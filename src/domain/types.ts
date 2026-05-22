@@ -1,10 +1,17 @@
+import type { Timestamp } from "firebase/firestore";
+
 export type RankingMode = 'real' | 'live'
 
 export type PlayerStatus = 'active' | 'excluded' | 'justified'
 
 export interface Player {
   id: string
-  name: string
+  name: string;
+  surname: string;
+  gender: 'male' | 'female' | 'other';
+  birthDate: Timestamp | null;
+  phone: string | null;
+  email: string | null;
   realPoints: number
   historicalMatches: number
   previousPeriodOpponentIds: string[]
