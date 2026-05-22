@@ -1,0 +1,287 @@
+ANALISI FUNZIONALE
+Applicazione per la gestione della Scala Mobile del Tennis Club Monteroni
+
+1. OBIETTIVO DELL'APPLICAZIONE
+
+L'applicazione ha lo scopo di digitalizzare la gestione della Scala Mobile descritta nel regolamento del circolo.
+Il sistema deve consentire a un unico amministratore di gestire iscritti, classifica, periodi di gioco, sfide, risultati, punteggi, tabelloni finali ed esclusioni, sostituendo le attivita oggi svolte tramite gruppo WhatsApp e gestione manuale.
+
+
+2. UTENTI DEL SISTEMA
+
+E previsto un solo tipo di utente:
+
+- Amministratore
+
+L'amministratore e l'unico soggetto autorizzato a usare l'applicazione e puo:
+
+- inserire, modificare e disattivare i partecipanti
+- definire la classifica iniziale
+- suddividere i giocatori nei gruppi
+- aprire e chiudere i periodi di gioco
+- registrare sfide e risultati
+- applicare le regole di validita delle sfide
+- calcolare punti e classifiche
+- gestire nuovi ingressi
+- registrare esclusioni e relative motivazioni
+- creare e gestire il torneo finale a eliminazione diretta
+
+Non sono previsti accessi diretti da parte dei giocatori.
+
+
+3. STRUTTURA DELLA COMPETIZIONE
+
+La Scala Mobile si svolge in un arco temporale definito dal regolamento stagionale.
+La competizione e suddivisa in periodi, indicativamente di 3 settimane.
+
+All'inizio del primo periodo viene definita una classifica iniziale.
+La classifica iniziale non e generata automaticamente da semplici punti storici, ma viene stabilita dall'organizzazione in base a:
+
+- livello di gioco del partecipante
+- classifica finale del torneo sociale appena concluso
+
+La classifica viene suddivisa in gruppi, per quanto possibile, di 10 o piu giocatori.
+I gruppi non sono quindi fissati rigidamente a 4 fasce.
+
+All'inizio di ogni nuovo periodo possono essere inseriti nuovi partecipanti.
+Ai nuovi partecipanti viene attribuito un punteggio iniziale tale da collocarli in una posizione coerente con il loro livello di gioco.
+
+
+4. CLASSIFICHE GESTITE DAL SISTEMA
+
+Il sistema deve gestire due classifiche:
+
+- classifica reale
+- classifica live
+
+La classifica reale e la classifica ufficiale valida all'inizio del periodo.
+I gruppi e i limiti di sfida si basano sulla classifica reale del periodo corrente.
+
+La classifica live viene aggiornata dopo ogni risultato inserito e rappresenta l'evoluzione in tempo reale dei punteggi maturati nel periodo.
+
+Alla fine di ogni periodo il sistema produce la nuova classifica reale combinando:
+
+- i punti di partenza del periodo
+- i punti maturati nel periodo stesso
+
+
+5. PERIODI DI GIOCO
+
+La competizione non e organizzata per settimane singole, ma per periodi di circa 3 settimane.
+
+Per ogni periodo il sistema deve permettere:
+
+- apertura del periodo
+- visualizzazione dei partecipanti attivi
+- gestione di sfide e risultati
+- conteggio delle partite giocate
+- verifica dei vincoli regolamentari
+- chiusura del periodo con ricalcolo della classifica reale
+
+Ogni concorrente deve disputare almeno una partita per periodo, salvo giustificato motivo.
+
+
+6. REGOLE DELLE SFIDE
+
+Le sfide seguono le regole del regolamento del circolo.
+
+6.1 Sfide consentite
+
+Possono sfidarsi:
+
+- tutti i giocatori appartenenti allo stesso gruppo
+- i giocatori posizionati a cavallo dei due gruppi confinanti individuati dalla regola dei gruppi adiacenti
+
+La precedente regola "stessa fascia o meta inferiore della fascia superiore" non e piu valida.
+
+6.2 Prima partita del periodo
+
+In ogni periodo, la prima partita di un giocatore deve essere disputata obbligatoriamente contro un atleta non incontrato nel periodo precedente.
+
+6.3 Ripetizione degli avversari
+
+Due giocatori non possono disputare piu di un incontro tra loro nello stesso periodo.
+Fa eccezione il caso in cui lo sfidante abbia gia giocato contro tutti i giocatori del proprio gruppo.
+
+6.4 Sfida irrevocabile
+
+Il sistema deve supportare il concetto di sfida irrevocabile.
+In caso di mancato accordo, lo sfidante puo fissare l'incontro in uno dei 3 giorni successivi, lasciando allo sfidato la scelta dell'orario entro i limiti previsti dal regolamento.
+
+La sfida irrevocabile non puo essere emessa se si verifica almeno una delle seguenti condizioni:
+
+- lo sfidato ha gia disputato il numero massimo di incontri consentiti nel periodo
+- lo sfidato ha gia un altro incontro prenotato
+- tra le due partite dello sfidato non trascorrono almeno 2 giorni
+
+
+7. PARTITE E FORMATO DI GIOCO
+
+Le partite si disputano al meglio dei 3 set.
+
+Regole di gioco:
+
+- ogni set si gioca con punteggio tennistico standard a giochi
+- il set si vince con almeno 6 giochi e 2 giochi di vantaggio
+- sul 6-6 si disputa il tie-break a 7 punti con 2 punti di vantaggio
+- in caso di un set pari, il terzo set viene sostituito da un tie-break decisivo a 10 punti con 2 punti di vantaggio
+
+Prima dell'inizio dell'incontro i giocatori possono concordare il sistema:
+
+- advantage
+- no advantage
+
+Se non c'e accordo, il sistema di riferimento da applicare e no advantage.
+
+
+8. PARTITE NON TERMINATE E PARTITE PARI
+
+Se una partita non viene ultimata per qualunque motivo, ad eccezione del ritiro, il vincitore viene determinato in base alla somma totale dei game vinti da ciascun giocatore.
+
+Non si tiene conto di un eventuale tie-break non ultimato, compreso il tie-break decisivo.
+
+Nel caso di partita pari, il sistema deve consentire di registrare l'esito senza forzare un vincitore di match.
+
+
+9. SISTEMA DI PUNTEGGIO
+
+Il sistema di punteggio previsto dal regolamento e il seguente.
+
+9.1 Partita terminata
+
+- vittoria 2 set a 0: 3 punti al vincitore, 0 punti al perdente
+- vittoria 2 set a 1: 2 punti al vincitore, 1 punto al perdente
+
+9.2 Partita non terminata
+
+- 1,5 punti a chi vince il primo set
+- 1 punto al giocatore avanti nel secondo set
+- se il secondo set e in parita, 0,5 punti a ciascun giocatore per il secondo set
+
+9.3 Partita pari
+
+- 1 punto al giocatore che vince il primo set
+- 1 punto al giocatore che vince il secondo set
+
+9.4 Bonus sfidante
+
+In ogni caso allo sfidante vengono aggiunti 0,50 punti.
+
+Il precedente criterio "1 punto per ogni set vinto" non e piu applicabile.
+
+
+10. VALIDITA DI SFIDE E RISULTATI
+
+Il sistema deve bloccare l'inserimento di sfide o risultati non conformi al regolamento.
+
+Devono essere verificati almeno i seguenti controlli:
+
+- i due giocatori devono appartenere allo stesso gruppo oppure a due gruppi adiacenti nei limiti consentiti
+- la prima partita del periodo deve rispettare il vincolo del mancato incontro nel periodo precedente
+- la stessa coppia di giocatori non puo affrontarsi piu volte nello stesso periodo, salvo eccezione regolamentare
+- una sfida irrevocabile puo essere registrata solo se rispetta i vincoli di calendario
+- l'esito inserito deve essere compatibile con il formato di gioco
+- i punteggi assegnati devono seguire il regolamento ufficiale
+
+
+11. STATO DEI GIOCATORI ED ESCLUSIONI
+
+Il regolamento non prevede il concetto di "congelamento" come regola principale della competizione.
+L'applicazione deve invece gestire gli stati rilevanti del regolamento:
+
+- attivo
+- escluso
+- giustificato nel periodo
+
+Sono esclusi dal torneo i giocatori che:
+
+- non disputano almeno una partita nel periodo, salvo giustificato motivo
+- in un periodo ricevono due sfide irrevocabili da giocatori diversi e non accettano di giocare
+- complessivamente ricevono quattro sfide irrevocabili e non accettano di giocare
+
+L'amministratore deve poter registrare:
+
+- motivazione dell'esclusione
+- data dell'esclusione
+- eventuale giustificazione per inattivita nel periodo
+
+
+12. NUOVI INGRESSI
+
+All'inizio di ogni periodo l'amministratore puo inserire nuovi partecipanti.
+Il sistema deve permettere di attribuire a ciascun nuovo giocatore un punteggio iniziale e una collocazione coerente con il livello di gioco stimato.
+
+
+13. GESTIONE OPERATIVA DELLE SFIDE
+
+Nel regolamento attuale le sfide e i risultati vengono comunicati sul gruppo WhatsApp.
+Nell'applicazione queste operazioni devono essere internalizzate e rese tracciabili.
+
+Il sistema deve consentire all'amministratore di registrare:
+
+- chi lancia la sfida
+- chi riceve la sfida
+- data e ora proposta
+- eventuale natura irrevocabile della sfida
+- esito della sfida
+- risultato finale dell'incontro
+
+
+14. FASE FINALE
+
+Alla fine del periodo di sfide viene organizzato un torneo finale a eliminazione diretta.
+
+Il sistema deve prevedere:
+
+- generazione del tabellone finale sulla base della classifica maturata alla fine dell'ultimo periodo
+- tabelloni distinti per fascia o gruppo finale, secondo l'impostazione del circolo
+- individuazione del vincitore finale
+- individuazione dei vincitori delle fasce inferiori previste dal regolamento
+
+Alla fase finale possono partecipare soltanto gli atleti che abbiano disputato almeno 12 incontri tra il primo e l'ultimo periodo.
+
+La precedente idea di tornei di fascia con promozione progressiva del vincitore alla fascia superiore non e confermata dal regolamento PDF e non deve essere considerata regola base dell'applicazione.
+
+
+15. ALTRI DATI GESTITI
+
+L'applicazione dovra gestire almeno i seguenti dati:
+
+- partecipanti
+- classifica reale
+- classifica live
+- gruppi del periodo
+- periodi di gioco
+- sfide
+- sfide irrevocabili
+- partite
+- risultati dei set
+- punti assegnati
+- storico incontri
+- esclusioni
+- accesso al tabellone finale
+
+
+16. ASPETTI ANCORA DA CHIARIRE
+
+Restano da definire alcuni dettagli applicativi:
+
+- numero massimo di incontri consentiti per periodo, se deve essere configurabile nell'app
+- rappresentazione precisa dei giocatori "a cavallo" tra due gruppi
+- struttura esatta dei tabelloni finali per seconda, terza ed eventuale quarta fascia
+- gestione dei ritiri durante la partita
+- eventuale mantenimento nell'app della funzionalita di congelamento come opzione amministrativa interna, anche se non prevista dal regolamento
+
+
+17. SINTESI
+
+L'applicazione dovra aderire al regolamento ufficiale della Scala Mobile del circolo.
+Rispetto alla versione precedente dell'analisi, le principali modifiche riguardano:
+
+- passaggio da sessioni settimanali a periodi di circa 3 settimane
+- sostituzione delle 4 fasce fisse con gruppi di classifica variabili
+- nuove regole di sfida, inclusa la sfida irrevocabile
+- nuovo sistema di punteggio ufficiale
+- gestione delle partite non terminate tramite somma dei game
+- introduzione delle regole di esclusione
+- fase finale a eliminazione diretta basata sulla classifica dell'ultimo periodo
