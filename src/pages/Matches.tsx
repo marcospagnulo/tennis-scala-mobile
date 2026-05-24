@@ -1,5 +1,5 @@
-import { Typography } from '@mui/material'
+import {Typography} from "@mui/material";
 
 export function MatchesPage() {
-  return <Typography>Pagina di gestione delle partite</Typography>
+  return <Typography>Pagina di gestione delle partite</Typography>;
 }

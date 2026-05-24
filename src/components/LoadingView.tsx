@@ -11,17 +11,21 @@ export default function LoadingView(prop: Prop) {
   return (
     <Fade in={loading} unmountOnExit>
       <Stack
-        sx={{left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        position: "absolute",
-        zIndex: 1202}}>
+        sx={{
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          position: "absolute",
+          zIndex: 1202,
+        }}>
         <Stack
-          sx={{flex: 1, 
-          bgcolor: theme.palette.background.default + "cc",
-          alignItems: "center",
-          justifyContent: "center"}}>
+          sx={{
+            flex: 1,
+            bgcolor: theme.palette.background.default + "cc",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
           <CircularProgress />
         </Stack>
       </Stack>

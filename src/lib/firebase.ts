@@ -1,10 +1,10 @@
-import { getApp, getApps, initializeApp } from 'firebase/app'
-import { connectAuthEmulator, getAuth } from 'firebase/auth'
+import {getApp, getApps, initializeApp} from "firebase/app";
+import {connectAuthEmulator, getAuth} from "firebase/auth";
 import {
   collection,
   connectFirestoreEmulator,
   getFirestore,
-} from 'firebase/firestore'
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,43 +14,43 @@ const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-}
+};
 
 export const missingFirebaseConfig = Object.entries(firebaseConfig)
   .filter(([, value]) => !value)
-  .map(([key]) => key)
+  .map(([key]) => key);
 
-export const firebaseEnabled = missingFirebaseConfig.length === 0
+export const firebaseEnabled = missingFirebaseConfig.length === 0;
 
 const firebaseApp = firebaseEnabled
   ? getApps().length > 0
     ? getApp()
     : initializeApp(firebaseConfig)
-  : undefined
+  : undefined;
 
-export const firestore = firebaseApp ? getFirestore(firebaseApp) : undefined
-export const auth = firebaseApp ? getAuth(firebaseApp) : undefined
+export const firestore = firebaseApp ? getFirestore(firebaseApp) : undefined;
+export const auth = firebaseApp ? getAuth(firebaseApp) : undefined;
 
 // --- NUOVA SEZIONE PER GLI EMULATORI ---
 // Controlla se siamo in sviluppo e se la variabile d'ambiente VITE_USE_EMULATORS è 'true'
-if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
+if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === "true") {
   if (firestore) {
-    connectFirestoreEmulator(firestore, 'localhost', 8080)
-    console.log('Firestore emulator connected')
+    connectFirestoreEmulator(firestore, "localhost", 8080);
+    console.log("Firestore emulator connected");
   }
   if (auth) {
-    connectAuthEmulator(auth, 'http://localhost:9099')
-    console.log('Auth emulator connected')
+    connectAuthEmulator(auth, "http://localhost:9099");
+    console.log("Auth emulator connected");
   }
 }
 // --- FINE NUOVA SEZIONE ---
 
 export const collections = firestore
   ? {
-      players: collection(firestore, 'players'),
-      periods: collection(firestore, 'periods'),
-      challenges: collection(firestore, 'challenges'),
-      matches: collection(firestore, 'matches'),
-      exclusions: collection(firestore, 'exclusions'),
+      players: collection(firestore, "players"),
+      periods: collection(firestore, "periods"),
+      challenges: collection(firestore, "challenges"),
+      matches: collection(firestore, "matches"),
+      exclusions: collection(firestore, "exclusions"),
     }
-  : undefined
+  : undefined;
