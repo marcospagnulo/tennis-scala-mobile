@@ -1,26 +1,63 @@
-:root {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #162033;
-  background: #f4f6fb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
+
+html {
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 100%;
+}
+
+body {
+  display: flex;
+  flex: 1 1 auto;
+  margin: 0;
+  inline-size: 100%;
+  min-block-size: 100%;
+  font-family: "Nunito Sans", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
 #root {
-  margin: 0;
-  min-height: 100%;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  inline-size: 100%;
+  min-inline-size: 0;
 }
 
-body {
-  min-width: 320px;
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Scrollbar per browser basati su WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px; /* Larghezza della scrollbar verticale */
+  height: 6px; /* Altezza della scrollbar orizzontale */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Colore dello sfondo del tracciato */
+  border-radius: 10px; /* Arrotondamento del tracciato */
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent; /* Colore del pollice (parte che si muove) */
+  border-radius: 10px; /* Arrotondamento del pollice */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Colore del pollice al passaggio del mouse */
+}
+
+/* Scrollbar per Firefox */
+* {
+  scrollbar-arrow-color: transparent;
+  scrollbar-width: thin; /* Larghezza sottile */
+  scrollbar-color: #888 transparent; /* Colore del pollice e dello sfondo */
 }

@@ -5,29 +5,31 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import SportsTennisRoundedIcon from '@mui/icons-material/SportsTennisRounded'
 import {
-  AppBar,
   Box,
-  Button,
+  Divider,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
+  Stack,
   Typography,
+  useTheme,
 } from '@mui/material'
-import { Login } from './components/Login'
+import { Login } from './pages/Login'
 import { auth } from './lib/firebase'
 import { DashboardPage } from './pages/Dashboard'
 import { MatchesPage } from './pages/Matches'
 import { PlayersPage } from './pages/Players'
+import LoadingView from './components/LoadingView'
+import { Logout } from '@mui/icons-material'
 
 const drawerWidth = 240
 
 function App() {
+  const theme = useTheme();
   const [user, setUser] = useState<User | null | undefined>(undefined)
-
 
   useEffect(() => {
     if(!auth) {
@@ -48,9 +50,7 @@ function App() {
 
   if (user === undefined) {
     return (
-      <Box sx={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
-        <Typography>Caricamento...</Typography>
-      </Box>
+      <LoadingView loading={true} />
     )
   }
 
@@ -59,22 +59,7 @@ function App() {
   }
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: '#f4f6fb', minHeight: '100vh' }}>
-      <AppBar
-        position="fixed"
-        color="transparent"
-        elevation={0}
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Toolbar sx={{ gap: 2 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography color="text.secondary" variant="body2">
-              Benvenuto, {user.displayName}
-            </Typography>
-          </Box>
-          <Button onClick={handleLogout}>Logout</Button>
-        </Toolbar>
-      </AppBar>
+    <Stack direction="row" sx={{flex: 1}}>
       <Drawer
         variant="permanent"
         sx={{
@@ -83,8 +68,13 @@ function App() {
           [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
+        <Stack sx={{p: 1, gap: 1, bgcolor: "primary.dark", color: theme.palette.primary.contrastText}}>
+          <Typography color="text.secondary" variant="body2">
+            Benvenuto, {user.displayName}
+          </Typography>
+        </Stack>
         <Box sx={{ overflow: 'auto' }}>
-          <List>
+          <List sx={{py: 0}}>
             <ListItem disablePadding>
               <ListItemButton component={Link} to="/">
                 <ListItemIcon>
@@ -109,18 +99,26 @@ function App() {
                 <ListItemText primary="Partite" />
               </ListItemButton>
             </ListItem>
+            <Divider  />
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon>
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText primary="Logout" />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
+      <Stack sx={{ flexGrow: 1, p: 2 }}>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/players" element={<PlayersPage />} />
           <Route path="/matches" element={<MatchesPage />} />
         </Routes>
-      </Box>
-    </Box>
+      </Stack>
+    </Stack>
   )
 }
 

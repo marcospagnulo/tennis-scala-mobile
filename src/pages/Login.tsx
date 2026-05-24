@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { Button, Paper, Stack, TextField, Typography } from '@mui/material';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -8,8 +9,7 @@ export function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = () => {
     setError(null);
     setLoading(true);
 
@@ -20,7 +20,7 @@ export function Login() {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      signInWithEmailAndPassword(auth, email, password);
       // Il cambio di stato verrà gestito da onAuthStateChanged in App.tsx
     } catch (err) {
       setError('Credenziali non valide. Riprova.');
@@ -31,30 +31,28 @@ export function Login() {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
-        <h2>Login Amministratore</h2>
-        <input
+    <Stack spacing={2} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>      
+      <Paper sx={{display: "flex", flexDirection: "column", gap: 2, padding: 2}}>
+        <Typography variant="h5" align="center">Login</Typography>
+        <TextField
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
           required
-          style={{ padding: '0.5rem' }}
+          label="Email"
         />
-        <input
+        <TextField
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
           required
-          style={{ padding: '0.5rem' }}
+          label="Password"
         />
-        <button type="submit" disabled={loading} style={{ padding: '0.5rem', cursor: 'pointer' }}>
+        <Button onClick={handleLogin} disabled={loading} variant="contained" color="primary" sx={{ padding: '0.5rem' }}>
           {loading ? 'Accesso in corso...' : 'Accedi'}
-        </button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
-    </div>
+        </Button>
+        {error && <Typography color="error">{error}</Typography>}
+      </Paper>
+    </Stack>
   );
 }

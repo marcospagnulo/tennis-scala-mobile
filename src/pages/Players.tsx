@@ -8,19 +8,12 @@ import {
   DialogTitle,
   Fab,
   FormControl,
-  Grid,
   IconButton,
   InputLabel,
   MenuItem,
   Paper,
   Select,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
 } from '@mui/material'
@@ -41,6 +34,7 @@ import type { Player } from '../domain/types'
 import { DatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { Add } from '@mui/icons-material'
+import { DataGrid, type GridColDef } from '@mui/x-data-grid'
 
 const initialFormData: Partial<Player> = {
   name: '',
@@ -60,6 +54,7 @@ export function PlayersPage() {
   const [formData, setFormData] = useState<Partial<Player>>(initialFormData)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null)
+  const [openFormDialog, setOpenFormDialog] = useState(false)
 
   useEffect(() => {
     if (!collections) return
@@ -83,11 +78,13 @@ export function PlayersPage() {
         gender: player.gender,
         status: player.status,
     })
+    setOpenFormDialog(true)
   }
 
   const handleAddClick = () => {
     setSelectedPlayer(null)
     setFormData(initialFormData)
+    setOpenFormDialog(true)
   }
     
   const handleBirthDateChange = (date: dayjs.Dayjs | null) => { 
@@ -97,6 +94,12 @@ export function PlayersPage() {
 
   const handleChange = (key: keyof typeof formData, value: string | Timestamp) => {
     setFormData(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleCloseFormDialog = () => {
+    setOpenFormDialog(false)
+    setSelectedPlayer(null)
+    setFormData(initialFormData)
   }
 
   const handleSubmit = async () => {
@@ -134,7 +137,7 @@ export function PlayersPage() {
         createdAt: serverTimestamp(),
       })
     }
-    setSelectedPlayer(null)
+    handleCloseFormDialog()
   }
 
   const handleDeleteClick = (player: Player) => {
@@ -153,130 +156,123 @@ export function PlayersPage() {
     handleCloseDeleteDialog()
   }
 
+  const columns: GridColDef[] = [
+    { field: 'surname', headerName: 'Cognome', flex: 1 },
+    { field: 'name', headerName: 'Nome', flex: 1 },
+    {
+      field: 'birthDate',
+      headerName: 'Data di Nascita',
+      flex: 1,
+      valueGetter: (value: Timestamp) => value ? dayjs(value.toDate()).format('DD/MM/YYYY') : '',
+    },
+    { field: 'gender', headerName: 'Genere', flex: 1 },
+    { field: 'phone', headerName: 'Telefono', flex: 1 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    {
+      field: 'actions',
+      headerName: '',
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <Stack direction={'row'} spacing={1}>
+            <IconButton
+              size="small"
+              aria-label="edit"
+              onClick={() => handleEditPlayer(params.row as Player)}
+            >
+              <EditIcon fontSize="small" color='primary' />
+            </IconButton>
+            <IconButton
+              size="small"
+              aria-label="delete"
+              onClick={() => handleDeleteClick(params.row as Player)}
+            >
+              <DeleteIcon fontSize="small" color='error'/>
+            </IconButton>
+          </Stack>
+        );
+      },
+    },
+  ];
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Stack sx={{ flexGrow: 1 }}>
       <Typography variant="h6" gutterBottom>Giocatori</Typography>
-      <Grid container spacing={2}>
-        <Grid size={8}>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Cognome</TableCell>
-                  <TableCell>Nome</TableCell>
-                  <TableCell>Data di Nascita</TableCell>
-                  <TableCell>Genere</TableCell>
-                  <TableCell>Telefono</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {players.map(player => (
-                  <TableRow
-                    key={player.id}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {player.surname}
-                    </TableCell>
-                    <TableCell>{player.name}</TableCell>
-                    <TableCell>{player.birthDate ? dayjs(player.birthDate.toDate()).format('DD/MM/YYYY') : ''}</TableCell>
-                    <TableCell>{player.gender}</TableCell>
-                    <TableCell>{player.phone}</TableCell>
-                    <TableCell>{player.email}</TableCell>
-                    <TableCell align="right">
-                      <Stack direction={'row'} spacing={1}>
-                        <IconButton
-                          size="small"
-                          aria-label="edit"
-                          onClick={() => handleEditPlayer(player)}
-                        >
-                          <EditIcon fontSize="small" color='primary' />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          aria-label="delete"
-                          onClick={() => handleDeleteClick(player)}
-                        >
-                          <DeleteIcon fontSize="small" color='error'/>
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-        <Grid size={4}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6">
-              {selectedPlayer ? 'Modifica Giocatore' : 'Nuovo Giocatore'}
-            </Typography>
-              <TextField
-                fullWidth
-                label="Nome"
-                name="name"
-                value={formData.name}
-                onChange={e => handleChange('name', e.target.value)}
-                margin="normal"
-                />
-                <TextField
-                    fullWidth
-                    label="Cognome"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={e => handleChange('surname', e.target.value)}
-                    margin="normal"
-                />
-                <Box sx={{ mt: 2, mb: 1 }}>
-                    <DatePicker
-                        format='DD/MM/YYYY'
-                        label="Data di Nascita"
-                        value={formData.birthDate ? dayjs(formData.birthDate.toDate()): null}
-                        onChange={handleBirthDateChange}
-                    />  
-                </Box>
-                <TextField
-                    fullWidth
-                    label="Telefono"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={e => handleChange('phone', e.target.value)}
-                    margin="normal"
-                />
-                <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={e => handleChange('email', e.target.value)}
-                    margin="normal"
-                />
-                <FormControl fullWidth margin="normal">
-                    <InputLabel id="gender-label">Genere</InputLabel>
-                    <Select<string>
-                        labelId="gender-label"
-                        label="Genere"
-                        name="gender"
-                        value={formData.gender}
-                        onChange={e => handleChange('gender', e.target.value)}
-                    >
-                        <MenuItem value="male">Maschio</MenuItem>
-                        <MenuItem value="female">Femmina</MenuItem>
-                        <MenuItem value="other">Altro</MenuItem>
-                    </Select>
-                </FormControl>
-              <Button type="submit" variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
-                Salva
-              </Button>
-          </Paper>
-        </Grid>
-      </Grid>
+      <Paper style={{ height: 600, flexGrow: 1 }}>
+        <DataGrid
+          rows={players}
+          columns={columns}
+          pageSizeOptions={[10, 25, 50]}
+        />
+      </Paper>
       <Fab color="primary" aria-label="add" sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleAddClick}>
         <Add />
       </Fab>
+      <Dialog open={openFormDialog} onClose={handleCloseFormDialog}>
+        <DialogTitle>{selectedPlayer ? 'Modifica Giocatore' : 'Nuovo Giocatore'}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Nome"
+            name="name"
+            value={formData.name}
+            onChange={e => handleChange('name', e.target.value)}
+            margin="normal"
+            />
+            <TextField
+                fullWidth
+                label="Cognome"
+                name="surname"
+                value={formData.surname}
+                onChange={e => handleChange('surname', e.target.value)}
+                margin="normal"
+            />
+            <Box sx={{ mt: 2, mb: 1 }}>
+                <DatePicker
+                    format='DD/MM/YYYY'
+                    label="Data di Nascita"
+                    value={formData.birthDate ? dayjs(formData.birthDate.toDate()): null}
+                    onChange={handleBirthDateChange}
+                />  
+            </Box>
+            <TextField
+                fullWidth
+                label="Telefono"
+                name="phone"
+                value={formData.phone}
+                onChange={e => handleChange('phone', e.target.value)}
+                margin="normal"
+            />
+            <TextField
+                fullWidth
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={e => handleChange('email', e.target.value)}
+                margin="normal"
+            />
+            <FormControl fullWidth margin="normal">
+                <InputLabel id="gender-label">Genere</InputLabel>
+                <Select<string>
+                    labelId="gender-label"
+                    label="Genere"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={e => handleChange('gender', e.target.value)}
+                >
+                    <MenuItem value="male">Maschio</MenuItem>
+                    <MenuItem value="female">Femmina</MenuItem>
+                    <MenuItem value="other">Altro</MenuItem>
+                </Select>
+            </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseFormDialog}>Annulla</Button>
+          <Button onClick={handleSubmit} variant="contained">
+            Salva
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Conferma Eliminazione</DialogTitle>
         <DialogContent>
@@ -292,6 +288,6 @@ export function PlayersPage() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Stack>
   )
 }
