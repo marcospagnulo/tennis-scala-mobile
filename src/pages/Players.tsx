@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Dialog,
@@ -7,7 +8,7 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -32,8 +33,13 @@ import {
 import type {Player} from "../domain/types";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {Add} from "@mui/icons-material";
-import {DataGrid, type GridColDef} from "@mui/x-data-grid";
+import {Add, Search} from "@mui/icons-material";
+import {
+  DataGrid,
+  GridActionsCell,
+  GridActionsCellItem,
+  type GridColDef,
+} from "@mui/x-data-grid";
 
 const initialFormData: Partial<Player> = {
   name: "",
@@ -41,8 +47,9 @@ const initialFormData: Partial<Player> = {
   birthDate: new Timestamp(new Date().getTime() / 1000, 0),
   phone: "",
   email: "",
-  gender: "other",
+  gender: "male",
   status: "active",
+  avatar: "",
 };
 
 export function PlayersPage() {
@@ -74,6 +81,7 @@ export function PlayersPage() {
       email: player.email,
       gender: player.gender,
       status: player.status,
+      avatar: player.avatar,
     });
     setOpenFormDialog(true);
   };
@@ -116,6 +124,7 @@ export function PlayersPage() {
         email: formData.email,
         gender: formData.gender,
         status: formData.status,
+        avatar: formData.avatar,
       });
     } else {
       // Add new player
@@ -127,12 +136,7 @@ export function PlayersPage() {
         email: formData.email,
         gender: formData.gender,
         status: formData.status,
-        realPoints: 0,
-        historicalMatches: 0,
-        previousPeriodOpponentIds: [],
-        irrevocableRefusalsCurrentPeriod: 0,
-        irrevocableRefusalsTotal: 0,
-        bookedMatchDates: [],
+        avatar: formData.avatar,
         createdAt: serverTimestamp(),
       });
     }
@@ -156,6 +160,13 @@ export function PlayersPage() {
   };
 
   const columns: GridColDef[] = [
+    {field: "avatar", headerName: "", width: 80, renderCell: params => {
+        return (
+          <Box sx={{mt: 0.5}}>
+            <Avatar src={params.row.avatar} alt="Avatar" sx={{width: 40, height: 40}} />
+          </Box>
+        );
+    }},
     {field: "surname", headerName: "Cognome", flex: 1},
     {field: "name", headerName: "Nome", flex: 1},
     {
@@ -171,34 +182,45 @@ export function PlayersPage() {
     {
       field: "actions",
       headerName: "",
+      type: "actions",
       sortable: false,
       renderCell: params => {
         return (
-          <Stack direction={"row"} spacing={1}>
-            <IconButton
-              size="small"
-              aria-label="edit"
-              onClick={() => handleEditPlayer(params.row as Player)}>
-              <EditIcon fontSize="small" color="primary" />
-            </IconButton>
-            <IconButton
-              size="small"
-              aria-label="delete"
-              onClick={() => handleDeleteClick(params.row as Player)}>
-              <DeleteIcon fontSize="small" color="error" />
-            </IconButton>
-          </Stack>
+          <GridActionsCell {...params}>
+            <GridActionsCellItem
+              icon={<EditIcon fontSize="small" color="primary" />}
+              label="Edit"
+              onClick={() => handleEditPlayer(params.row as Player)}
+            />
+            <GridActionsCellItem
+              icon={<DeleteIcon fontSize="small" color="error" />}
+              label="Delete"
+              onClick={() => handleDeleteClick(params.row as Player)}
+            />
+          </GridActionsCell>
         );
       },
     },
   ];
 
+  const handleFileLoad = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const fileUpload = evt.target.files?.item(0);
+    if (fileUpload) {
+      const reader = new FileReader();
+      reader.readAsDataURL(fileUpload);
+      reader.onload = () => {
+        const base64 = reader.result;
+        setFormData(prev => ({...prev, avatar: base64 as string}));
+      };
+    }
+  };
+
   return (
-    <Stack sx={{flex: 1, gap: 1}}>
+    <Stack sx={{flex: 1, gap: 2}}>
       <Typography variant="h6" gutterBottom>
         Giocatori
       </Typography>
-      <Stack direction={"row"}>
+      <Stack direction={"row"} sx={{justifyContent: "flex-end"}}>
         <Button
           variant="contained"
           startIcon={<Add />}
@@ -219,6 +241,25 @@ export function PlayersPage() {
           {selectedPlayer ? "Modifica Giocatore" : "Nuovo Giocatore"}
         </DialogTitle>
         <DialogContent>
+          <Stack direction="row" sx={{mb: 2, gap: 2, alignItems: "center"}}>
+            <Avatar
+              src={formData.avatar}
+              alt="Avatar"
+              sx={{width: 50, height: 50}}
+            />
+            <TextField
+              type="file"
+              onChange={handleFileLoad}
+              slotProps={{
+                input: {
+                  inputProps: {
+                    accept:
+                      "image/png, image/jpeg, image/jpg, image/gif, image/webp",
+                  },
+                },
+              }}
+            />
+          </Stack>
           <TextField
             fullWidth
             label="Nome"
@@ -269,9 +310,8 @@ export function PlayersPage() {
               name="gender"
               value={formData.gender}
               onChange={e => handleChange("gender", e.target.value)}>
-              <MenuItem value="male">Maschio</MenuItem>
-              <MenuItem value="female">Femmina</MenuItem>
-              <MenuItem value="other">Altro</MenuItem>
+              <MenuItem value="uomo">Uomo</MenuItem>
+              <MenuItem value="donna">Donna</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>

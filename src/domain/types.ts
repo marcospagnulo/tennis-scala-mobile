@@ -8,6 +8,7 @@ export interface Player {
   id: string;
   name: string;
   surname: string;
+  avatar?: string;
   gender: "male" | "female" | "other";
   birthDate: Timestamp | null;
   phone: string | null;
