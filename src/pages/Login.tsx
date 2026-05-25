@@ -61,9 +61,9 @@ export function Login() {
         <Button
           onClick={handleLogin}
           disabled={loading}
+          loading={loading}
           variant="contained"
-          color="primary"
-          sx={{padding: "0.5rem"}}>
+          color="primary">
           {loading ? "Accesso in corso..." : "Accedi"}
         </Button>
         {error && <Typography color="error">{error}</Typography>}

@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "emulators": "firebase emulators:start --import=exported-dev-data --export-on-exit=exported-dev-data",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prettier": "prettier --write .",
-    "emulators": "firebase emulators:start --import=exported-dev-data --export-on-exit=exported-dev-data"
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

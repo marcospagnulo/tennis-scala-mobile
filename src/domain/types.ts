@@ -1,5 +1,12 @@
 import type {Timestamp} from "firebase/firestore";
 
+export type role = "admin" | "user";
+export type User = {
+  displayName: string;
+  email: string;
+  role: role;
+};
+
 export type RankingMode = "real" | "live";
 
 export type PlayerStatus = "active" | "excluded" | "justified";

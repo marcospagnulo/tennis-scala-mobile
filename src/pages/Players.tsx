@@ -8,7 +8,6 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -16,6 +15,7 @@ import {
   Stack,
   TextField,
   Typography,
+  type SxProps,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,13 +33,15 @@ import {
 import type {Player} from "../domain/types";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {Add, Search} from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import {
   DataGrid,
   GridActionsCell,
   GridActionsCellItem,
   type GridColDef,
 } from "@mui/x-data-grid";
+import {useAuth} from "../hooks/useAuth";
+import type {Theme} from "@emotion/react";
 
 const initialFormData: Partial<Player> = {
   name: "",
@@ -52,7 +54,8 @@ const initialFormData: Partial<Player> = {
   avatar: "",
 };
 
-export function PlayersPage() {
+export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
+  const {user} = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [formData, setFormData] = useState<Partial<Player>>(initialFormData);
@@ -160,13 +163,22 @@ export function PlayersPage() {
   };
 
   const columns: GridColDef[] = [
-    {field: "avatar", headerName: "", width: 80, renderCell: params => {
+    {
+      field: "avatar",
+      headerName: "",
+      width: 80,
+      renderCell: params => {
         return (
           <Box sx={{mt: 0.5}}>
-            <Avatar src={params.row.avatar} alt="Avatar" sx={{width: 40, height: 40}} />
+            <Avatar
+              src={params.row.avatar}
+              alt="Avatar"
+              sx={{width: 40, height: 40}}
+            />
           </Box>
         );
-    }},
+      },
+    },
     {field: "surname", headerName: "Cognome", flex: 1},
     {field: "name", headerName: "Nome", flex: 1},
     {
@@ -179,7 +191,10 @@ export function PlayersPage() {
     {field: "gender", headerName: "Genere", flex: 1},
     {field: "phone", headerName: "Telefono", flex: 1},
     {field: "email", headerName: "Email", flex: 1},
-    {
+  ];
+
+  if (user?.role === "admin") {
+    columns.push({
       field: "actions",
       headerName: "",
       type: "actions",
@@ -200,8 +215,8 @@ export function PlayersPage() {
           </GridActionsCell>
         );
       },
-    },
-  ];
+    });
+  }
 
   const handleFileLoad = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const fileUpload = evt.target.files?.item(0);
@@ -216,11 +231,11 @@ export function PlayersPage() {
   };
 
   return (
-    <Stack sx={{flex: 1, gap: 2}}>
+    <Stack sx={{...sx}}>
       <Typography variant="h6" gutterBottom>
         Giocatori
       </Typography>
-      <Stack direction={"row"} sx={{justifyContent: "flex-end"}}>
+      <Stack direction={"row"} sx={{justifyContent: "flex-end", mb: 2}}>
         <Button
           variant="contained"
           startIcon={<Add />}
@@ -229,8 +244,18 @@ export function PlayersPage() {
           Nuovo
         </Button>
       </Stack>
-      <Paper sx={{flex: 1}}>
+      <Paper
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}>
         <DataGrid
+          sx={{
+            border: "none",
+          }}
+          disableColumnMenu={true}
           rows={players}
           columns={columns}
           pageSizeOptions={[10, 25, 50]}
