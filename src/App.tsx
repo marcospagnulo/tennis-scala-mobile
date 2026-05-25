@@ -12,17 +12,17 @@ function App() {
 
   return (
     <Stack direction="row" sx={{flex: 1}}>
-      <AppBar onMenuClick={() => setDrawer(!drawer)} />
-      <Drawer open={drawer} />
+      <AppBar onMenuClick={() => setDrawer(!drawer)} open={drawer} />
+      <Drawer open={drawer} onOpen={() => setDrawer(true)} onClose={() => setDrawer(false)} />
       <Stack sx={{flex: "1 1 0", overflow: "hidden"}}>
         <Toolbar />
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<DashboardPage sx={{flex: 1, p: 2}} />} />
           <Route
             path="/players"
             element={<PlayersPage sx={{flex: 1, p: 2}} />}
           />
-          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/matches" element={<MatchesPage sx={{flex: 1, p: 2}} />} />
         </Routes>
       </Stack>
     </Stack>

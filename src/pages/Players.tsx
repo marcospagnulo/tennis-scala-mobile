@@ -235,15 +235,6 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
       <Typography variant="h6" gutterBottom>
         Giocatori
       </Typography>
-      <Stack direction={"row"} sx={{justifyContent: "flex-end", mb: 2}}>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          aria-label="add"
-          onClick={handleAddClick}>
-          Nuovo
-        </Button>
-      </Stack>
       <Paper
         sx={{
           flex: 1,
@@ -251,6 +242,15 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
           flexDirection: "column",
           overflow: "hidden",
         }}>
+        <Stack direction={"row"} sx={{justifyContent: "flex-end", mb: 2, mx: 2, mt: 2}}>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            aria-label="add"
+            onClick={handleAddClick}>
+            Nuovo
+          </Button>
+        </Stack>
         <DataGrid
           sx={{
             border: "none",

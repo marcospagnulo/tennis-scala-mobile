@@ -5,6 +5,7 @@ import SportsTennisRoundedIcon from "@mui/icons-material/SportsTennisRounded";
 import {
   Box,
   Drawer as MuiDrawer,
+  SwipeableDrawer,
   List,
   ListItem,
   ListItemButton,
@@ -17,12 +18,16 @@ import {
 
 const drawerWidth = 240;
 
-const Drawer = ({open}: {open: boolean}) => {
+const Drawer = ({open, onOpen, onClose}: {open: boolean, onOpen: () => void, onClose: () => void}) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const DrawerContainer = mobile ? SwipeableDrawer : MuiDrawer;
+
   return (
-    <MuiDrawer
+    <DrawerContainer
+      onOpen={onOpen}
+      onClose={onClose}
       open={open}
       variant={mobile ? "temporary" : "persistent"}
       sx={{
@@ -62,7 +67,7 @@ const Drawer = ({open}: {open: boolean}) => {
           </ListItem>
         </List>
       </Box>
-    </MuiDrawer>
+    </DrawerContainer>
   );
 };
 
