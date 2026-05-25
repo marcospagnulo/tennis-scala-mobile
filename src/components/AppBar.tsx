@@ -10,6 +10,7 @@ import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
 import {useAuth} from "../hooks/useAuth";
 import {Login} from "./Login";
 import {useEffect, useState} from "react";
+import { useAppContext } from "../app/context";
 
 const AppBar = ({
   onMenuClick,
@@ -19,6 +20,7 @@ const AppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
+  const {season} = useAppContext();
   const {user, handleLogout} = useAuth();
   const [login, setLogin] = useState<boolean>(false);
 
@@ -44,7 +46,7 @@ const AppBar = ({
             {open ? <MenuOpen /> : <Menu />}
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
-            Tennis Scala Mobile
+            {season ? season.name : "Scala Mobile"}
           </Typography>
           <IconButton
             onClick={handleAuthClick}

@@ -3,7 +3,7 @@ import {createRoot} from "react-dom/client";
 import {BrowserRouter} from "react-router-dom";
 import {CssBaseline, ThemeProvider, createTheme} from "@mui/material";
 import "./index.css";
-import App from "./App";
+import {App} from "./app";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 

@@ -42,7 +42,7 @@ export interface Entity {
 interface CrudProps<T extends Entity> {
   sx?: SxProps<Theme>;
   collection: CollectionReference<T, T>;
-  columns: GridColDef[];
+  columns: GridColDef<T>[];
   title: string;
   form: (
     formData: Partial<T>,
@@ -219,8 +219,7 @@ export function Crud<T extends Entity>({
         <DialogTitle>Conferma Eliminazione</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Sei sicuro di voler eliminare "{itemToDelete?.name}"? Questa azione
-            è irreversibile.
+            Sei sicuro di voler eliminare "{itemToDelete?.name}"?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

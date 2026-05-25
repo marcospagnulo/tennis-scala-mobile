@@ -6,7 +6,7 @@ import {
   connectFirestoreEmulator,
   getFirestore,
 } from "firebase/firestore";
-import type {Player} from "../domain/types";
+import type {Player, Season} from "../domain/types";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -52,6 +52,10 @@ export const collections = firestore
       players: collection(firestore, "players") as CollectionReference<
         Player,
         Player
+      >,
+      seasons: collection(firestore, "seasons") as CollectionReference<
+        Season,
+        Season
       >,
       periods: collection(firestore, "periods"),
       challenges: collection(firestore, "challenges"),

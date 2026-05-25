@@ -15,6 +15,7 @@ import {
   useTheme,
   Toolbar,
 } from "@mui/material";
+import {CalendarMonth} from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -71,8 +72,17 @@ const Drawer = ({
       <Box sx={{overflow: "auto"}}>
         <List sx={{py: 0}}>
           <DrawerItem to="/" icon={<DashboardRoundedIcon />} text="Dashboard" />
-          <DrawerItem to="/players" icon={<GroupsRoundedIcon />} text="Giocatori" />
-          <DrawerItem to="/matches" icon={<SportsTennisRoundedIcon />} text="Partite" />
+          <DrawerItem to="/seasons" icon={<CalendarMonth />} text="Stagioni" />
+          <DrawerItem
+            to="/matches"
+            icon={<SportsTennisRoundedIcon />}
+            text="Partite"
+          />
+          <DrawerItem
+            to="/players"
+            icon={<GroupsRoundedIcon />}
+            text="Giocatori"
+          />
         </List>
       </Box>
     </DrawerContainer>

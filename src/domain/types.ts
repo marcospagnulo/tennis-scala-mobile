@@ -20,7 +20,7 @@ export interface Player {
   status: PlayerStatus;
 }
 
-export interface Ladder {
+export interface Season {
   id: string;
   name: string;
   startDate: Timestamp;
@@ -29,6 +29,7 @@ export interface Ladder {
 
 export interface Period {
   id: string;
-  startDate: string;
-  endDate: string;
+  seasonId: string;
+  startDate: Timestamp;
+  endDate: Timestamp;
 }
