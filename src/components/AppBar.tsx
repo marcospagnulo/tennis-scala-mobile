@@ -11,7 +11,13 @@ import {useAuth} from "../hooks/useAuth";
 import {Login} from "./Login";
 import {useEffect, useState} from "react";
 
-const AppBar = ({onMenuClick, open}: {onMenuClick: () => void, open: boolean}) => {
+const AppBar = ({
+  onMenuClick,
+  open,
+}: {
+  onMenuClick: () => void;
+  open: boolean;
+}) => {
   const theme = useTheme();
   const {user, handleLogout} = useAuth();
   const [login, setLogin] = useState<boolean>(false);

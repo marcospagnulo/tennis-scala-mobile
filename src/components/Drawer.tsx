@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
 import SportsTennisRoundedIcon from "@mui/icons-material/SportsTennisRounded";
@@ -18,7 +18,36 @@ import {
 
 const drawerWidth = 240;
 
-const Drawer = ({open, onOpen, onClose}: {open: boolean, onOpen: () => void, onClose: () => void}) => {
+const DrawerItem = ({
+  to,
+  icon,
+  text,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  text: string;
+}) => {
+  const location = useLocation();
+  const selected = location.pathname === to;
+  return (
+    <ListItem disablePadding sx={{"&.Mui-selected": {fontWeight: "bold"}}}>
+      <ListItemButton component={Link} to={to} selected={selected}>
+        <ListItemIcon>{icon}</ListItemIcon>
+        <ListItemText primary={text} />
+      </ListItemButton>
+    </ListItem>
+  );
+};
+
+const Drawer = ({
+  open,
+  onOpen,
+  onClose,
+}: {
+  open: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}) => {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -41,30 +70,9 @@ const Drawer = ({open, onOpen, onClose}: {open: boolean, onOpen: () => void, onC
       <Toolbar />
       <Box sx={{overflow: "auto"}}>
         <List sx={{py: 0}}>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/">
-              <ListItemIcon>
-                <DashboardRoundedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/players">
-              <ListItemIcon>
-                <GroupsRoundedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Giocatori" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/matches">
-              <ListItemIcon>
-                <SportsTennisRoundedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Partite" />
-            </ListItemButton>
-          </ListItem>
+          <DrawerItem to="/" icon={<DashboardRoundedIcon />} text="Dashboard" />
+          <DrawerItem to="/players" icon={<GroupsRoundedIcon />} text="Giocatori" />
+          <DrawerItem to="/matches" icon={<SportsTennisRoundedIcon />} text="Partite" />
         </List>
       </Box>
     </DrawerContainer>

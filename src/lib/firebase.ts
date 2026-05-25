@@ -2,9 +2,11 @@ import {getApp, getApps, initializeApp} from "firebase/app";
 import {connectAuthEmulator, getAuth} from "firebase/auth";
 import {
   collection,
+  CollectionReference,
   connectFirestoreEmulator,
   getFirestore,
 } from "firebase/firestore";
+import type {Player} from "../domain/types";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -47,7 +49,10 @@ if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === "true") {
 
 export const collections = firestore
   ? {
-      players: collection(firestore, "players"),
+      players: collection(firestore, "players") as CollectionReference<
+        Player,
+        Player
+      >,
       periods: collection(firestore, "periods"),
       challenges: collection(firestore, "challenges"),
       matches: collection(firestore, "matches"),
