@@ -33,3 +33,10 @@ export interface Period {
   startDate: Timestamp;
   endDate: Timestamp;
 }
+
+export interface Ranking {
+  id: string;
+  playerId: string;
+  periodId: string;
+  points: number;
+}

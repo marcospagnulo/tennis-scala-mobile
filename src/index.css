@@ -1,30 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
-
-/*html {
-  display: flex;
-  inline-size: 100%;
-  min-block-size: 100%;
-}
-
-body {
-  display: flex;
-  flex: 1 1 auto;
-  margin: 0;
-  inline-size: 100%;
-  min-block-size: 100%;
-  font-family: "Nunito Sans", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#root {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
-  inline-size: 100%;
-  min-inline-size: 0;
-}*/
-
 body {
   font-family: "Nunito Sans", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;

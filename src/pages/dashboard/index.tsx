@@ -1,7 +1,6 @@
 import type {Theme} from "@emotion/react";
 import {Grid, Stack, Typography, type SxProps} from "@mui/material";
 import {useAppContext} from "../../app/context";
-import {SeasonPlayers} from "./Ranking";
 
 export function DashboardPage({sx}: {sx?: SxProps<Theme>}) {
   const {season} = useAppContext();
@@ -18,9 +17,7 @@ export function DashboardPage({sx}: {sx?: SxProps<Theme>}) {
   return (
     <Stack sx={{...sx}}>
       <Grid container>
-        <Grid size={4}>
-          <SeasonPlayers season={season} />
-        </Grid>
+        <Grid size={4}></Grid>
       </Grid>
     </Stack>
   );

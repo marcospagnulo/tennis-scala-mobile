@@ -7,6 +7,7 @@ import {AppBar, Drawer} from "../components";
 import {useState} from "react";
 import {SeasonsPage} from "../pages/season";
 import {AppProvider} from "./context";
+import {RankingPage} from "../pages/ranking";
 
 const App = () => {
   const mobile = useMediaQuery(useTheme().breakpoints.down("md"));
@@ -36,6 +37,10 @@ const App = () => {
             <Route
               path="/seasons"
               element={<SeasonsPage sx={{flex: 1, p: 2}} />}
+            />
+            <Route
+              path="/ranking"
+              element={<RankingPage sx={{flex: 1, p: 2}} />}
             />
           </Routes>
         </Stack>
