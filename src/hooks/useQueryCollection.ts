@@ -32,6 +32,7 @@ const useQueryCollection = <T extends DocumentData>(
       const data = documentSnapshots.docs.map(
         doc => ({...doc.data(), id: doc.id}) as T,
       );
+      setItems(data);
       setFilteredItems(data);
       setLoading(false);
     },
@@ -78,6 +79,7 @@ const useQueryCollection = <T extends DocumentData>(
       }
 
       setItems(data);
+      setFilteredItems(data);
       setLoading(false);
     },
     [],
