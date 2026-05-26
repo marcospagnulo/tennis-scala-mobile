@@ -13,9 +13,9 @@ import {
 import {useCallback, useEffect, useRef, useState} from "react";
 
 const useQueryCollection = <T extends DocumentData>(
-  collection: CollectionReference<T, T>,
-  pagination: GridPaginationModel,
-  queryText: string,
+  collection: CollectionReference<T, T> | undefined,
+  pagination?: GridPaginationModel,
+  queryText?: string,
 ) => {
   const [items, setItems] = useState<T[]>([]);
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
@@ -24,6 +24,21 @@ const useQueryCollection = <T extends DocumentData>(
   const lastDocsRef = useRef<Map<number, QueryDocumentSnapshot<T>>>(new Map());
 
   const fetchData = useCallback(
+    async (collection: CollectionReference<T, T>) => {
+      setLoading(true);
+      const documentSnapshots = await getDocs(
+        query(collection, orderBy("createdAt", "desc")),
+      );
+      const data = documentSnapshots.docs.map(
+        doc => ({...doc.data(), id: doc.id}) as T,
+      );
+      setFilteredItems(data);
+      setLoading(false);
+    },
+    [],
+  );
+
+  const fetchDataPaginated = useCallback(
     async (
       collection: CollectionReference<T, T>,
       pagination: GridPaginationModel,
@@ -89,14 +104,24 @@ const useQueryCollection = <T extends DocumentData>(
   );
 
   useEffect(() => {
-    searchData(queryText);
+    if (queryText) {
+      searchData(queryText);
+    }
   }, [searchData, queryText]);
 
   useEffect(() => {
-    fetchData(collection, pagination);
-  }, [fetchData, collection, pagination]);
+    if (!collection) return;
+
+    if (pagination) {
+      fetchDataPaginated(collection, pagination);
+    } else {
+      fetchData(collection);
+    }
+  }, [fetchDataPaginated, fetchData, collection, pagination]);
 
   useEffect(() => {
+    if (!collection) return;
+
     const fetchRowCount = async () => {
       const snapshot = await getCountFromServer(collection);
       setRowCount(snapshot.data().count);
