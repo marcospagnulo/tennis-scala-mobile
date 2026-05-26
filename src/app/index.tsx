@@ -1,6 +1,6 @@
 import {Route, Routes} from "react-router-dom";
 import {Stack, Toolbar, useMediaQuery, useTheme} from "@mui/material";
-import {DashboardPage} from "../pages/dashboard/Dashboard";
+import {DashboardPage} from "../pages/dashboard";
 import {MatchesPage} from "../pages/Matches";
 import {PlayersPage} from "../pages/players";
 import {AppBar, Drawer} from "../components";

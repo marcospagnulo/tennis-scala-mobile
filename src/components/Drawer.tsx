@@ -1,7 +1,4 @@
 import {Link, useLocation} from "react-router-dom";
-import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
-import SportsTennisRoundedIcon from "@mui/icons-material/SportsTennisRounded";
 import {
   Box,
   Drawer as MuiDrawer,
@@ -15,7 +12,7 @@ import {
   useTheme,
   Toolbar,
 } from "@mui/material";
-import {CalendarMonth} from "@mui/icons-material";
+import {DashboardIcon, MatchIcon, PlayersIcon, SeasonIcon} from "../icons";
 
 const drawerWidth = 240;
 
@@ -71,18 +68,10 @@ const Drawer = ({
       <Toolbar />
       <Box sx={{overflow: "auto"}}>
         <List sx={{py: 0}}>
-          <DrawerItem to="/" icon={<DashboardRoundedIcon />} text="Dashboard" />
-          <DrawerItem to="/seasons" icon={<CalendarMonth />} text="Stagioni" />
-          <DrawerItem
-            to="/matches"
-            icon={<SportsTennisRoundedIcon />}
-            text="Partite"
-          />
-          <DrawerItem
-            to="/players"
-            icon={<GroupsRoundedIcon />}
-            text="Giocatori"
-          />
+          <DrawerItem to="/" icon={<DashboardIcon />} text="Dashboard" />
+          <DrawerItem to="/seasons" icon={<SeasonIcon />} text="Stagioni" />
+          <DrawerItem to="/matches" icon={<MatchIcon />} text="Partite" />
+          <DrawerItem to="/players" icon={<PlayersIcon />} text="Giocatori" />
         </List>
       </Box>
     </DrawerContainer>

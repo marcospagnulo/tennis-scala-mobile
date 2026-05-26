@@ -7,10 +7,9 @@ import {
   Dialog,
 } from "@mui/material";
 import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
-import {useAuth} from "../hooks/useAuth";
 import {Login} from "./Login";
 import {useEffect, useState} from "react";
-import { useAppContext } from "../app/context";
+import {useAppContext} from "../app/context";
 
 const AppBar = ({
   onMenuClick,
@@ -20,8 +19,7 @@ const AppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
-  const {season} = useAppContext();
-  const {user, handleLogout} = useAuth();
+  const {season, user, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
 
   const handleAuthClick = () => {

@@ -1,11 +1,19 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {collections} from "../lib/firebase";
 import {onSnapshot} from "firebase/firestore";
-import type {Season} from "../domain/types";
+import type {role, Season, User} from "../domain/types";
+import {
+  onAuthStateChanged,
+  signOut,
+  type User as FirebaseUser,
+} from "firebase/auth";
+import {auth} from "../lib/firebase";
 
 export type AppContextType = {
   season?: Season;
   setSeason: (season: Season) => void;
+  user?: User | null;
+  handleLogout: () => Promise<void>;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -21,8 +29,10 @@ export const useAppContext = (): AppContextType => {
 export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
 
+  // Fetch current season
   useEffect(() => {
     if (!collections) return;
 
@@ -40,8 +50,38 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     return () => unsubscribe();
   }, []);
 
+
+  // Listen for auth state changes
+  useEffect(() => {
+    if (!auth) {
+      return;
+    }
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (firebaseUser: FirebaseUser | null) => {
+        let user: User | null = null;
+        if (firebaseUser) {
+          const claims = (await firebaseUser.getIdTokenResult()).claims;
+          user = {
+            displayName: firebaseUser.displayName || "",
+            email: firebaseUser.email || "",
+            role: claims.role ? (claims.role as role) : "user",
+          };
+        }
+        setUser(user);
+      },
+    );
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+    }
+  };
+
   return (
-    <AppContext.Provider value={{season, setSeason}}>
+    <AppContext.Provider value={{season, setSeason, user, handleLogout}}>
       {children}
     </AppContext.Provider>
   );

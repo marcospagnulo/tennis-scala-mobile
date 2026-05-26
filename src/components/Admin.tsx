@@ -1,7 +1,7 @@
-import {useAuth} from "../hooks/useAuth";
+import { useAppContext } from "../app/context";
 
 const Admin = ({children}: {children: React.ReactNode}) => {
-  const {user} = useAuth();
+  const {user} = useAppContext();
 
   if (user?.role === "admin") {
     return <>{children}</>;

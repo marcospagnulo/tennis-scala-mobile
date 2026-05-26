@@ -10,8 +10,6 @@ import {
   Typography,
   type SxProps,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState, type ReactNode} from "react";
 import {
   addDoc,
@@ -24,15 +22,15 @@ import {
   type UpdateData,
   type WithFieldValue,
 } from "firebase/firestore";
-import {Add} from "@mui/icons-material";
 import {
   DataGrid,
   GridActionsCell,
   GridActionsCellItem,
   type GridColDef,
 } from "@mui/x-data-grid";
-import {useAuth} from "../hooks/useAuth";
 import type {Theme} from "@emotion/react";
+import {AddIcon, EditIcon, DeleteIcon} from "../icons";
+import { useAppContext } from "../app/context";
 
 export interface Entity {
   id: string;
@@ -44,6 +42,11 @@ interface CrudProps<T extends Entity> {
   collection: CollectionReference<T, T>;
   columns: GridColDef<T>[];
   title: string;
+  actions?: {
+    icon: React.ReactNode;
+    label: string;
+    onClick: (item: T) => void;
+  }[];
   form: (
     formData: Partial<T>,
     handleChange: (key: keyof Partial<T>, value: any) => void,
@@ -59,20 +62,37 @@ export function Crud<T extends Entity>({
   title,
   form: Form,
   initialFormData,
+  actions,
 }: CrudProps<T>) {
-  const {user} = useAuth();
+
+  const {user} = useAppContext();
+  
   const [items, setItems] = useState<T[]>([]);
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [formData, setFormData] = useState<Partial<T>>(initialFormData);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [openFormDialog, setOpenFormDialog] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection, snapshot => {
-      const data = snapshot.docs.map(doc => ({...doc.data(), id: doc.id}) as T);
-      setItems(data);
-    });
+    const unsubscribe = onSnapshot(
+      collection,
+      snapshot => {
+        const data = snapshot.docs.map(
+          doc => ({...doc.data(), id: doc.id}) as T,
+        );
+        setItems(data);
+        setLoading(false);
+      },
+      error => {
+        console.error("Error fetching data: ", error);
+        setLoading(false);
+      },
+      () => {
+        console.log("Real-time listener unsubscribed");
+      },
+    );
     return () => unsubscribe();
   }, [collection]);
 
@@ -130,14 +150,25 @@ export function Crud<T extends Entity>({
 
   const columns = [...initialColumns];
   if (user?.role === "admin") {
+    const actionsCount = 2 + (actions ? actions.length : 0);
+    const actionswidth = 48 * actionsCount;
     columns.push({
       field: "actions",
       headerName: "",
       type: "actions",
       sortable: false,
+      width: actionswidth,
       renderCell: params => {
         return (
           <GridActionsCell {...params}>
+            {actions?.map(action => (
+              <GridActionsCellItem
+                key={action.label}
+                icon={<>{action.icon}</>}
+                label={action.label}
+                onClick={() => action.onClick(params.row as T)}
+              />
+            ))}
             <GridActionsCellItem
               icon={<EditIcon fontSize="small" color="primary" />}
               label="Edit"
@@ -173,7 +204,7 @@ export function Crud<T extends Entity>({
       </Typography>
       <Paper
         sx={{
-          flex: 1,
+          flex: "1 1 0",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -184,7 +215,7 @@ export function Crud<T extends Entity>({
             sx={{justifyContent: "flex-end", mb: 2, mx: 2, mt: 2}}>
             <Button
               variant="contained"
-              startIcon={<Add />}
+              startIcon={<AddIcon />}
               aria-label="add"
               onClick={handleAddClick}>
               Nuovo
@@ -192,9 +223,8 @@ export function Crud<T extends Entity>({
           </Stack>
         )}
         <DataGrid
-          sx={{
-            border: "none",
-          }}
+          sx={{border: "none", height: "100%"}}
+          loading={loading}
           disableColumnMenu={true}
           rows={items}
           columns={columns}
