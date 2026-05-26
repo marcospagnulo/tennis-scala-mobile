@@ -24,7 +24,7 @@ const AppBar = ({
   const theme = useTheme();
   const {season, user, setSeason, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
-  const {items: seasons} = useQueryCollection(collections?.seasons);
+  const {items: seasons} = useQueryCollection({collection: collections?.seasons});
 
   const handleSeasonChange = (seasonId: string) => {
     const selectedSeason = seasons.find(s => s.id === seasonId);

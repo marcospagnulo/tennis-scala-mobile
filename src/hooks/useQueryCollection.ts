@@ -9,14 +9,36 @@ import {
   type CollectionReference,
   type DocumentData,
   type QueryDocumentSnapshot,
+  where,
+  type WhereFilterOp,
+  FieldPath,
 } from "firebase/firestore";
 import {useCallback, useEffect, useRef, useState} from "react";
 
-const useQueryCollection = <T extends DocumentData>(
+type sort = {
+  field: string | FieldPath;
+  direction: "asc" | "desc";
+}
+
+type filter = {
+  fieldPath: string | FieldPath, 
+  opStr: WhereFilterOp, 
+  value: unknown
+}
+
+const useQueryCollection = <T extends DocumentData>({
+  collection,
+  filters = [],
+  pagination,
+  queryText,
+  sort = []
+}:{
   collection: CollectionReference<T, T> | undefined,
   pagination?: GridPaginationModel,
   queryText?: string,
-) => {
+  filters?: filter[],
+  sort?: sort[]
+}) => {
   const [items, setItems] = useState<T[]>([]);
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,8 +48,13 @@ const useQueryCollection = <T extends DocumentData>(
   const fetchData = useCallback(
     async (collection: CollectionReference<T, T>) => {
       setLoading(true);
+
       const documentSnapshots = await getDocs(
-        query(collection, orderBy("createdAt", "desc")),
+        query(
+          collection, 
+          ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
+          ...(sort.map(s => orderBy(s.field, s.direction))),
+        ),
       );
       const data = documentSnapshots.docs.map(
         doc => ({...doc.data(), id: doc.id}) as T,
@@ -36,7 +63,7 @@ const useQueryCollection = <T extends DocumentData>(
       setFilteredItems(data);
       setLoading(false);
     },
-    [],
+    [filters, sort],
   );
 
   const fetchDataPaginated = useCallback(
@@ -48,8 +75,8 @@ const useQueryCollection = <T extends DocumentData>(
 
       let q = query(
         collection,
-
-        orderBy("createdAt", "desc"),
+        ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
+        ...(sort.map(s => orderBy(s.field, s.direction))),
         limit(pagination.pageSize),
       );
 
@@ -59,7 +86,8 @@ const useQueryCollection = <T extends DocumentData>(
         if (prevPageLastDoc) {
           q = query(
             collection,
-            orderBy("createdAt", "desc"),
+            ...(sort.map(s => orderBy(s.field, s.direction))),
+            ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
             startAfter(prevPageLastDoc),
             limit(pagination.pageSize),
           );
@@ -82,12 +110,13 @@ const useQueryCollection = <T extends DocumentData>(
       setFilteredItems(data);
       setLoading(false);
     },
-    [],
+    [filters, sort],
   );
 
   const searchData = useCallback(
     async (queryText: string) => {
       if (queryText.length > 2) {
+        setLoading(true);
         const filtered: T[] = [];
         items.forEach(item => {
           const values = Object.values(item).map(value =>
@@ -98,8 +127,10 @@ const useQueryCollection = <T extends DocumentData>(
           }
         });
         setFilteredItems(filtered);
+        setLoading(false);
       } else {
         setFilteredItems(items);
+        setLoading(false);
       }
     },
     [items],
@@ -119,7 +150,7 @@ const useQueryCollection = <T extends DocumentData>(
     } else {
       fetchData(collection);
     }
-  }, [fetchDataPaginated, fetchData, collection, pagination]);
+  }, [collection, pagination]);
 
   useEffect(() => {
     if (!collection) return;

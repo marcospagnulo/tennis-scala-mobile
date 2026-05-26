@@ -58,6 +58,7 @@ interface CrudProps<T extends Entity> {
   initialFormData: Partial<T>;
 }
 
+const pageSizeOptions = [25, 50, 100];
 export function Crud<T extends Entity>({
   sx,
   collection,
@@ -75,16 +76,16 @@ export function Crud<T extends Entity>({
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [queryText, setQueryText] = useState<string>("");
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+  const [pagination, setPagination] = useState<GridPaginationModel>({
     page: 0,
-    pageSize: 25,
+    pageSize: pageSizeOptions[0],
   });
 
-  const {items, loading, rowCount} = useQueryCollection(
+  const {items, loading, rowCount} = useQueryCollection({
     collection,
-    paginationModel,
+    pagination,
     queryText,
-  );
+  });
 
   const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const text = evt.target.value;
@@ -237,9 +238,9 @@ export function Crud<T extends Entity>({
           pagination
           paginationMode="server"
           rowCount={rowCount}
-          pageSizeOptions={[25, 50, 100]}
-          paginationModel={paginationModel}
-          onPaginationModelChange={newModel => setPaginationModel(newModel)}
+          pageSizeOptions={pageSizeOptions}
+          paginationModel={pagination}
+          onPaginationModelChange={newModel => setPagination(newModel)}
         />
       </Paper>
       <Dialog open={openFormDialog} onClose={handleCloseFormDialog}>
