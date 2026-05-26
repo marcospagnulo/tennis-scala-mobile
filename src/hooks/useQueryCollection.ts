@@ -68,22 +68,25 @@ const useQueryCollection = <T extends DocumentData>(
     [],
   );
 
-  const searchData = useCallback(async (queryText: string) => {
-    if (queryText.length > 2) {
-      const filtered: T[] = [];
-      items.forEach(item => {
-        const values = Object.values(item).map(value =>
-          String(value).toLowerCase(),
-        );
-        if (values.some(value => value.includes(queryText.toLowerCase()))) {
-          filtered.push(item);
-        }
-      });
-      setFilteredItems(filtered);
-    } else {
-      setFilteredItems(items);
-    }
-  }, [items]);
+  const searchData = useCallback(
+    async (queryText: string) => {
+      if (queryText.length > 2) {
+        const filtered: T[] = [];
+        items.forEach(item => {
+          const values = Object.values(item).map(value =>
+            String(value).toLowerCase(),
+          );
+          if (values.some(value => value.includes(queryText.toLowerCase()))) {
+            filtered.push(item);
+          }
+        });
+        setFilteredItems(filtered);
+      } else {
+        setFilteredItems(items);
+      }
+    },
+    [items],
+  );
 
   useEffect(() => {
     searchData(queryText);

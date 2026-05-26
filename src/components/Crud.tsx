@@ -77,7 +77,7 @@ export function Crud<T extends Entity>({
   const [queryText, setQueryText] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
-    pageSize: 5,
+    pageSize: 25,
   });
 
   const {items, loading, rowCount} = useQueryCollection(
@@ -237,7 +237,7 @@ export function Crud<T extends Entity>({
           pagination
           paginationMode="server"
           rowCount={rowCount}
-          pageSizeOptions={[5, 10, 25, 50, 100]}
+          pageSizeOptions={[25, 50, 100]}
           paginationModel={paginationModel}
           onPaginationModelChange={newModel => setPaginationModel(newModel)}
         />
