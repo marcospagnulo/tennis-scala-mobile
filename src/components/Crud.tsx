@@ -81,7 +81,7 @@ export function Crud<T extends Entity>({
     pageSize: pageSizeOptions[0],
   });
 
-  const {items, loading, rowCount} = useQueryCollection({
+  const {items, loading, rowCount, refetch} = useQueryCollection({
     collection,
     pagination,
     queryText,
@@ -118,12 +118,14 @@ export function Crud<T extends Entity>({
     if (selectedItem) {
       const itemDoc = doc(collection, selectedItem.id);
       await updateDoc(itemDoc, formData as UpdateData<T>);
+      refetch()
     } else {
       const doc = {
         ...formData,
         createdAt: serverTimestamp(),
       } as WithFieldValue<T>;
       await addDoc(collection, doc);
+      refetch()
     }
     handleCloseFormDialog();
   };
@@ -141,6 +143,7 @@ export function Crud<T extends Entity>({
   const handleConfirmDelete = async () => {
     if (!itemToDelete) return;
     await deleteDoc(doc(collection, itemToDelete.id));
+    refetch();
     handleCloseDeleteDialog();
   };
 

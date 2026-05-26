@@ -39,6 +39,7 @@ const useQueryCollection = <T extends DocumentData>({
   filters?: filter[],
   sort?: sort[]
 }) => {
+  const [refetchTS, setRefetchTs] = useState<number>(0);
   const [items, setItems] = useState<T[]>([]);
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -136,6 +137,10 @@ const useQueryCollection = <T extends DocumentData>({
     [items],
   );
 
+  const refetch = () => {
+    setRefetchTs(new Date().getTime());
+  };
+
   useEffect(() => {
     if (queryText) {
       searchData(queryText);
@@ -150,7 +155,7 @@ const useQueryCollection = <T extends DocumentData>({
     } else {
       fetchData(collection);
     }
-  }, [collection, pagination]);
+  }, [collection, pagination, refetchTS]);
 
   useEffect(() => {
     if (!collection) return;
@@ -162,7 +167,7 @@ const useQueryCollection = <T extends DocumentData>({
     fetchRowCount();
   }, [collection]);
 
-  return {items: filteredItems, loading, rowCount};
+  return {items: filteredItems, loading, rowCount, refetch};
 };
 
 export {useQueryCollection};
