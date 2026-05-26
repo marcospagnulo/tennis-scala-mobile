@@ -214,6 +214,7 @@ export function Crud<T extends Entity>({
             mt: 2,
           }}>
           <TextField
+            sx={{"& input": {p: 1}}}
             onChange={handleSearch}
             slotProps={{input: {startAdornment: <Search />}}}
           />
