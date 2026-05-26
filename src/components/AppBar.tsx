@@ -10,6 +10,9 @@ import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
 import {Login} from "./Login";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../app/context";
+import {Select} from "./Select";
+import {useQueryCollection} from "../hooks/useQueryCollection";
+import {collections} from "../lib/firebase";
 
 const AppBar = ({
   onMenuClick,
@@ -19,8 +22,16 @@ const AppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
-  const {season, user, handleLogout} = useAppContext();
+  const {season, user, setSeason, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
+  const {items: seasons} = useQueryCollection(collections?.seasons);
+
+  const handleSeasonChange = (seasonId: string) => {
+    const selectedSeason = seasons.find(s => s.id === seasonId);
+    if (selectedSeason) {
+      setSeason(selectedSeason);
+    }
+  };
 
   const handleAuthClick = () => {
     if (user) {
@@ -43,9 +54,21 @@ const AppBar = ({
           <IconButton onClick={onMenuClick} color="inherit">
             {open ? <MenuOpen /> : <Menu />}
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
-            {season ? season.name : "Scala Mobile"}
-          </Typography>
+          {season ? (
+            <Select<string>
+              sx={{color: "primary.contrastText", ml: 2}}
+              options={seasons.map(season => ({
+                label: season.name,
+                value: season.id,
+              }))}
+              value={season.id}
+              onChange={handleSeasonChange}
+            />
+          ) : (
+            <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
+              {"Scala Mobile"}
+            </Typography>
+          )}
           <IconButton
             onClick={handleAuthClick}
             color="inherit"

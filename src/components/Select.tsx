@@ -6,10 +6,12 @@ import {
   Menu,
   MenuItem,
   type SvgIconProps,
+  type SxProps,
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {useState} from "react";
 import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
+import type {Theme} from "@emotion/react";
 
 type Option<T> = {
   icon?: React.ElementType<SvgIconProps>;
@@ -24,6 +26,7 @@ const Select = <T,>({
   collapsable = false,
   disabled = false,
   variant = "outlined",
+  sx,
   onChange,
 }: {
   placeholder?: string;
@@ -32,6 +35,7 @@ const Select = <T,>({
   disabled?: boolean;
   value?: T;
   variant?: "text" | "outlined" | "contained";
+  sx?: SxProps<Theme>;
   onChange: (value: T) => void;
 }) => {
   const isDownSm = useDownBreakpoint("sm");
@@ -60,11 +64,12 @@ const Select = <T,>({
   return (
     <>
       {collapsable && isDownSm ? (
-        <IconButton onClick={handleMenuClick} disabled={disabled}>
+        <IconButton sx={{...sx}} onClick={handleMenuClick} disabled={disabled}>
           {Icon && <Icon fontSize="inherit" />}
         </IconButton>
       ) : (
         <Button
+          sx={{...sx}}
           startIcon={Icon && <Icon />}
           onClick={handleMenuClick}
           variant={variant}
