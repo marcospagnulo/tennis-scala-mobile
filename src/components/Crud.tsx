@@ -7,15 +7,15 @@ import {
   DialogTitle,
   Paper,
   Stack,
+  TextField,
   Typography,
   type SxProps,
 } from "@mui/material";
-import {useEffect, useState, type ReactNode} from "react";
+import {useState, type ReactNode} from "react";
 import {
   addDoc,
   deleteDoc,
   doc,
-  onSnapshot,
   serverTimestamp,
   updateDoc,
   type CollectionReference,
@@ -27,10 +27,13 @@ import {
   GridActionsCell,
   GridActionsCellItem,
   type GridColDef,
+  type GridPaginationModel,
 } from "@mui/x-data-grid";
 import type {Theme} from "@emotion/react";
 import {AddIcon, EditIcon, DeleteIcon} from "../icons";
-import { useAppContext } from "../app/context";
+import {useAppContext} from "../app/context";
+import {Search} from "@mui/icons-material";
+import {useQueryCollection} from "../hooks/useQueryCollection";
 
 export interface Entity {
   id: string;
@@ -64,37 +67,29 @@ export function Crud<T extends Entity>({
   initialFormData,
   actions,
 }: CrudProps<T>) {
-
   const {user} = useAppContext();
-  
-  const [items, setItems] = useState<T[]>([]);
+
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [formData, setFormData] = useState<Partial<T>>(initialFormData);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [openFormDialog, setOpenFormDialog] = useState(false);
+  const [queryText, setQueryText] = useState<string>("");
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 5,
+  });
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection,
-      snapshot => {
-        const data = snapshot.docs.map(
-          doc => ({...doc.data(), id: doc.id}) as T,
-        );
-        setItems(data);
-        setLoading(false);
-      },
-      error => {
-        console.error("Error fetching data: ", error);
-        setLoading(false);
-      },
-      () => {
-        console.log("Real-time listener unsubscribed");
-      },
-    );
-    return () => unsubscribe();
-  }, [collection]);
+  const {items, loading, rowCount} = useQueryCollection(
+    collection,
+    paginationModel,
+    queryText,
+  );
+
+  const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const text = evt.target.value;
+    setQueryText(text);
+  };
 
   const handleEditItem = (item: T) => {
     setSelectedItem(item);
@@ -209,10 +204,20 @@ export function Crud<T extends Entity>({
           flexDirection: "column",
           overflow: "hidden",
         }}>
-        {user?.role === "admin" && (
-          <Stack
-            direction={"row"}
-            sx={{justifyContent: "flex-end", mb: 2, mx: 2, mt: 2}}>
+        <Stack
+          direction={"row"}
+          sx={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 2,
+            mx: 2,
+            mt: 2,
+          }}>
+          <TextField
+            onChange={handleSearch}
+            slotProps={{input: {startAdornment: <Search />}}}
+          />
+          {user?.role === "admin" && (
             <Button
               variant="contained"
               startIcon={<AddIcon />}
@@ -220,15 +225,20 @@ export function Crud<T extends Entity>({
               onClick={handleAddClick}>
               Nuovo
             </Button>
-          </Stack>
-        )}
+          )}
+        </Stack>
         <DataGrid
           sx={{border: "none", height: "100%"}}
           loading={loading}
           disableColumnMenu={true}
           rows={items}
           columns={columns}
-          pageSizeOptions={[10, 25, 50, 100]}
+          pagination
+          paginationMode="server"
+          rowCount={rowCount}
+          pageSizeOptions={[5, 10, 25, 50, 100]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={newModel => setPaginationModel(newModel)}
         />
       </Paper>
       <Dialog open={openFormDialog} onClose={handleCloseFormDialog}>

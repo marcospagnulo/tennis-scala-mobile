@@ -50,7 +50,6 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     return () => unsubscribe();
   }, []);
 
-
   // Listen for auth state changes
   useEffect(() => {
     if (!auth) {
