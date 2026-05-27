@@ -32,7 +32,6 @@ export default defineConfig([
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "warn",
-      //https://react.dev/reference/eslint-plugin-react-hooks/lints/set-state-in-effect
       "react-refresh/only-export-components": "off",
       "react-hooks/set-state-in-effect": "off",
       "react/jsx-uses-react": "off",
