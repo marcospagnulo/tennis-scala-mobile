@@ -41,7 +41,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     {field: "player.surname", direction: "asc"},
   ]);
   const [dialog, setDialog] = useState(false);
-  const [playerFilters, setPlayerFilters] = useState<queryFilter[]>([]);
 
   const {items: seasonPlayers, loading: seasonPlayersLoading} =
     useLiveCollection({
@@ -55,25 +54,14 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     setFilters([{fieldPath: "seasonId", opStr: "==", value: season.id}]);
   }, [season]);
 
-  useEffect(() => {
-    if (seasonPlayers.length > 0) {
-      setPlayerFilters([
-        {
-          fieldPath: "id",
-          opStr: "not-in",
-          value: seasonPlayers.map(sp => sp.player.id),
-        },
-      ]);
-    } else {
-      setPlayerFilters([]);
-    }
-  }, [seasonPlayers]);
-
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
     if (!collections) return;
 
-    const docs = players.map(player => ({
+    //exclude already added players
+    const existingPlayerIds = seasonPlayers.map(sp => sp.player.id);
+    const newPlayers = players.filter(p => !existingPlayerIds.includes(p.id));
+    const docs = newPlayers.map(player => ({
       player: player,
       seasonId: season!.id,
       losses: 0,
@@ -122,6 +110,53 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     </Stack>
   );
 
+  const Header = (
+    <Stack direction="row" sx={{alignItems: "center", gap: 2, px: 2}}>
+      <Typography variant="h6" align="center" sx={{width: 20}}>
+        #
+      </Typography>
+      <Typography variant="subtitle1" sx={{width: 300}}>
+        Giocatore
+      </Typography>
+      <Typography
+        sx={{width: 100}}
+        variant="body2"
+        color="text.secondary"
+        align="center">
+        Punti
+      </Typography>
+      <Typography
+        sx={{flex: 1}}
+        variant="body2"
+        color="text.secondary"
+        align="center">
+        Partite
+      </Typography>
+      <Typography
+        sx={{flex: 1}}
+        variant="body2"
+        color="text.secondary"
+        align="center">
+        Vittorie
+      </Typography>
+      <Typography
+        sx={{flex: 1}}
+        variant="body2"
+        color="text.secondary"
+        align="center">
+        Sconfitte
+      </Typography>
+      {isAdmin && <Box sx={{width: 40}} />}
+    </Stack>
+  );
+
+  const getRankingBgColor = (position: number, length: number) => {
+    if (length <= 0) return "#b4cbfc";
+
+    const subgroup = Math.min(Math.floor((position * 8) / length), 7);
+    return subgroup % 2 === 0 ? "#b4cbfc" : "#d0defd";
+  };
+
   return (
     <Stack sx={{...sx}}>
       <Stack
@@ -130,45 +165,9 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         <Typography variant="h6" gutterBottom align="center">
           Classifica
         </Typography>
-        <Stack direction="row" sx={{alignItems: "center", gap: 2}}>
-          <Typography variant="h6" align="center" sx={{width: 20}}>
-            #
-          </Typography>
-          <Typography variant="subtitle1" sx={{width: 300}}>
-            Giocatore
-          </Typography>
-          <Typography
-            sx={{width: 100}}
-            variant="body2"
-            color="text.secondary"
-            align="center">
-            Punti
-          </Typography>
-          <Typography
-            sx={{flex: 1}}
-            variant="body2"
-            color="text.secondary"
-            align="center">
-            Partite
-          </Typography>
-          <Typography
-            sx={{flex: 1}}
-            variant="body2"
-            color="text.secondary"
-            align="center">
-            Vittorie
-          </Typography>
-          <Typography
-            sx={{flex: 1}}
-            variant="body2"
-            color="text.secondary"
-            align="center">
-            Sconfitte
-          </Typography>
-          {isAdmin && <Box sx={{width: 40}} />}
-        </Stack>
+        {Header}
         <Stack
-          sx={{gap: 1, overflow: "auto", flex: "1 1 0", mb: 9}}
+          sx={{overflow: "auto", flex: "1 1 0", mb: 9}}
           divider={<Divider />}>
           {seasonPlayersLoading && Loading}
           {seasonPlayers.map((r, index) => (
@@ -178,6 +177,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               position={index + 1}
               onEditPoint={value => handleEditPoint(r, value as number)}
               actions={DeletePlayer(r.player)}
+              bgColor={getRankingBgColor(index, seasonPlayers.length)}
             />
           ))}
         </Stack>
@@ -197,11 +197,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         maxWidth="sm">
         <DialogTitle>Seleziona giocatore</DialogTitle>
         <DialogContent>
-          <PlayerList
-            onSelect={handleAddPlayers}
-            sx={{height: "70vh"}}
-            filters={playerFilters}
-          />
+          <PlayerList onSelect={handleAddPlayers} sx={{height: "70vh"}} />
         </DialogContent>
       </Dialog>
     </Stack>

@@ -9,12 +9,14 @@ const RankingRow = ({
   ranking,
   position,
   actions,
+  bgColor,
   onEditPoint,
 }: {
   ranking: Ranking;
   position: number;
-  onEditPoint: (value: number) => void;
   actions?: React.ReactNode;
+  bgColor?: string;
+  onEditPoint: (value: number) => void;
 }) => {
   const player = ranking.player as Player;
   const [hover, setHover] = useState(false);
@@ -31,7 +33,13 @@ const RankingRow = ({
   return (
     <Stack
       direction="row"
-      sx={{alignItems: "center", gap: 2}}
+      sx={{
+        alignItems: "center",
+        gap: 2,
+        backgroundColor: bgColor,
+        py: 1,
+        px: 2,
+      }}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
       <Typography
