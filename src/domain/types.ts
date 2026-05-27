@@ -1,4 +1,4 @@
-import type {Timestamp} from "firebase/firestore";
+import type {FieldPath, Timestamp, WhereFilterOp} from "firebase/firestore";
 
 export type role = "admin" | "user";
 export type User = {
@@ -18,6 +18,7 @@ export interface Player {
   phone: string | null;
   email: string | null;
   status: PlayerStatus;
+  createdAt: Timestamp;
 }
 
 export interface Season {
@@ -25,6 +26,7 @@ export interface Season {
   name: string;
   startDate: Timestamp;
   weeks: number;
+  createdAt: Timestamp;
 }
 
 export interface Period {
@@ -32,11 +34,26 @@ export interface Period {
   seasonId: string;
   startDate: Timestamp;
   endDate: Timestamp;
+  createdAt: Timestamp;
 }
 
 export interface Ranking {
   id: string;
-  playerId: string;
-  periodId: string;
+  player: Player;
+  seasonId: string;
   points: number;
+  wins: number;
+  losses: number;
+  createdAt: Timestamp;
 }
+
+export type querySort = {
+  field: string | FieldPath;
+  direction: "asc" | "desc";
+};
+
+export type queryFilter = {
+  fieldPath: string | FieldPath;
+  opStr: WhereFilterOp;
+  value: unknown;
+};

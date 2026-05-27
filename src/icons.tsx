@@ -6,6 +6,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SeasonIcon from "@mui/icons-material/EmojiEvents";
 import RankingIcon from "@mui/icons-material/LeaderboardRounded";
+import ConfirmIcon from "@mui/icons-material/Done";
+import CancelIcon from "@mui/icons-material/Close";
 
 export {
   AddIcon,
@@ -16,4 +18,6 @@ export {
   MatchIcon,
   SeasonIcon,
   RankingIcon,
+  ConfirmIcon,
+  CancelIcon,
 };

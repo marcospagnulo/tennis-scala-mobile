@@ -32,7 +32,7 @@ const DrawerItem = ({
   text: string;
 }) => {
   const location = useLocation();
-  const selected = location.pathname === to;
+  const selected = location.pathname.indexOf(to) !== -1;
   return (
     <ListItem disablePadding sx={{"&.Mui-selected": {fontWeight: "bold"}}}>
       <ListItemButton component={Link} to={to} selected={selected}>

@@ -12,6 +12,7 @@ import {auth} from "../lib/firebase";
 export type AppContextType = {
   season?: Season;
   setSeason: (season: Season) => void;
+  seasons: Season[];
   user?: User | null;
   handleLogout: () => Promise<void>;
 };
@@ -31,6 +32,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 }) => {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
+  const [seasons, setSeasons] = useState<Season[]>([]);
 
   // Fetch current season
   useEffect(() => {
@@ -40,6 +42,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
       const seasons = snapshot.docs.map(
         doc => ({...doc.data(), id: doc.id}) as Season,
       );
+      setSeasons(seasons);
       const lastSeason = seasons.sort(
         (a, b) => b.startDate.seconds - a.startDate.seconds,
       )[0];
@@ -80,7 +83,8 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   };
 
   return (
-    <AppContext.Provider value={{season, setSeason, user, handleLogout}}>
+    <AppContext.Provider
+      value={{season, seasons, setSeason, user, handleLogout}}>
       {children}
     </AppContext.Provider>
   );

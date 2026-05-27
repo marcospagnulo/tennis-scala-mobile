@@ -10,34 +10,22 @@ import {
   type DocumentData,
   type QueryDocumentSnapshot,
   where,
-  type WhereFilterOp,
-  FieldPath,
 } from "firebase/firestore";
 import {useCallback, useEffect, useRef, useState} from "react";
-
-type sort = {
-  field: string | FieldPath;
-  direction: "asc" | "desc";
-}
-
-type filter = {
-  fieldPath: string | FieldPath, 
-  opStr: WhereFilterOp, 
-  value: unknown
-}
+import type {queryFilter, querySort} from "../domain/types";
 
 const useQueryCollection = <T extends DocumentData>({
   collection,
   filters = [],
   pagination,
   queryText,
-  sort = []
-}:{
-  collection: CollectionReference<T, T> | undefined,
-  pagination?: GridPaginationModel,
-  queryText?: string,
-  filters?: filter[],
-  sort?: sort[]
+  sort = [],
+}: {
+  collection: CollectionReference<T, T> | undefined;
+  pagination?: GridPaginationModel;
+  queryText?: string;
+  filters?: queryFilter[];
+  sort?: querySort[];
 }) => {
   const [refetchTS, setRefetchTs] = useState<number>(0);
   const [items, setItems] = useState<T[]>([]);
@@ -52,9 +40,11 @@ const useQueryCollection = <T extends DocumentData>({
 
       const documentSnapshots = await getDocs(
         query(
-          collection, 
-          ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
-          ...(sort.map(s => orderBy(s.field, s.direction))),
+          collection,
+          ...filters.map(filter =>
+            where(filter.fieldPath, filter.opStr, filter.value),
+          ),
+          ...sort.map(s => orderBy(s.field, s.direction)),
         ),
       );
       const data = documentSnapshots.docs.map(
@@ -76,8 +66,10 @@ const useQueryCollection = <T extends DocumentData>({
 
       let q = query(
         collection,
-        ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
-        ...(sort.map(s => orderBy(s.field, s.direction))),
+        ...filters.map(filter =>
+          where(filter.fieldPath, filter.opStr, filter.value),
+        ),
+        ...sort.map(s => orderBy(s.field, s.direction)),
         limit(pagination.pageSize),
       );
 
@@ -87,8 +79,10 @@ const useQueryCollection = <T extends DocumentData>({
         if (prevPageLastDoc) {
           q = query(
             collection,
-            ...(sort.map(s => orderBy(s.field, s.direction))),
-            ...(filters.map(filter => where(filter.fieldPath, filter.opStr, filter.value))),
+            ...sort.map(s => orderBy(s.field, s.direction)),
+            ...filters.map(filter =>
+              where(filter.fieldPath, filter.opStr, filter.value),
+            ),
             startAfter(prevPageLastDoc),
             limit(pagination.pageSize),
           );

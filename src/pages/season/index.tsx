@@ -16,6 +16,7 @@ const initialFormData: Partial<Season> = {
 
 export function SeasonsPage({sx}: {sx?: SxProps<Theme>}) {
   if (!collections) return null;
+
   return (
     <Crud<Season>
       sx={sx}

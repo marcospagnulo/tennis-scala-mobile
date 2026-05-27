@@ -9,6 +9,7 @@ import {
   Stack,
   TextField,
   Typography,
+  type SvgIconProps,
   type SxProps,
 } from "@mui/material";
 import {useState, type ReactNode} from "react";
@@ -46,7 +47,7 @@ interface CrudProps<T extends Entity> {
   columns: GridColDef<T>[];
   title: string;
   actions?: {
-    icon: React.ReactNode;
+    icon: React.ElementType<SvgIconProps>;
     label: string;
     onClick: (item: T) => void;
   }[];
@@ -118,14 +119,14 @@ export function Crud<T extends Entity>({
     if (selectedItem) {
       const itemDoc = doc(collection, selectedItem.id);
       await updateDoc(itemDoc, formData as UpdateData<T>);
-      refetch()
+      refetch();
     } else {
       const doc = {
         ...formData,
         createdAt: serverTimestamp(),
       } as WithFieldValue<T>;
       await addDoc(collection, doc);
-      refetch()
+      refetch();
     }
     handleCloseFormDialog();
   };
@@ -160,14 +161,17 @@ export function Crud<T extends Entity>({
       renderCell: params => {
         return (
           <GridActionsCell {...params}>
-            {actions?.map(action => (
-              <GridActionsCellItem
-                key={action.label}
-                icon={<>{action.icon}</>}
-                label={action.label}
-                onClick={() => action.onClick(params.row as T)}
-              />
-            ))}
+            {actions?.map(action => {
+              const Icon = action.icon;
+              return (
+                <GridActionsCellItem
+                  key={action.label}
+                  icon={<Icon fontSize="small" />}
+                  label={action.label}
+                  onClick={() => action.onClick(params.row as T)}
+                />
+              );
+            })}
             <GridActionsCellItem
               icon={<EditIcon fontSize="small" color="primary" />}
               label="Edit"
