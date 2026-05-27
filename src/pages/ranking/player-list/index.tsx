@@ -22,7 +22,10 @@ const PlayerList = ({
   filters?: queryFilter[];
   onSelect: (players: Player[]) => void;
 }) => {
-  const [selection, setSelection] = useState<GridRowSelectionModel>();
+  const [selection, setSelection] = useState<GridRowSelectionModel>({
+    type: "include",
+    ids: new Set(),
+  });
   const [queryText, setQueryText] = useState<string>("");
   const [pagination, setPagination] = useState<GridPaginationModel>({
     page: 0,
@@ -47,8 +50,12 @@ const PlayerList = ({
     onSelect(selectedPlayers);
   };
 
+  const handleSelection = (newSelection: GridRowSelectionModel) => {
+    setSelection(newSelection);
+  };
+
   return (
-    <Stack sx={{...sx}}>
+    <Stack sx={{...sx, gap: 2, mt: 1}}>
       <TextField
         sx={{"& input": {p: 1}}}
         onChange={e => setQueryText(e.target.value)}
@@ -62,7 +69,8 @@ const PlayerList = ({
         columns={columns}
         pagination
         checkboxSelection
-        onRowSelectionModelChange={setSelection}
+        disableRowSelectionExcludeModel
+        onRowSelectionModelChange={handleSelection}
         rowSelectionModel={selection}
         paginationMode="server"
         rowCount={rowCount}
@@ -74,7 +82,7 @@ const PlayerList = ({
         <Button
           variant="contained"
           onClick={handleConfirm}
-          disabled={!selection}>
+          disabled={selection.ids.size === 0}>
           Coferma
         </Button>
       </Stack>

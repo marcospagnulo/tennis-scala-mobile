@@ -31,10 +31,10 @@ const useLiveCollection = <T extends DocumentData>({
       ...(sort?.map(s => orderBy(s.field, s.direction)) || []),
     );
     const unsubscribe = onSnapshot(q, snapshot => {
-      const playersData = snapshot.docs.map(
+      const items = snapshot.docs.map(
         doc => ({...doc.data(), id: doc.id}) as T,
       );
-      setItems(playersData);
+      setItems(items);
       setLoading(false);
     });
     return () => unsubscribe();

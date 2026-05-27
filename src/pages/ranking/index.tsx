@@ -34,7 +34,12 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const isAdmin = user?.role === "admin";
 
   const [filters, setFilters] = useState<queryFilter[]>([]);
-  const [sort] = useState<querySort[]>([{field: "points", direction: "desc"}]);
+  const [sort] = useState<querySort[]>([
+    {field: "points", direction: "desc"},
+    {field: "wins", direction: "desc"},
+    {field: "losses", direction: "asc"},
+    {field: "player.surname", direction: "asc"},
+  ]);
   const [dialog, setDialog] = useState(false);
   const [playerFilters, setPlayerFilters] = useState<queryFilter[]>([]);
 
@@ -51,13 +56,17 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   }, [season]);
 
   useEffect(() => {
-    setPlayerFilters([
-      {
-        fieldPath: "id",
-        opStr: "not-in",
-        value: seasonPlayers.map(sp => sp.player.id),
-      },
-    ]);
+    if (seasonPlayers.length > 0) {
+      setPlayerFilters([
+        {
+          fieldPath: "id",
+          opStr: "not-in",
+          value: seasonPlayers.map(sp => sp.player.id),
+        },
+      ]);
+    } else {
+      setPlayerFilters([]);
+    }
   }, [seasonPlayers]);
 
   const handleAddPlayers = async (players: Player[]) => {
@@ -121,58 +130,56 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         <Typography variant="h6" gutterBottom align="center">
           Classifica
         </Typography>
+        <Stack direction="row" sx={{alignItems: "center", gap: 2}}>
+          <Typography variant="h6" align="center" sx={{width: 20}}>
+            #
+          </Typography>
+          <Typography variant="subtitle1" sx={{width: 300}}>
+            Giocatore
+          </Typography>
+          <Typography
+            sx={{width: 100}}
+            variant="body2"
+            color="text.secondary"
+            align="center">
+            Punti
+          </Typography>
+          <Typography
+            sx={{flex: 1}}
+            variant="body2"
+            color="text.secondary"
+            align="center">
+            Partite
+          </Typography>
+          <Typography
+            sx={{flex: 1}}
+            variant="body2"
+            color="text.secondary"
+            align="center">
+            Vittorie
+          </Typography>
+          <Typography
+            sx={{flex: 1}}
+            variant="body2"
+            color="text.secondary"
+            align="center">
+            Sconfitte
+          </Typography>
+          {isAdmin && <Box sx={{width: 40}} />}
+        </Stack>
         <Stack
-          sx={{gap: 1, overflow: "auto", flex: "1 1 0"}}
+          sx={{gap: 1, overflow: "auto", flex: "1 1 0", mb: 9}}
           divider={<Divider />}>
-          <Stack direction="row" sx={{alignItems: "center", gap: 2}}>
-            <Typography variant="h6" align="center" sx={{width: 20}}>
-              #
-            </Typography>
-            <Typography variant="subtitle1" sx={{width: 300}}>
-              Giocatore
-            </Typography>
-            <Typography
-              sx={{flex: 1}}
-              variant="body2"
-              color="text.secondary"
-              align="center">
-              Punti
-            </Typography>
-            <Typography
-              sx={{flex: 1}}
-              variant="body2"
-              color="text.secondary"
-              align="center">
-              Partite
-            </Typography>
-            <Typography
-              sx={{flex: 1}}
-              variant="body2"
-              color="text.secondary"
-              align="center">
-              Vittorie
-            </Typography>
-            <Typography
-              sx={{flex: 1}}
-              variant="body2"
-              color="text.secondary"
-              align="center">
-              Sconfitte
-            </Typography>
-            {isAdmin && <Box sx={{width: 40}} />}
-          </Stack>
           {seasonPlayersLoading && Loading}
-          {seasonPlayers
-            .sort((a, b) => a.player.surname.localeCompare(b.player.surname))
-            .map((r, index) => (
-              <RankingRow
-                key={r.id}
-                ranking={r}
-                position={index + 1}
-                onEditPoint={value => handleEditPoint(r, value as number)}
-                actions={DeletePlayer(r.player)}
-              />
-            ))}
+          {seasonPlayers.map((r, index) => (
+            <RankingRow
+              key={r.id}
+              ranking={r}
+              position={index + 1}
+              onEditPoint={value => handleEditPoint(r, value as number)}
+              actions={DeletePlayer(r.player)}
+            />
+          ))}
         </Stack>
       </Stack>
       {isAdmin && (

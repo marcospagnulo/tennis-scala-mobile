@@ -76,7 +76,7 @@ const Drawer = ({
         <List sx={{py: 0}}>
           <DrawerItem to="/" icon={<DashboardIcon />} text="Dashboard" />
           <DrawerItem to="/seasons" icon={<SeasonIcon />} text="Stagioni" />
-          <DrawerItem to="/ranking" icon={<RankingIcon />} text="Ranking" />
+          <DrawerItem to="/ranking" icon={<RankingIcon />} text="Classifica" />
           <DrawerItem to="/matches" icon={<MatchIcon />} text="Partite" />
           <DrawerItem to="/players" icon={<PlayersIcon />} text="Giocatori" />
         </List>

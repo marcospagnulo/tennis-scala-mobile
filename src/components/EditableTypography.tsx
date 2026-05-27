@@ -9,7 +9,7 @@ import {
 import {CancelIcon, ConfirmIcon} from "../icons";
 
 type EditableTypographyProps = {
-  value: string | number;
+  value: string;
   edit: boolean;
   sx?: SxProps;
   label?: string;
@@ -25,7 +25,7 @@ type EditableTypographyProps = {
     | "subtitle2"
     | "body1"
     | "body2";
-  onConfirm: (t: string | number) => void;
+  onConfirm: (t: string) => void;
   onCancel: () => void;
 };
 
@@ -39,7 +39,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
   variant = "body1",
   type = "string",
 }) => {
-  const [currentText, setCurrentText] = useState<string | number>(value);
+  const [currentText, setCurrentText] = useState<string>(value);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentText(event.target.value);
@@ -48,7 +48,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
   return (
     <>
       {edit ? (
-        <Stack direction="row" sx={{gap: 1, alignItems: "center"}}>
+        <Stack direction="row" sx={{...sx, gap: 1, alignItems: "center"}}>
           <TextField
             sx={{minWidth: 50}}
             type={type}
@@ -70,7 +70,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
           </IconButton>
         </Stack>
       ) : (
-        <Typography variant={variant} style={{cursor: "pointer"}} sx={sx}>
+        <Typography variant={variant} sx={{...sx}}>
           {value}
         </Typography>
       )}

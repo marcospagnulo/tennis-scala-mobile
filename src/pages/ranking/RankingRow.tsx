@@ -3,6 +3,7 @@ import type {Player, Ranking} from "../../domain/types";
 import {EditableTypography} from "../../components/EditableTypography";
 import {useState} from "react";
 import {EditIcon} from "../../icons";
+import {useAppContext} from "../../app/context";
 
 const RankingRow = ({
   ranking,
@@ -12,12 +13,20 @@ const RankingRow = ({
 }: {
   ranking: Ranking;
   position: number;
-  onEditPoint: (value: string | number) => void;
+  onEditPoint: (value: number) => void;
   actions?: React.ReactNode;
 }) => {
   const player = ranking.player as Player;
   const [hover, setHover] = useState(false);
   const [editPoint, setEditPoint] = useState(false);
+  const {user} = useAppContext();
+  const isAdmin = user?.role === "admin";
+
+  const handleEditPoint = (value: string) => {
+    onEditPoint(Number(value));
+    setEditPoint(false);
+    setHover(false);
+  };
 
   return (
     <Stack
@@ -38,21 +47,30 @@ const RankingRow = ({
           color="textPrimary"
           variant="subtitle1">{`${player.surname} ${player.name}`}</Typography>
       </Stack>
-      <Stack direction={"row"} sx={{flex: 1, gap: 1, alignItems: "center"}}>
+      <Stack
+        direction={"row"}
+        sx={{
+          width: 100,
+          gap: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         <EditableTypography
           variant="body2"
-          value={ranking.points}
+          value={ranking.points + ""}
           edit={editPoint}
-          onConfirm={value => onEditPoint(value)}
+          onConfirm={handleEditPoint}
           onCancel={() => setEditPoint(false)}
           type="number"
         />
-        <IconButton
-          sx={{visibility: hover ? "visible" : "hidden"}}
-          size="small"
-          onClick={() => setEditPoint(true)}>
-          {!editPoint && <EditIcon fontSize="inherit" />}
-        </IconButton>
+        {isAdmin && (
+          <IconButton
+            sx={{visibility: hover ? "visible" : "hidden", mr: -4}}
+            size="small"
+            onClick={() => setEditPoint(true)}>
+            {!editPoint && <EditIcon fontSize="inherit" />}
+          </IconButton>
+        )}
       </Stack>
       <Typography
         sx={{flex: 1}}
