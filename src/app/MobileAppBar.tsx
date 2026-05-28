@@ -1,20 +1,20 @@
 import {
   Toolbar,
-  AppBar as MuiAppBar,
+  AppBar,
   useTheme,
   Typography,
   IconButton,
   Dialog,
 } from "@mui/material";
 import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
-import {Login} from "./Login";
+import {Login} from "../components/Login";
 import {useEffect, useState} from "react";
-import {useAppContext} from "../app/context";
-import {Select} from "./Select";
+import {useAppContext} from "./context";
+import {Select} from "../components/Select";
 import {useQueryCollection} from "../hooks/useQueryCollection";
 import {collections} from "../lib/firebase";
 
-const AppBar = ({
+const MobileAppBar = ({
   onMenuClick,
   open,
 }: {
@@ -51,7 +51,7 @@ const AppBar = ({
 
   return (
     <>
-      <MuiAppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
+      <AppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
         <Toolbar>
           <IconButton onClick={onMenuClick} color="inherit">
             {open ? <MenuOpen /> : <Menu />}
@@ -78,7 +78,7 @@ const AppBar = ({
             {user ? <Logout /> : <Key />}
           </IconButton>
         </Toolbar>
-      </MuiAppBar>
+      </AppBar>
       <Dialog open={login} onClose={() => setLogin(false)}>
         <Login />
       </Dialog>
@@ -86,4 +86,4 @@ const AppBar = ({
   );
 };
 
-export {AppBar};
+export {MobileAppBar};

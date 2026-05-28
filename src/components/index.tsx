@@ -1,3 +1,3 @@
-export {AppBar} from "./AppBar";
-export {Drawer} from "./Drawer";
+export {MobileAppBar} from "../app/MobileAppBar";
+export {Drawer} from "../app/Drawer";
 export {Admin} from "./Admin";

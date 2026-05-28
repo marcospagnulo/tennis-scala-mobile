@@ -115,7 +115,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
       <Typography variant="h6" align="center" sx={{width: 20}}>
         #
       </Typography>
-      <Typography variant="subtitle1" sx={{width: 300}}>
+      <Typography variant="subtitle1" sx={{minWidth: 250}}>
         Giocatore
       </Typography>
       <Typography

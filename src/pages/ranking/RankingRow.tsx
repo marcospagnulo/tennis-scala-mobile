@@ -45,11 +45,13 @@ const RankingRow = ({
       <Typography
         variant="h6"
         align="center"
-        sx={{width: 20}}
+        sx={{minWidth: 20}}
         color="textPrimary">
         {position}
       </Typography>
-      <Stack direction={"row"} sx={{alignItems: "center", gap: 1, width: 300}}>
+      <Stack
+        direction={"row"}
+        sx={{alignItems: "center", gap: 1, minWidth: 250}}>
         <Avatar src={player.avatar} alt={`${player.surname} ${player.name}`} />
         <Typography
           color="textPrimary"

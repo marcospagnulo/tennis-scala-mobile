@@ -12,13 +12,7 @@ import {
   useTheme,
   Toolbar,
 } from "@mui/material";
-import {
-  DashboardIcon,
-  MatchIcon,
-  PlayersIcon,
-  RankingIcon,
-  SeasonIcon,
-} from "../icons";
+import {navigationItems} from "./navigation";
 
 const drawerWidth = 240;
 
@@ -26,16 +20,22 @@ const DrawerItem = ({
   to,
   icon,
   text,
+  onClick,
 }: {
   to: string;
   icon: React.ReactNode;
   text: string;
+  onClick: () => void;
 }) => {
   const location = useLocation();
   const selected = location.pathname.indexOf(to) !== -1;
   return (
     <ListItem disablePadding sx={{"&.Mui-selected": {fontWeight: "bold"}}}>
-      <ListItemButton component={Link} to={to} selected={selected}>
+      <ListItemButton
+        component={Link}
+        to={to}
+        selected={selected}
+        onClick={onClick}>
         <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText primary={text} />
       </ListItemButton>
@@ -74,11 +74,15 @@ const Drawer = ({
       <Toolbar />
       <Box sx={{overflow: "auto"}}>
         <List sx={{py: 0}}>
-          <DrawerItem to="/" icon={<DashboardIcon />} text="Dashboard" />
-          <DrawerItem to="/seasons" icon={<SeasonIcon />} text="Stagioni" />
-          <DrawerItem to="/ranking" icon={<RankingIcon />} text="Classifica" />
-          <DrawerItem to="/matches" icon={<MatchIcon />} text="Partite" />
-          <DrawerItem to="/players" icon={<PlayersIcon />} text="Giocatori" />
+          {navigationItems.map(item => (
+            <DrawerItem
+              key={item.path}
+              to={item.path}
+              icon={<item.icon />}
+              text={item.label}
+              onClick={onClose}
+            />
+          ))}
         </List>
       </Box>
     </DrawerContainer>
