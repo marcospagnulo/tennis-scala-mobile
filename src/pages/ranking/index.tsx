@@ -8,6 +8,7 @@ import {
   IconButton,
   Stack,
   Typography,
+  useTheme,
   type SxProps,
 } from "@mui/material";
 import {collections} from "../../lib/firebase";
@@ -31,9 +32,11 @@ import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
+  const theme = useTheme();
   const {user, season} = useAppContext();
   const isAdmin = user?.role === "admin";
 
+  const [dialog, setDialog] = useState(false);
   const [filters, setFilters] = useState<queryFilter[]>([]);
   const [sort] = useState<querySort[]>([
     {field: "points", direction: "desc"},
@@ -41,7 +44,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     {field: "losses", direction: "asc"},
     {field: "player.surname", direction: "asc"},
   ]);
-  const [dialog, setDialog] = useState(false);
 
   const {items: seasonPlayers, loading: seasonPlayersLoading} =
     useLiveCollection({
@@ -142,27 +144,39 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     if (length <= 0) return "#b4cbfc";
 
     const subgroup = Math.min(Math.floor((position * 8) / length), 7);
-    return subgroup % 2 === 0 ? "#b4cbfc" : "#d0defd";
+    return subgroup % 2 === 0
+      ? theme.palette.primary.main + "78"
+      : theme.palette.primary.main + "57";
   };
+
+  const groupSize = Math.round(seasonPlayers.length / 4);
 
   return (
     <Stack sx={{...sx}}>
       <Stack
-        sx={{gap: 1, flex: "1 1 0", overflow: "hidden"}}
+        sx={{
+          gap: 1,
+          flex: "1 1 0",
+          overflow: "hidden",
+        }}
         divider={<Divider />}>
         <Typography variant="h6" gutterBottom align="center">
           Classifica
         </Typography>
         <RankingHeader />
         <Stack
-          sx={{overflow: "auto", flex: "1 1 0", mb: 9}}
-          divider={<Divider />}>
+          sx={{
+            overflow: "auto",
+            flex: "1 1 0",
+            mb: 9,
+          }}>
           {seasonPlayersLoading && Loading}
           {seasonPlayers.map((r, index) => (
             <RankingRow
               key={r.id}
               ranking={r}
               position={index + 1}
+              divider={(index + 1) % groupSize === 0}
               onEdit={(field, value) => handleEdit(r, field, value)}
               refresh={RefreshPlayer(r)}
               delete={DeletePlayer(r)}

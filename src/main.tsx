@@ -6,13 +6,13 @@ import "./index.css";
 import {App} from "./app";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {indigo, yellow} from "@mui/material/colors";
+import {yellow, blue} from "@mui/material/colors";
 
 const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: indigo[500],
+      main: blue[500],
     },
     secondary: {
       main: yellow[700],

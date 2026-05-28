@@ -11,10 +11,12 @@ const RankingRow = ({
   refresh,
   delete: deleteAction,
   bgColor,
+  divider,
   onEdit,
 }: {
   ranking: Ranking;
   position: number;
+  divider: boolean;
   refresh?: React.ReactNode;
   delete?: React.ReactNode;
   bgColor?: string;
@@ -40,11 +42,15 @@ const RankingRow = ({
         backgroundColor: bgColor,
         py: 1,
         px: 2,
+        ...(divider && {
+          borderBottom: "2px solid",
+          borderColor: "primary.main",
+        }),
       }}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
       <Typography
-        variant="h6"
+        variant={position <= 3 ? "h6" : "body2"}
         align="center"
         sx={{minWidth: 20}}
         color="textPrimary">
