@@ -20,12 +20,14 @@ const useQueryCollection = <T extends DocumentData>({
   pagination,
   queryText,
   sort = [],
+  skip = false,
 }: {
   collection: CollectionReference<T, T> | undefined;
   pagination?: GridPaginationModel;
   queryText?: string;
   filters?: queryFilter[];
   sort?: querySort[];
+  skip?: boolean;
 }) => {
   const [refetchTS, setRefetchTs] = useState<number>(0);
   const [items, setItems] = useState<T[]>([]);
@@ -142,24 +144,24 @@ const useQueryCollection = <T extends DocumentData>({
   }, [searchData, queryText]);
 
   useEffect(() => {
-    if (!collection) return;
+    if (!collection || skip) return;
 
     if (pagination) {
       fetchDataPaginated(collection, pagination);
     } else {
       fetchData(collection);
     }
-  }, [collection, pagination, refetchTS]);
+  }, [collection, pagination, refetchTS, skip]);
 
   useEffect(() => {
-    if (!collection) return;
+    if (!collection || skip) return;
 
     const fetchRowCount = async () => {
       const snapshot = await getCountFromServer(collection);
       setRowCount(snapshot.data().count);
     };
     fetchRowCount();
-  }, [collection]);
+  }, [collection, skip]);
 
   return {items: filteredItems, loading, rowCount, refetch};
 };

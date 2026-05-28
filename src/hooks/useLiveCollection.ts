@@ -13,16 +13,18 @@ const useLiveCollection = <T extends DocumentData>({
   collection,
   filters,
   sort,
+  skip = false,
 }: {
   collection: CollectionReference<T, T> | undefined;
   filters?: queryFilter[];
   sort?: querySort[];
+  skip?: boolean;
 }) => {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!collection) return;
+    if (!collection || skip) return;
     const q = query(
       collection,
       ...(filters?.map(filter =>
@@ -38,7 +40,7 @@ const useLiveCollection = <T extends DocumentData>({
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [collection, filters, sort]);
+  }, [collection, filters, sort, skip]);
 
   return {items, loading};
 };

@@ -50,6 +50,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
       collection: collections?.ranking,
       filters: filters,
       sort: sort,
+      skip: !season,
     });
 
   useEffect(() => {
