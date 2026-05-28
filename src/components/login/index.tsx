@@ -1,6 +1,13 @@
 import {useState} from "react";
 import {signInWithEmailAndPassword} from "firebase/auth";
-import {Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {
+  Button,
+  CardMedia,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import {auth} from "../../lib/firebase";
 import {Register} from "./Register";
 
@@ -72,30 +79,39 @@ export function Login() {
       }}>
       <Paper
         sx={{display: "flex", flexDirection: "column", gap: 2, padding: 2}}>
+        <CardMedia
+          component="img"
+          image={`logo.png`}
+          alt="Logo"
+          sx={{height: 100, objectFit: "contain"}}
+        />
         <Typography variant="h5" align="center">
           Login
         </Typography>
-        <TextField
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          onBlur={() => setEmailTouched(true)}
-          required
-          label="Email"
-          error={emailTouched && trimmedEmail.length > 0 && !isEmailValid}
-          helperText={
-            emailTouched && trimmedEmail.length > 0 && !isEmailValid
-              ? "Inserisci un indirizzo email valido."
-              : " "
-          }
-        />
-        <TextField
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          label="Password"
-        />
+        {error && <Typography color="error">{error}</Typography>}
+        <Stack>
+          <TextField
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onBlur={() => setEmailTouched(true)}
+            required
+            label="Email"
+            error={emailTouched && trimmedEmail.length > 0 && !isEmailValid}
+            helperText={
+              emailTouched && trimmedEmail.length > 0 && !isEmailValid
+                ? "Inserisci un indirizzo email valido."
+                : " "
+            }
+          />
+          <TextField
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+            label="Password"
+          />
+        </Stack>
         <Button
           onClick={handleSubmit}
           disabled={loading}
@@ -107,7 +123,6 @@ export function Login() {
         <Button onClick={handleRegisterOpen} disabled={loading} variant="text">
           Non hai un account? Registrati
         </Button>
-        {error && <Typography color="error">{error}</Typography>}
       </Paper>
     </Stack>
   );
