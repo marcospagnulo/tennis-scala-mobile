@@ -179,9 +179,11 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   const renderGroup = (group: Ranking[], gindex: number) => {
     const offsetPosition = (gindex - 1) * group.length;
+    if (group.length === 0) return null;
     return (
       <Stack direction={"row"}>
-        <Stack sx={{width: 30, justifyContent: "center", alignItems: "center"}}>
+        <Stack
+          sx={{minWidth: 30, justifyContent: "center", alignItems: "center"}}>
           <Typography variant="h5">{gindex}</Typography>
         </Stack>
         <Stack sx={{flex: 1}}>

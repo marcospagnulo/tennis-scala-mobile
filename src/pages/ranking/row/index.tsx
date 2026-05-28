@@ -1,9 +1,10 @@
-import {Avatar, Box, Stack, Typography} from "@mui/material";
+import {Avatar, Box, Stack, Typography, type SxProps} from "@mui/material";
 import type {Player, Ranking} from "../../../domain/types";
 import {useState} from "react";
 import {useAppContext} from "../../../app/context";
 import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
+import type {Theme} from "@emotion/react";
 
 const RankingRow = ({
   ranking,
@@ -33,15 +34,21 @@ const RankingRow = ({
     setHover(false);
   };
 
+  const truncateSx: SxProps<Theme> = {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  };
+
   return (
     <Stack
       direction="row"
       sx={{
         alignItems: "center",
-        gap: 2,
+        gap: mobile ? 1 : 2,
         backgroundColor: bgColor,
         py: 1,
-        px: 2,
+        px: mobile ? 0 : 2,
         ...(divider && {
           borderBottom: "2px solid",
           borderColor: "primary.main",
@@ -62,7 +69,7 @@ const RankingRow = ({
           alignItems: "center",
           gap: 1,
           flex: 1,
-          minWidth: 180,
+          maxWidth: mobile ? 160 : 300,
         }}>
         <Avatar
           sx={{...(isSmallScreen && {width: 32, height: 32})}}
@@ -71,10 +78,7 @@ const RankingRow = ({
         />
         {isSmallScreen ? (
           <Stack>
-            <Typography
-              color="textPrimary"
-              variant="subtitle1"
-              sx={{lineHeight: 1.3}}>
+            <Typography color="textPrimary" variant="subtitle1" sx={truncateSx}>
               {player.surname} {player.name[0]}.
             </Typography>
           </Stack>
@@ -89,8 +93,9 @@ const RankingRow = ({
           </Box>
         )}
       </Stack>
+      <Box sx={{flex: 1}} />
       <EditableField
-        width={mobile ? 50 : 100}
+        width={mobile ? 25 : 100}
         field="points"
         value={ranking.points}
         isAdmin={isAdmin}
@@ -98,14 +103,14 @@ const RankingRow = ({
         onEdit={handleEdit}
       />
       <Typography
-        sx={{width: mobile ? 50 : 100}}
+        sx={{width: mobile ? 25 : 100}}
         variant="body2"
         color="text.secondary"
         align="center">
         {ranking.wins + ranking.losses}
       </Typography>
       <EditableField
-        width={mobile ? 50 : 100}
+        width={mobile ? 25 : 100}
         field="wins"
         value={ranking.wins}
         isAdmin={isAdmin}
@@ -113,25 +118,23 @@ const RankingRow = ({
         onEdit={handleEdit}
       />
       <EditableField
-        width={mobile ? 50 : 100}
+        width={mobile ? 25 : 100}
         field="losses"
         value={ranking.losses}
         isAdmin={isAdmin}
         hover={hover}
         onEdit={handleEdit}
       />
-      {deleteAction && (
-        <Stack
-          direction="row"
-          sx={{
-            width: 40,
-            gap: 1,
-            ml: "auto",
-            visibility: hover ? "visible" : "hidden",
-          }}>
-          {deleteAction}
-        </Stack>
-      )}
+      <Stack
+        direction="row"
+        sx={{
+          width: 40,
+          gap: 1,
+          ml: "auto",
+          visibility: hover ? "visible" : "hidden",
+        }}>
+        {deleteAction}
+      </Stack>
     </Stack>
   );
 };
