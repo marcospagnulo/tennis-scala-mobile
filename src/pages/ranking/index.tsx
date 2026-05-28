@@ -31,12 +31,25 @@ import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 
+type groupedPlayersType = {
+  1: Ranking[];
+  2: Ranking[];
+  3: Ranking[];
+  4: Ranking[];
+};
+
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
   const {user, season} = useAppContext();
   const isAdmin = user?.role === "admin";
 
   const [dialog, setDialog] = useState(false);
+  const [groupedPlayers, setGroupedPlayers] = useState<groupedPlayersType>({
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  });
   const [filters, setFilters] = useState<queryFilter[]>([]);
   const [sort] = useState<querySort[]>([
     {field: "points", direction: "desc"},
@@ -57,6 +70,15 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     if (!season) return;
     setFilters([{fieldPath: "seasonId", opStr: "==", value: season.id}]);
   }, [season]);
+  useEffect(() => {
+    const groupSize = Math.round(seasonPlayers.length / 4);
+    const newGroupedPlayers: groupedPlayersType = {1: [], 2: [], 3: [], 4: []};
+    seasonPlayers.forEach((player, index) => {
+      const group = Math.min(Math.floor(index / groupSize) + 1, 4);
+      newGroupedPlayers[group as 1 | 2 | 3 | 4].push(player);
+    });
+    setGroupedPlayers(newGroupedPlayers);
+  }, [seasonPlayers]);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
@@ -141,16 +163,44 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     </Stack>
   );
 
-  const getRankingBgColor = (position: number, length: number) => {
-    if (length <= 0) return "#b4cbfc";
-
-    const subgroup = Math.min(Math.floor((position * 8) / length), 7);
-    return subgroup % 2 === 0
-      ? theme.palette.primary.main + "78"
-      : theme.palette.primary.main + "57";
+  const getRankingBgColor = (
+    index: number,
+    length: number,
+    groupIndex: number,
+  ) => {
+    const alternate = groupIndex % 2 === 0;
+    const compare = alternate
+      ? (a: number, b: number) => a < b
+      : (a: number, b: number) => a >= b;
+    return compare(index, length / 2)
+      ? theme.palette.primary.main + "10"
+      : theme.palette.primary.main + "20";
   };
 
-  const groupSize = Math.round(seasonPlayers.length / 4);
+  const renderGroup = (group: Ranking[], gindex: number) => {
+    const offsetPosition = (gindex - 1) * group.length;
+    return (
+      <Stack direction={"row"}>
+        <Stack sx={{width: 30, justifyContent: "center", alignItems: "center"}}>
+          <Typography variant="h5">{gindex}</Typography>
+        </Stack>
+        <Stack sx={{flex: 1}}>
+          {group.map((r, index) => (
+            <RankingRow
+              key={r.id}
+              ranking={r}
+              position={offsetPosition + index + 1}
+              divider={(index + 1) % group.length === 0 && gindex !== 4}
+              onEdit={(field, value) => handleEdit(r, field, value)}
+              refresh={RefreshPlayer(r)}
+              delete={DeletePlayer(r)}
+              bgColor={getRankingBgColor(index, group.length, gindex)}
+            />
+          ))}
+        </Stack>
+      </Stack>
+    );
+  };
 
   return (
     <Stack sx={{...sx}}>
@@ -172,18 +222,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
             mb: 9,
           }}>
           {seasonPlayersLoading && Loading}
-          {seasonPlayers.map((r, index) => (
-            <RankingRow
-              key={r.id}
-              ranking={r}
-              position={index + 1}
-              divider={(index + 1) % groupSize === 0}
-              onEdit={(field, value) => handleEdit(r, field, value)}
-              refresh={RefreshPlayer(r)}
-              delete={DeletePlayer(r)}
-              bgColor={getRankingBgColor(index, seasonPlayers.length)}
-            />
-          ))}
+          <Stack>{renderGroup(groupedPlayers[1], 1)}</Stack>
+          <Stack>{renderGroup(groupedPlayers[2], 2)}</Stack>
+          <Stack>{renderGroup(groupedPlayers[3], 3)}</Stack>
+          <Stack>{renderGroup(groupedPlayers[4], 4)}</Stack>
         </Stack>
       </Stack>
       {isAdmin && (
