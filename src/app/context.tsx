@@ -8,6 +8,7 @@ import {
   type User as FirebaseUser,
 } from "firebase/auth";
 import {auth} from "../lib/firebase";
+import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 
 export type AppContextType = {
   season?: Season;
@@ -15,6 +16,7 @@ export type AppContextType = {
   seasons: Season[];
   user?: User | null;
   handleLogout: () => Promise<void>;
+  mobile: boolean;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -30,9 +32,15 @@ export const useAppContext = (): AppContextType => {
 export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
+  const downMd = useDownBreakpoint("md");
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
   const [seasons, setSeasons] = useState<Season[]>([]);
+  const [mobile, setMobile] = useState(downMd);
+
+  useEffect(() => {
+    setMobile(downMd);
+  }, [downMd]);
 
   // Fetch current season
   useEffect(() => {
@@ -84,7 +92,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 
   return (
     <AppContext.Provider
-      value={{season, seasons, setSeason, user, handleLogout}}>
+      value={{season, mobile, seasons, setSeason, user, handleLogout}}>
       {children}
     </AppContext.Provider>
   );

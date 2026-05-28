@@ -1,5 +1,4 @@
 import {
-  Box,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -25,9 +24,10 @@ import {
 import {useLiveCollection} from "../../hooks/useLiveCollection";
 import type {Theme} from "@emotion/react";
 import {DeleteIcon} from "../../icons";
-import {RankingRow} from "./RankingRow";
+import {RankingRow} from "./row";
 import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
+import {RankingHeader} from "./Header";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {user, season} = useAppContext();
@@ -83,12 +83,16 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     await deleteDoc(doc(collections.ranking, sp.id));
   };
 
-  const handleEditPoint = async (ranking: Ranking, points: number) => {
+  const handleEdit = async (
+    ranking: Ranking,
+    field: string,
+    value: string | number,
+  ) => {
     if (!collections) return;
     const document = doc(collections.ranking, ranking.id);
     await updateDoc(document, {
       ...ranking,
-      points: points,
+      [field]: value,
     });
   };
 
@@ -110,46 +114,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     </Stack>
   );
 
-  const Header = (
-    <Stack direction="row" sx={{alignItems: "center", gap: 2, px: 2}}>
-      <Typography variant="h6" align="center" sx={{width: 20}}>
-        #
-      </Typography>
-      <Typography variant="subtitle1" sx={{minWidth: 250}}>
-        Giocatore
-      </Typography>
-      <Typography
-        sx={{width: 100}}
-        variant="body2"
-        color="text.secondary"
-        align="center">
-        Punti
-      </Typography>
-      <Typography
-        sx={{flex: 1}}
-        variant="body2"
-        color="text.secondary"
-        align="center">
-        Partite
-      </Typography>
-      <Typography
-        sx={{flex: 1}}
-        variant="body2"
-        color="text.secondary"
-        align="center">
-        Vittorie
-      </Typography>
-      <Typography
-        sx={{flex: 1}}
-        variant="body2"
-        color="text.secondary"
-        align="center">
-        Sconfitte
-      </Typography>
-      {isAdmin && <Box sx={{width: 40}} />}
-    </Stack>
-  );
-
   const getRankingBgColor = (position: number, length: number) => {
     if (length <= 0) return "#b4cbfc";
 
@@ -165,7 +129,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         <Typography variant="h6" gutterBottom align="center">
           Classifica
         </Typography>
-        {Header}
+        <RankingHeader />
         <Stack
           sx={{overflow: "auto", flex: "1 1 0", mb: 9}}
           divider={<Divider />}>
@@ -175,7 +139,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               key={r.id}
               ranking={r}
               position={index + 1}
-              onEditPoint={value => handleEditPoint(r, value as number)}
+              onEdit={(field, value) => handleEdit(r, field, value)}
               actions={DeletePlayer(r.player)}
               bgColor={getRankingBgColor(index, seasonPlayers.length)}
             />
