@@ -1,0 +1,12 @@
+{
+  "name": "tennis-scala-mobile-admin",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "set-claim": "node set-custom-claims.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.10.0"
+  }
+}

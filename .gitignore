@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+admin/service-account*.json
 exported-dev-data/*
 .agents/*
