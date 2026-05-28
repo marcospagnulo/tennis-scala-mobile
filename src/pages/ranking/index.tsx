@@ -12,12 +12,13 @@ import {
 } from "@mui/material";
 import {collections} from "../../lib/firebase";
 import type {Player, queryFilter, querySort, Ranking} from "../../domain/types";
-import {Add} from "@mui/icons-material";
+import {Add, Refresh} from "@mui/icons-material";
 import {useAppContext} from "../../app/context";
 import {
   addDoc,
   deleteDoc,
   doc,
+  getDoc,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -75,12 +76,28 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     });
   };
 
-  const deletePlayer = async (playerId: string) => {
+  const deletePlayer = async (ranking: Ranking) => {
     if (!collections) return;
-    const sp = seasonPlayers.find(sp => sp.player.id === playerId);
-    if (!sp) return;
+    await deleteDoc(doc(collections.ranking, ranking.id));
+  };
 
-    await deleteDoc(doc(collections.ranking, sp.id));
+  const refreshPlayer = async (ranking: Ranking) => {
+    if (!collections) return;
+
+    const playerRef = doc(collections.players, ranking.player.id);
+    const playerSnap = await getDoc(playerRef);
+
+    if (!playerSnap.exists()) {
+      deletePlayer(ranking);
+      return;
+    }
+
+    const player = playerSnap.data() as Player;
+    const document = doc(collections.ranking, ranking.id);
+    await updateDoc(document, {
+      ...ranking,
+      player: player,
+    });
   };
 
   const handleEdit = async (
@@ -96,9 +113,16 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     });
   };
 
-  const DeletePlayer = (player: Player) =>
+  const RefreshPlayer = (ranking: Ranking) =>
     isAdmin && (
-      <IconButton size="small" onClick={() => deletePlayer(player.id)}>
+      <IconButton size="small" onClick={() => refreshPlayer(ranking)}>
+        <Refresh color="primary" fontSize="inherit" />
+      </IconButton>
+    );
+
+  const DeletePlayer = (ranking: Ranking) =>
+    isAdmin && (
+      <IconButton size="small" onClick={() => deletePlayer(ranking)}>
         <DeleteIcon color="error" fontSize="inherit" />
       </IconButton>
     );
@@ -140,7 +164,8 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               ranking={r}
               position={index + 1}
               onEdit={(field, value) => handleEdit(r, field, value)}
-              actions={DeletePlayer(r.player)}
+              refresh={RefreshPlayer(r)}
+              delete={DeletePlayer(r)}
               bgColor={getRankingBgColor(index, seasonPlayers.length)}
             />
           ))}

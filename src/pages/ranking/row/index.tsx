@@ -1,4 +1,4 @@
-import {Avatar, Stack, Typography} from "@mui/material";
+import {Avatar, Box, Stack, Typography} from "@mui/material";
 import type {Player, Ranking} from "../../../domain/types";
 import {useState} from "react";
 import {useAppContext} from "../../../app/context";
@@ -8,13 +8,15 @@ import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 const RankingRow = ({
   ranking,
   position,
-  actions,
+  refresh,
+  delete: deleteAction,
   bgColor,
   onEdit,
 }: {
   ranking: Ranking;
   position: number;
-  actions?: React.ReactNode;
+  refresh?: React.ReactNode;
+  delete?: React.ReactNode;
   bgColor?: string;
   onEdit: (field: string, value: string | number) => void;
 }) => {
@@ -75,6 +77,11 @@ const RankingRow = ({
             color="textPrimary"
             variant="subtitle1">{`${player.surname} ${player.name}`}</Typography>
         )}
+        {refresh && (
+          <Box sx={{ml: 1, visibility: hover ? "visible" : "hidden"}}>
+            {refresh}
+          </Box>
+        )}
       </Stack>
       <EditableField
         width={mobile ? 50 : 100}
@@ -107,7 +114,7 @@ const RankingRow = ({
         hover={hover}
         onEdit={handleEdit}
       />
-      {actions && (
+      {deleteAction && (
         <Stack
           direction="row"
           sx={{
@@ -116,7 +123,7 @@ const RankingRow = ({
             ml: "auto",
             visibility: hover ? "visible" : "hidden",
           }}>
-          {actions}
+          {deleteAction}
         </Stack>
       )}
     </Stack>
