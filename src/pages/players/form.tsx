@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -12,6 +13,7 @@ import {Timestamp} from "firebase/firestore";
 import type {Player} from "../../domain/types";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import {DeleteIcon} from "../../icons";
 
 const Form = (
   formData: Partial<Player>,
@@ -26,11 +28,21 @@ const Form = (
   return (
     <>
       <Stack direction="row" sx={{mb: 2, gap: 2, alignItems: "center"}}>
-        <Avatar
-          src={formData.avatar}
-          alt="Avatar"
-          sx={{width: 50, height: 50}}
-        />
+        <Box sx={{position: "relative"}}>
+          <Avatar
+            src={formData.avatar}
+            alt="Avatar"
+            sx={{width: 50, height: 50}}
+          />
+          {formData.avatar && formData.avatar !== "" && (
+            <IconButton
+              size="small"
+              sx={{position: "absolute", zIndex: 1, top: -10, right: -10}}
+              onClick={() => handleChange("avatar", "")}>
+              <DeleteIcon color="error" fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
         <TextField
           type="file"
           onChange={handleFileLoad}
