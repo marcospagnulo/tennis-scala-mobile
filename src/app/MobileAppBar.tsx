@@ -7,7 +7,7 @@ import {
   Dialog,
 } from "@mui/material";
 import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
-import {Login} from "../components/Login";
+import {Login} from "../components/login";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {Select} from "../components/Select";

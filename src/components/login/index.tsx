@@ -1,27 +1,43 @@
 import {useState} from "react";
 import {signInWithEmailAndPassword} from "firebase/auth";
-import {auth} from "../lib/firebase";
 import {Button, Paper, Stack, TextField, Typography} from "@mui/material";
+import {auth} from "../../lib/firebase";
+import {Register} from "./Register";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const trimmedEmail = email.trim();
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
 
-  const handleLogin = () => {
+  const handleSubmit = async () => {
     setError(null);
+
+    if (!trimmedEmail || !password) {
+      setError("Inserisci email e password.");
+      return;
+    }
+
+    if (!isEmailValid) {
+      setError("Inserisci un indirizzo email valido.");
+      return;
+    }
+
     setLoading(true);
 
     if (!auth) {
-      setError("Firebase non è configurato correttamente.");
+      setError("Firebase non e configurato correttamente.");
       setLoading(false);
       return;
     }
 
     try {
-      signInWithEmailAndPassword(auth, email, password);
-      // Il cambio di stato verrà gestito da onAuthStateChanged in App.tsx
+      await signInWithEmailAndPassword(auth, trimmedEmail, password);
+      // Il cambio di stato verra gestito da onAuthStateChanged in App.tsx
     } catch (err) {
       setError("Credenziali non valide. Riprova.");
       console.error(err);
@@ -29,6 +45,21 @@ export function Login() {
       setLoading(false);
     }
   };
+
+  const handleRegisterOpen = () => {
+    setError(null);
+    setPassword("");
+    setShowRegister(true);
+  };
+
+  const handleRegisterClose = () => {
+    setError(null);
+    setShowRegister(false);
+  };
+
+  if (showRegister) {
+    return <Register onBackToLogin={handleRegisterClose} />;
+  }
 
   return (
     <Stack
@@ -48,8 +79,15 @@ export function Login() {
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
+          onBlur={() => setEmailTouched(true)}
           required
           label="Email"
+          error={emailTouched && trimmedEmail.length > 0 && !isEmailValid}
+          helperText={
+            emailTouched && trimmedEmail.length > 0 && !isEmailValid
+              ? "Inserisci un indirizzo email valido."
+              : " "
+          }
         />
         <TextField
           type="password"
@@ -59,12 +97,15 @@ export function Login() {
           label="Password"
         />
         <Button
-          onClick={handleLogin}
+          onClick={handleSubmit}
           disabled={loading}
           loading={loading}
           variant="contained"
           color="primary">
           {loading ? "Accesso in corso..." : "Accedi"}
+        </Button>
+        <Button onClick={handleRegisterOpen} disabled={loading} variant="text">
+          Non hai un account? Registrati
         </Button>
         {error && <Typography color="error">{error}</Typography>}
       </Paper>
