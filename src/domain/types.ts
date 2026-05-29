@@ -33,6 +33,7 @@ export interface Season {
   name: string;
   startDate: Timestamp;
   weeks: number;
+  ranking?: Ranking[];
   createdAt: Timestamp;
 }
 
@@ -45,13 +46,11 @@ export interface Period {
 }
 
 export interface Ranking {
-  id: string | undefined;
+  position: number;
   player: Player;
-  seasonId: string;
   points: number;
   wins: number;
   losses: number;
-  createdAt: Timestamp;
 }
 
 export type querySort = {

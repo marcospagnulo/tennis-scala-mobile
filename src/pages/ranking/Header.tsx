@@ -24,10 +24,7 @@ const RankingHeader = () => {
           }}>
           #
         </Typography>
-        <Typography
-          variant="subtitle1"
-          sx={{flex: 1, maxWidth: mobile ? 160 : 300}}
-          color="textPrimary">
+        <Typography variant="subtitle1" color="textPrimary">
           Giocatore
         </Typography>
         <Box sx={{flex: 1}} />

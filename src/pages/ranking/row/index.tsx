@@ -1,31 +1,29 @@
-import {Avatar, Box, Stack, Typography, type SxProps} from "@mui/material";
+import {Box, IconButton, Stack, Typography, type SxProps} from "@mui/material";
 import type {Player, Ranking} from "../../../domain/types";
 import {useState} from "react";
 import {useAppContext} from "../../../app/context";
 import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
+import {DeleteIcon} from "../../../icons";
+import {deletePlayer, swapPositions} from "../functions";
+import {ArrowDropUp} from "@mui/icons-material";
+import {PlayerAvatar} from "../../../components";
 
 const RankingRow = ({
   ranking,
-  position,
-  refresh,
-  delete: deleteAction,
   bgColor,
   divider,
   onEdit,
 }: {
   ranking: Ranking;
-  position: number;
   divider: boolean;
-  refresh?: React.ReactNode;
-  delete?: React.ReactNode;
   bgColor?: string;
   onEdit: (field: string, value: string | number) => void;
 }) => {
   const player = ranking.player as Player;
   const [hover, setHover] = useState(false);
-  const {user, mobile} = useAppContext();
+  const {user, mobile, season} = useAppContext();
   const isAdmin = user?.role === "admin";
   const isSmallScreen = useDownBreakpoint("sm");
 
@@ -39,6 +37,8 @@ const RankingRow = ({
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
   };
+
+  if (!season) return null;
 
   return (
     <Stack
@@ -57,25 +57,24 @@ const RankingRow = ({
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
       <Typography
-        variant={position <= 3 ? "h6" : "body2"}
+        variant={ranking.position <= 3 ? "h6" : "body2"}
         align="center"
         sx={{minWidth: 20}}
         color="textPrimary">
-        {position}
+        {ranking.position}
       </Typography>
       <Stack
         direction={"row"}
         sx={{
           alignItems: "center",
           gap: 1,
-          flex: 1,
-          maxWidth: mobile ? 160 : 300,
         }}>
-        <Avatar
-          sx={{...(isSmallScreen && {width: 32, height: 32})}}
-          src={player.avatar}
-          alt={`${player.surname} ${player.name}`}
-        />
+        {ranking.position <= 3 && (
+          <PlayerAvatar
+            playerId={player.id!}
+            size={isSmallScreen ? 32 : undefined}
+          />
+        )}
         {isSmallScreen ? (
           <Stack>
             <Typography color="textPrimary" variant="subtitle1" sx={truncateSx}>
@@ -87,10 +86,34 @@ const RankingRow = ({
             color="textPrimary"
             variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
         )}
-        {refresh && (
-          <Box sx={{ml: 1, visibility: hover ? "visible" : "hidden"}}>
-            {refresh}
-          </Box>
+        {isAdmin && (
+          <Stack
+            direction={"row"}
+            spacing={1}
+            sx={{ml: 1, visibility: hover ? "visible" : "hidden"}}>
+            {ranking.position > 1 && (
+              <IconButton
+                size="small"
+                onClick={() =>
+                  swapPositions(season, ranking.position, ranking.position - 1)
+                }>
+                <ArrowDropUp color="primary" fontSize="inherit" />
+              </IconButton>
+            )}
+            {ranking.position < season.ranking!.length && (
+              <IconButton
+                size="small"
+                onClick={() =>
+                  swapPositions(season, ranking.position, ranking.position + 1)
+                }>
+                <ArrowDropUp
+                  color="primary"
+                  fontSize="inherit"
+                  sx={{transform: "rotate(180deg)"}}
+                />
+              </IconButton>
+            )}
+          </Stack>
         )}
       </Stack>
       <Box sx={{flex: 1}} />
@@ -133,7 +156,13 @@ const RankingRow = ({
           ml: "auto",
           visibility: hover ? "visible" : "hidden",
         }}>
-        {deleteAction}
+        {isAdmin && (
+          <IconButton
+            size="small"
+            onClick={() => deletePlayer(season, ranking)}>
+            <DeleteIcon color="error" fontSize="inherit" />
+          </IconButton>
+        )}
       </Stack>
     </Stack>
   );
