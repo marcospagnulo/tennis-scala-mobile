@@ -7,7 +7,7 @@ import {
   Dialog,
 } from "@mui/material";
 import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
-import {Login} from "../components/login";
+import {Auth} from "../components/auth";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {Select} from "../components/Select";
@@ -74,8 +74,12 @@ const MobileAppBar = ({
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Dialog open={login} onClose={() => setLogin(false)}>
-        <Login />
+      <Dialog
+        open={login}
+        onClose={() => setLogin(false)}
+        fullWidth
+        maxWidth="xs">
+        <Auth />
       </Dialog>
     </>
   );

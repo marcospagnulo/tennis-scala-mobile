@@ -10,7 +10,7 @@ import {
   Tabs,
 } from "@mui/material";
 import {Key, Logout} from "@mui/icons-material";
-import {Login} from "../components/login";
+import {Auth} from "../components/auth";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {Select} from "../components/Select";
@@ -120,8 +120,12 @@ const DesktopAppBar = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Dialog open={login} onClose={() => setLogin(false)}>
-        <Login />
+      <Dialog
+        open={login}
+        onClose={() => setLogin(false)}
+        fullWidth
+        maxWidth="xs">
+        <Auth />
       </Dialog>
     </>
   );
