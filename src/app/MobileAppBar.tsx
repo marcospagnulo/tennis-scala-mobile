@@ -11,8 +11,6 @@ import {Login} from "../components/login";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {Select} from "../components/Select";
-import {useQueryCollection} from "../hooks/useQueryCollection";
-import {collections} from "../lib/firebase";
 
 const MobileAppBar = ({
   onMenuClick,
@@ -22,11 +20,8 @@ const MobileAppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
-  const {season, user, setSeason, handleLogout} = useAppContext();
+  const {season, seasons, user, setSeason, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
-  const {items: seasons} = useQueryCollection({
-    collection: collections?.seasons,
-  });
 
   const handleSeasonChange = (seasonId: string) => {
     const selectedSeason = seasons.find(s => s.id === seasonId);

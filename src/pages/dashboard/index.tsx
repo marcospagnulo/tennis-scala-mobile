@@ -3,9 +3,9 @@ import {Grid, Stack, Typography, type SxProps} from "@mui/material";
 import {useAppContext} from "../../app/context";
 
 export function DashboardPage({sx}: {sx?: SxProps<Theme>}) {
-  const {season} = useAppContext();
+  const {season, appLoading} = useAppContext();
 
-  if (!season) {
+  if (!season && !appLoading) {
     return (
       <Stack
         sx={{...sx, flex: 1, justifyContent: "center", alignItems: "center"}}>

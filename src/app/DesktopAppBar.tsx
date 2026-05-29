@@ -14,20 +14,17 @@ import {Login} from "../components/login";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {Select} from "../components/Select";
-import {useQueryCollection} from "../hooks/useQueryCollection";
-import {collections} from "../lib/firebase";
 import {navigationItems} from "./navigation";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
-  const {season, user, setSeason, handleLogout} = useAppContext();
+  const {appLoading, season, seasons, user, setSeason, handleLogout} =
+    useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const {items: seasons} = useQueryCollection({
-    collection: collections?.seasons,
-  });
 
+  const [tabValue, setTabValue] = useState<string | boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
 
   const handleSeasonChange = (seasonId: string) => {
@@ -50,10 +47,26 @@ const DesktopAppBar = () => {
   };
 
   useEffect(() => {
+    const matchedItem = navigationItems.find(
+      item => item.path === location.pathname,
+    );
+    if (
+      location.pathname === "/" ||
+      !matchedItem ||
+      (matchedItem.admin && user?.role !== "admin")
+    ) {
+      setTabValue(false);
+    } else {
+      setTabValue(matchedItem.path);
+    }
+  }, [location.pathname, user]);
+
+  useEffect(() => {
     if (user) {
       setLogin(false);
     }
   }, [user]);
+
   return (
     <>
       <AppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
@@ -77,25 +90,33 @@ const DesktopAppBar = () => {
                 {"Scala Mobile"}
               </Typography>
             )}
-            <Tabs
-              value={location.pathname}
-              onChange={handleTabChange}
-              sx={{ml: 4}}
-              indicatorColor="secondary"
-              textColor="inherit">
-              {navigationItems
-                .filter(item => item.path !== "/")
-                .filter(item => !item.admin || user?.role === "admin")
-                .map(item => (
-                  <Tab key={item.path} label={item.label} value={item.path} />
-                ))}
-            </Tabs>
-            <IconButton
-              onClick={handleAuthClick}
-              color="inherit"
-              sx={{ml: "auto"}}>
-              {user ? <Logout /> : <Key />}
-            </IconButton>
+            {!appLoading && (
+              <>
+                <Tabs
+                  value={tabValue}
+                  onChange={handleTabChange}
+                  sx={{ml: 4}}
+                  indicatorColor="secondary"
+                  textColor="inherit">
+                  {navigationItems
+                    .filter(item => item.path !== "/")
+                    .filter(item => !item.admin || user?.role === "admin")
+                    .map(item => (
+                      <Tab
+                        key={item.path}
+                        label={item.label}
+                        value={item.path}
+                      />
+                    ))}
+                </Tabs>
+                <IconButton
+                  onClick={handleAuthClick}
+                  color="inherit"
+                  sx={{ml: "auto"}}>
+                  {user ? <Logout /> : <Key />}
+                </IconButton>
+              </>
+            )}
           </Toolbar>
         </Container>
       </AppBar>

@@ -1,7 +1,15 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {collections} from "../lib/firebase";
-import {onSnapshot} from "firebase/firestore";
-import type {role, Season, User} from "../domain/types";
+import {
+  addDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  where,
+  type WithFieldValue,
+} from "firebase/firestore";
+import type {Player, role, Season, User} from "../domain/types";
 import {
   onAuthStateChanged,
   signOut,
@@ -9,14 +17,17 @@ import {
 } from "firebase/auth";
 import {auth} from "../lib/firebase";
 import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
+import {Backdrop, CircularProgress} from "@mui/material";
 
 export type AppContextType = {
+  user?: User | null;
+  appLoading: boolean;
+  setAppLoading: (loading: boolean) => void;
   season?: Season;
   setSeason: (season: Season) => void;
-  seasons: Season[];
-  user?: User | null;
   handleLogout: () => Promise<void>;
   mobile: boolean;
+  seasons: Season[];
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -36,36 +47,38 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
   const [seasons, setSeasons] = useState<Season[]>([]);
-  const [mobile, setMobile] = useState(downMd);
+  const [mobile, setMobile] = useState<boolean>(downMd);
+  const [appLoading, setAppLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setMobile(downMd);
   }, [downMd]);
 
-  // Fetch current season
-  useEffect(() => {
-    if (!collections) return;
+  const ensurePlayer = async (user: User | null) => {
+    if (!user || !collections) return;
 
-    const unsubscribe = onSnapshot(collections?.seasons, snapshot => {
-      const seasons = snapshot.docs.map(
-        doc => ({...doc.data(), id: doc.id}) as Season,
-      );
-      setSeasons(seasons);
-      const lastSeason = seasons.sort(
-        (a, b) => b.startDate.seconds - a.startDate.seconds,
-      )[0];
-      if (lastSeason) {
-        setSeason(lastSeason);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+    const playerQuery = query(
+      collections.players,
+      where("userId", "==", user.id),
+    );
+    const snapshot = await getDocs(playerQuery);
+    if (snapshot.empty) {
+      const player: WithFieldValue<Player> = {
+        userId: user.id,
+        email: user.email,
+        createdAt: serverTimestamp(),
+      };
+      await addDoc(collections.players, player);
+    }
+  };
 
   // Listen for auth state changes
   useEffect(() => {
     if (!auth) {
+      setAppLoading(false);
       return;
     }
+
     const unsubscribe = onAuthStateChanged(
       auth,
       async (firebaseUser: FirebaseUser | null) => {
@@ -73,16 +86,49 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
         if (firebaseUser) {
           const claims = (await firebaseUser.getIdTokenResult()).claims;
           user = {
+            id: firebaseUser.uid,
             displayName: firebaseUser.displayName || "",
             email: firebaseUser.email || "",
             role: claims.role ? (claims.role as role) : "user",
           };
         }
         setUser(user);
+        ensurePlayer(user);
+      },
+      (error: Error) => {
+        setAppLoading(false);
+        console.error("Auth state change error:", error);
+        setUser(null);
       },
     );
     return () => unsubscribe();
   }, []);
+
+  // Fetch current season after auth state has been resolved
+  useEffect(() => {
+    if (user === undefined) {
+      return;
+    }
+    if (!collections) {
+      setAppLoading(false);
+      return;
+    }
+
+    const unsubscribe = onSnapshot(collections?.seasons, snapshot => {
+      const seasons = snapshot.docs.map(
+        doc => ({...doc.data(), id: doc.id}) as Season,
+      );
+      const lastSeason = seasons.sort(
+        (a, b) => b.startDate.seconds - a.startDate.seconds,
+      )[0];
+      if (lastSeason) {
+        setSeasons(seasons);
+        setSeason(lastSeason);
+      }
+      setAppLoading(false);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   const handleLogout = async () => {
     if (auth) {
@@ -92,7 +138,21 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 
   return (
     <AppContext.Provider
-      value={{season, mobile, seasons, setSeason, user, handleLogout}}>
+      value={{
+        season,
+        mobile,
+        setSeason,
+        user,
+        handleLogout,
+        appLoading,
+        setAppLoading,
+        seasons,
+      }}>
+      <Backdrop
+        open={appLoading}
+        sx={{zIndex: theme => theme.zIndex.drawer + 1}}>
+        <CircularProgress />
+      </Backdrop>
       {children}
     </AppContext.Provider>
   );

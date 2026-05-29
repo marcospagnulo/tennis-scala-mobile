@@ -2,6 +2,7 @@ import type {FieldPath, Timestamp, WhereFilterOp} from "firebase/firestore";
 
 export type role = "admin" | "user";
 export type User = {
+  id: string;
   displayName: string;
   email: string;
   role: role;
@@ -9,16 +10,17 @@ export type User = {
 
 export type PlayerStatus = "active" | "excluded" | "justified";
 export interface Player {
-  id: string;
-  name: string;
-  surname: string;
+  id?: string;
+  userId?: string;
+  name?: string;
+  surname?: string;
   avatar?: string;
-  gender: "male" | "female" | "other";
-  birthDate: Timestamp | null;
-  phone: string | null;
-  email: string | null;
-  status: PlayerStatus;
-  createdAt: Timestamp;
+  gender?: "male" | "female" | "other";
+  birthDate?: Timestamp | null;
+  phone?: string | null;
+  email?: string | null;
+  status?: PlayerStatus;
+  createdAt?: Timestamp;
 }
 
 export interface Season {
