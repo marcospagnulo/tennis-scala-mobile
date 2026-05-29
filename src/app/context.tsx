@@ -21,6 +21,8 @@ import {Backdrop, CircularProgress} from "@mui/material";
 
 export type AppContextType = {
   user?: User | null;
+  player?: Player | null;
+  setPlayer: (player: Player) => void;
   appLoading: boolean;
   setAppLoading: (loading: boolean) => void;
   season?: Season;
@@ -45,6 +47,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 }) => {
   const downMd = useDownBreakpoint("md");
   const [user, setUser] = useState<User | null | undefined>(undefined);
+  const [player, setPlayer] = useState<Player | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [mobile, setMobile] = useState<boolean>(downMd);
@@ -68,7 +71,11 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
         email: user.email,
         createdAt: serverTimestamp(),
       };
-      await addDoc(collections.players, player);
+      const playerDoc = await addDoc(collections.players, player);
+      setPlayer({...(player as Player), id: playerDoc.id});
+    } else {
+      const playerData = snapshot.docs[0].data() as Player;
+      setPlayer({...playerData, id: snapshot.docs[0].id});
     }
   };
 
@@ -133,6 +140,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   const handleLogout = async () => {
     if (auth) {
       await signOut(auth);
+      setPlayer(undefined);
     }
   };
 
@@ -143,6 +151,8 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
         mobile,
         setSeason,
         user,
+        player,
+        setPlayer,
         handleLogout,
         appLoading,
         setAppLoading,

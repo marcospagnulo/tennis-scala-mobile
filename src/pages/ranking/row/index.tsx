@@ -79,13 +79,13 @@ const RankingRow = ({
         {isSmallScreen ? (
           <Stack>
             <Typography color="textPrimary" variant="subtitle1" sx={truncateSx}>
-              {player.surname} {player.name[0]}.
+              {player.surname} {player.name ? player.name[0] : ""}.
             </Typography>
           </Stack>
         ) : (
           <Typography
             color="textPrimary"
-            variant="subtitle1">{`${player.surname} ${player.name}`}</Typography>
+            variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
         )}
         {refresh && (
           <Box sx={{ml: 1, visibility: hover ? "visible" : "hidden"}}>

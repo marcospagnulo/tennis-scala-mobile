@@ -5,6 +5,7 @@ import {
   Stack,
   IconButton,
   type SxProps,
+  type TypographyProps,
 } from "@mui/material";
 import {CancelIcon, ConfirmIcon} from "../icons";
 
@@ -14,6 +15,8 @@ type EditableTypographyProps = {
   sx?: SxProps;
   label?: string;
   type?: "string" | "number";
+  color?: TypographyProps["color"];
+  textFieldVariant: "standard" | "outlined" | "filled";
   variant?:
     | "h1"
     | "h2"
@@ -38,6 +41,8 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
   onCancel,
   variant = "body1",
   type = "string",
+  color = "textPrimary",
+  textFieldVariant = "standard",
 }) => {
   const [currentText, setCurrentText] = useState<string>(value);
 
@@ -59,7 +64,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
             onKeyUp={e => e.stopPropagation()}
             onChange={handleTextChange}
             autoFocus
-            variant="standard"
+            variant={textFieldVariant}
             size="small"
           />
           <IconButton size="small" onClick={() => onConfirm(currentText)}>
@@ -70,7 +75,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
           </IconButton>
         </Stack>
       ) : (
-        <Typography variant={variant} sx={{...sx}}>
+        <Typography color={color} variant={variant} sx={{...sx}}>
           {value}
         </Typography>
       )}

@@ -8,6 +8,7 @@ import {
   Container,
   Tab,
   Tabs,
+  Stack,
 } from "@mui/material";
 import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
@@ -16,13 +17,16 @@ import {useAppContext} from "./context";
 import {Select} from "../components/Select";
 import {navigationItems} from "./navigation";
 import {Link, useLocation, useNavigate} from "react-router-dom";
+import {PlayerUserInfo} from "./PlayerUserInfo";
+import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
-  const {appLoading, season, seasons, user, setSeason, handleLogout} =
+  const {appLoading, season, seasons, user, player, setSeason, handleLogout} =
     useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
+  const downLg = useDownBreakpoint("lg");
 
   const [tabValue, setTabValue] = useState<string | boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
@@ -109,12 +113,16 @@ const DesktopAppBar = () => {
                       />
                     ))}
                 </Tabs>
-                <IconButton
-                  onClick={handleAuthClick}
-                  color="inherit"
-                  sx={{ml: "auto"}}>
-                  {user ? <Logout /> : <Key />}
-                </IconButton>
+                <Stack
+                  direction="row"
+                  sx={{ml: "auto", gap: 2, alignItems: "center"}}>
+                  {player && user && !downLg && (
+                    <PlayerUserInfo player={player} user={user} />
+                  )}
+                  <IconButton onClick={handleAuthClick} color="inherit">
+                    {user ? <Logout /> : <Key />}
+                  </IconButton>
+                </Stack>
               </>
             )}
           </Toolbar>

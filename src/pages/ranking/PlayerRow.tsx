@@ -10,8 +10,11 @@ const PlayerRow = ({
 }) => {
   return (
     <Stack direction="row" sx={{alignItems: "center", gap: 2}}>
-      <Avatar src={player.avatar} alt={`${player.surname} ${player.name}`} />
-      <Typography>{`${player.surname} ${player.name}`}</Typography>
+      <Avatar
+        src={player.avatar}
+        alt={`${player.surname ?? ""} ${player.name ?? ""}`}
+      />
+      <Typography>{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
       {actions && (
         <Stack direction="row" sx={{gap: 1, ml: "auto"}}>
           {actions}

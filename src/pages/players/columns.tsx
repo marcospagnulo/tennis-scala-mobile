@@ -37,11 +37,8 @@ const columns: GridColDef[] = [
     renderCell: params => (
       <Stack
         sx={{height: "100%", alignItems: "center", justifyContent: "center"}}>
-        {params.value === "male" ? (
-          <Male htmlColor="blue" />
-        ) : (
-          <Female htmlColor="pink" />
-        )}
+        {params.value === "male" && <Male htmlColor="blue" />}
+        {params.value === "female" && <Female htmlColor="pink" />}
       </Stack>
     ),
   },

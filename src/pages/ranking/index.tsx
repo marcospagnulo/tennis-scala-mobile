@@ -70,6 +70,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     if (!season) return;
     setFilters([{fieldPath: "seasonId", opStr: "==", value: season.id}]);
   }, [season]);
+
   useEffect(() => {
     const groupSize = Math.round(seasonPlayers.length / 4);
     const newGroupedPlayers: groupedPlayersType = {1: [], 2: [], 3: [], 4: []};

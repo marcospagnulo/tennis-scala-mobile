@@ -37,7 +37,7 @@ import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../hooks/useQueryCollection";
 
 export interface Entity {
-  id: string;
+  id: string | undefined;
   [key: string]: any;
 }
 

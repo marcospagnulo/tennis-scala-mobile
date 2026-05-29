@@ -8,23 +8,28 @@ export type User = {
   role: role;
 };
 
+export const genderMap: Record<string, string> = {
+  male: "Uomo",
+  female: "Donna",
+  other: "Altro",
+};
 export type PlayerStatus = "active" | "excluded" | "justified";
 export interface Player {
-  id?: string;
+  id: string | undefined;
   userId?: string;
   name?: string;
   surname?: string;
   avatar?: string;
   gender?: "male" | "female" | "other";
-  birthDate?: Timestamp | null;
-  phone?: string | null;
-  email?: string | null;
+  birthDate?: Timestamp;
+  phone?: string;
+  email?: string;
   status?: PlayerStatus;
   createdAt?: Timestamp;
 }
 
 export interface Season {
-  id: string;
+  id: string | undefined;
   name: string;
   startDate: Timestamp;
   weeks: number;
@@ -32,7 +37,7 @@ export interface Season {
 }
 
 export interface Period {
-  id: string;
+  id: string | undefined;
   seasonId: string;
   startDate: Timestamp;
   endDate: Timestamp;
@@ -40,7 +45,7 @@ export interface Period {
 }
 
 export interface Ranking {
-  id: string;
+  id: string | undefined;
   player: Player;
   seasonId: string;
   points: number;
