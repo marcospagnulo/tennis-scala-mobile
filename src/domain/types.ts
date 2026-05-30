@@ -13,7 +13,14 @@ export const genderMap: Record<string, string> = {
   female: "Donna",
   other: "Altro",
 };
-export type PlayerStatus = "active" | "excluded" | "justified";
+
+export const playerStatusMap: Record<string, string> = {
+  active: "Attivo",
+  excluded: "Escluso",
+  unactive: "Non disponibile",
+};
+
+export type PlayerStatus = "active" | "excluded" | "unactive";
 export interface Player {
   id: string | undefined;
   userId?: string;
@@ -24,7 +31,6 @@ export interface Player {
   birthDate?: Timestamp;
   phone?: string;
   email?: string;
-  status?: PlayerStatus;
   createdAt?: Timestamp;
 }
 
@@ -51,6 +57,7 @@ export interface Ranking {
   points: number;
   wins: number;
   losses: number;
+  status: PlayerStatus;
 }
 
 export type querySort = {

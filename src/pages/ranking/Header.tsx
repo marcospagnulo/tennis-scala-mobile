@@ -56,7 +56,7 @@ const RankingHeader = () => {
           align="center">
           {mobile ? "S" : "Sconfitte"}
         </Typography>
-        <Box sx={{width: 40}} />
+        <Box sx={{width: 16}} />
       </Stack>
     </Stack>
   );

@@ -17,7 +17,7 @@ import {RankingRow} from "./row";
 import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
-import {addPlayers, handleEdit} from "./functions";
+import {addPlayers, editRanking} from "./functions";
 
 type groupedPlayersType = {
   1: Ranking[];
@@ -86,7 +86,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               key={`ranking-${r.position}`}
               ranking={r}
               divider={(index + 1) % group.length === 0 && gindex !== 4}
-              onEdit={(field, value) => handleEdit(season!, r, field, value)}
+              onEdit={(field, value) => editRanking(season!, r, field, value)}
               bgColor={getRankingBgColor(index, group.length, gindex)}
             />
           ))}

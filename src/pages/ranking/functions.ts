@@ -1,4 +1,4 @@
-import {doc, updateDoc} from "firebase/firestore";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {collections} from "../../lib/firebase";
 import type {Player, Ranking, Season} from "../../domain/types";
 
@@ -27,7 +27,7 @@ const swapPositions = (season: Season, pos1: number, pos2: number) => {
   });
 };
 
-const handleEdit = async (
+const editRanking = async (
   season: Season,
   ranking: Ranking,
   field: string,
@@ -69,6 +69,7 @@ const addPlayers = async (season: Season, players: Player[]) => {
     losses: 0,
     wins: 0,
     points: 0,
+    status: "active",
   }));
   updatedSeason.ranking = [...updatedSeason.ranking, ...ranking];
 
@@ -92,4 +93,36 @@ const deletePlayer = async (season: Season, ranking: Ranking) => {
   });
 };
 
-export {handleEdit, deletePlayer, addPlayers, swapPositions};
+const refreshPlayer = async (season: Season, ranking: Ranking) => {
+  if (!collections) return;
+
+  const playerRef = doc(collections.players, ranking.player.id);
+  const playerSnap = await getDoc(playerRef);
+
+  if (!playerSnap.exists()) {
+    deletePlayer(season, ranking);
+    return;
+  }
+
+  const playerData = playerSnap.data() as Player;
+  const updatedRanking = {
+    ...ranking,
+    player: {
+      id: playerData.id,
+      name: playerData.name,
+      surname: playerData.surname,
+    },
+  };
+
+  const updatedSeason = {...season};
+  updatedSeason.ranking = updatedSeason.ranking?.map(r =>
+    r.player.id === ranking.player.id ? updatedRanking : r,
+  );
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
+export {editRanking, deletePlayer, addPlayers, swapPositions, refreshPlayer};
