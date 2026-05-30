@@ -104,15 +104,11 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           overflow: "hidden",
         }}
         divider={<Divider />}>
-        <Typography variant="h6" gutterBottom align="center">
-          Classifica
-        </Typography>
         <RankingHeader />
         <Stack
           sx={{
             overflow: "auto",
             flex: "1 1 0",
-            mb: 9,
           }}>
           <Stack>{renderGroup(groupedPlayers[1], 1)}</Stack>
           <Stack>{renderGroup(groupedPlayers[2], 2)}</Stack>

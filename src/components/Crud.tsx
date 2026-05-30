@@ -8,7 +8,6 @@ import {
   Paper,
   Stack,
   TextField,
-  Typography,
   type SvgIconProps,
   type SxProps,
 } from "@mui/material";
@@ -202,9 +201,6 @@ export function Crud<T extends Entity>({
 
   return (
     <Stack sx={{...sx}}>
-      <Typography variant="h6" gutterBottom>
-        {title}
-      </Typography>
       <Paper
         sx={{
           flex: "1 1 0",

@@ -27,32 +27,32 @@ const navigationItems: NavigationItem[] = [
     path: "/",
     label: "Dashboard",
     icon: DashboardIcon,
-    element: <DashboardPage sx={{flex: 1, py: 2}} />,
+    element: <DashboardPage sx={{flex: 1}} />,
   },
   {
     path: "/seasons",
     label: "Stagioni",
     icon: SeasonIcon,
-    element: <SeasonsPage sx={{flex: 1, py: 2}} />,
+    element: <SeasonsPage sx={{flex: 1}} />,
     admin: true,
   },
   {
     path: "/ranking",
     label: "Classifica",
     icon: RankingIcon,
-    element: <RankingPage sx={{flex: 1, py: 2}} />,
+    element: <RankingPage sx={{flex: 1}} />,
   },
   {
     path: "/matches",
     label: "Partite",
     icon: MatchIcon,
-    element: <MatchesPage sx={{flex: 1, py: 2}} />,
+    element: <MatchesPage sx={{flex: 1}} />,
   },
   {
     path: "/players",
     label: "Giocatori",
     icon: PlayersIcon,
-    element: <PlayersPage sx={{flex: 1, py: 2}} />,
+    element: <PlayersPage sx={{flex: 1}} />,
   },
 ];
 

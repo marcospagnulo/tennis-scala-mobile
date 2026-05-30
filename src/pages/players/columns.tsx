@@ -21,19 +21,20 @@ const columns: GridColDef[] = [
       );
     },
   },
-  {field: "surname", headerName: "Cognome", flex: 1},
-  {field: "name", headerName: "Nome", flex: 1},
+  {field: "surname", headerName: "Cognome", flex: 1, minWidth: 150},
+  {field: "name", headerName: "Nome", flex: 1, minWidth: 150},
   {
     field: "birthDate",
     headerName: "Data di Nascita",
     flex: 1,
+    minWidth: 120,
     valueGetter: (value: Timestamp) =>
       value ? dayjs(value.toDate()).format("DD/MM/YYYY") : "",
   },
   {
     field: "gender",
     headerName: "Sesso",
-    width: 100,
+    width: 70,
     renderCell: params => (
       <Stack
         sx={{height: "100%", alignItems: "center", justifyContent: "center"}}>
@@ -42,8 +43,8 @@ const columns: GridColDef[] = [
       </Stack>
     ),
   },
-  {field: "phone", headerName: "Telefono", flex: 1},
-  {field: "email", headerName: "Email", flex: 1},
+  {field: "phone", headerName: "Telefono", flex: 1, minWidth: 70},
+  {field: "email", headerName: "Email", flex: 1, minWidth: 150},
 ];
 
 export {columns};

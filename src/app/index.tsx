@@ -6,14 +6,9 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {DashboardPage} from "../pages/dashboard";
-import {MatchesPage} from "../pages/Matches";
-import {PlayersPage} from "../pages/players";
 import {MobileAppBar, Drawer} from "../components";
 import {useState} from "react";
-import {SeasonsPage} from "../pages/season";
 import {AppProvider} from "./context";
-import {RankingPage} from "../pages/ranking";
 import {DesktopAppBar} from "./DesktopAppBar";
 import {navigationItems} from "./navigation";
 
@@ -46,7 +41,7 @@ const App = () => {
               flex: "1 1 0",
               display: "flex",
               flexDirection: "column",
-              p: 0,
+              py: mobile ? 0 : 2,
             }}>
             <Routes>
               {navigationItems.map(item => (
@@ -56,26 +51,6 @@ const App = () => {
                   element={item.element}
                 />
               ))}
-              <Route
-                path="/"
-                element={<DashboardPage sx={{flex: 1, p: 2}} />}
-              />
-              <Route
-                path="/players"
-                element={<PlayersPage sx={{flex: 1, p: 2}} />}
-              />
-              <Route
-                path="/matches"
-                element={<MatchesPage sx={{flex: 1, p: 2}} />}
-              />
-              <Route
-                path="/seasons"
-                element={<SeasonsPage sx={{flex: 1, p: 2}} />}
-              />
-              <Route
-                path="/ranking"
-                element={<RankingPage sx={{flex: 1, p: 2}} />}
-              />
             </Routes>
           </Container>
         </Stack>

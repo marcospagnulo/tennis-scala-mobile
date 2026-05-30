@@ -14,7 +14,6 @@ const initialFormData: Partial<Player> = {
   phone: "",
   email: "",
   gender: "male",
-  status: "active",
   avatar: "",
 };
 
@@ -25,7 +24,7 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
       sx={sx}
       collection={collections.players}
       columns={columns}
-      title="Giocatori"
+      title="Giocatore"
       form={Form}
       initialFormData={initialFormData}
     />
