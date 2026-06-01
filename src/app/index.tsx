@@ -43,7 +43,7 @@ const App = () => {
               flex: "1 1 0",
               display: "flex",
               flexDirection: "column",
-              py: mobile ? 0 : 2,
+              ...(mobile && {pl: "0 !important", pr: "0 !important"}),
             }}>
             <Routes>
               {navigationItems.map(item => (

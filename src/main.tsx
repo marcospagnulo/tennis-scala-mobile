@@ -22,9 +22,6 @@ const theme = createTheme({
       paper: "#ffffff",
     },
   },
-  shape: {
-    borderRadius: 10,
-  },
   typography: {
     fontFamily: "Inter, system-ui, sans-serif",
   },

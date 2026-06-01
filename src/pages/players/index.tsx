@@ -6,6 +6,7 @@ import {collections} from "../../lib/firebase";
 import {Crud} from "../../components/Crud";
 import {columns} from "./columns";
 import {Form} from "./form";
+import {useAppContext} from "../../app/context";
 
 const initialFormData: Partial<Player> = {
   name: "",
@@ -18,10 +19,13 @@ const initialFormData: Partial<Player> = {
 };
 
 export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
+  const {mobile} = useAppContext();
+
   if (!collections) return null;
+
   return (
     <Crud<Player>
-      sx={sx}
+      sx={{...sx, ...(!mobile && {py: 2})}}
       collection={collections.players}
       columns={columns}
       title="Giocatore"

@@ -7,6 +7,7 @@ import {Crud} from "../../components/Crud";
 import {columns} from "./columns";
 import {Form} from "./form";
 import dayjs from "dayjs";
+import {useAppContext} from "../../app/context";
 
 const initialFormData: Partial<Season> = {
   name: `Stagione ${dayjs().year()}/${dayjs().add(1, "year").year()}`,
@@ -16,11 +17,13 @@ const initialFormData: Partial<Season> = {
 };
 
 export function SeasonsPage({sx}: {sx?: SxProps<Theme>}) {
+  const {mobile} = useAppContext();
+
   if (!collections) return null;
 
   return (
     <Crud<Season>
-      sx={sx}
+      sx={{...sx, ...(!mobile && {py: 2})}}
       collection={collections.seasons}
       columns={columns}
       title="Stagioni"

@@ -15,7 +15,7 @@ const navigationItems: NavigationItem[] = [
     path: "/",
     label: "Dashboard",
     icon: DashboardIcon,
-    element: <DashboardPage sx={{flex: 1}} />,
+    element: <DashboardPage sx={{flex: 1, py: 2}} />,
   },
   {
     path: "/seasons",
@@ -28,7 +28,7 @@ const navigationItems: NavigationItem[] = [
     path: "/ranking",
     label: "Classifica",
     icon: RankingIcon,
-    element: <RankingPage sx={{flex: 1}} />,
+    element: <RankingPage sx={{flex: 1, py: 2}} />,
   },
   {
     path: "/players",
