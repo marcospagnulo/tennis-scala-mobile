@@ -3,6 +3,7 @@ import {
   Container,
   Stack,
   Toolbar,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -11,6 +12,7 @@ import {useState} from "react";
 import {AppProvider} from "./context";
 import {DesktopAppBar} from "./DesktopAppBar";
 import {navigationItems} from "./navigation";
+import {ReportProblem} from "@mui/icons-material";
 
 const App = () => {
   const mobile = useMediaQuery(useTheme().breakpoints.down("md"));
@@ -51,6 +53,20 @@ const App = () => {
                   element={item.element}
                 />
               ))}
+              <Route
+                path="*"
+                element={
+                  <Stack
+                    sx={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}>
+                    <ReportProblem color="error" sx={{fontSize: 180, mb: 2}} />
+                    <Typography variant="h4">Pagina non trovata</Typography>
+                  </Stack>
+                }
+              />
             </Routes>
           </Container>
         </Stack>
