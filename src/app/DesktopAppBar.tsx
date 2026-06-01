@@ -8,7 +8,6 @@ import {
   Container,
   Tab,
   Tabs,
-  Stack,
 } from "@mui/material";
 import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
@@ -17,8 +16,6 @@ import {useAppContext} from "./context";
 import {Select} from "../components/Select";
 import {navigationItems} from "./navigation";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {PlayerUserInfo} from "./PlayerUserInfo";
-import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
@@ -27,13 +24,11 @@ const DesktopAppBar = () => {
     currentSeason,
     seasons,
     user,
-    player,
     setCurrentSeasonId,
     handleLogout,
   } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
-  const downLg = useDownBreakpoint("lg");
 
   const [tabValue, setTabValue] = useState<string | boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
@@ -82,7 +77,7 @@ const DesktopAppBar = () => {
     <>
       <AppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
         <Container maxWidth="md">
-          <Toolbar>
+          <Toolbar sx={{px: "0 !important"}}>
             <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
               <img src={`logo.png`} alt="Logo" style={{height: 48}} />
             </Link>
@@ -120,16 +115,12 @@ const DesktopAppBar = () => {
                       />
                     ))}
                 </Tabs>
-                <Stack
-                  direction="row"
-                  sx={{ml: "auto", gap: 2, alignItems: "center"}}>
-                  {player && user && !downLg && (
-                    <PlayerUserInfo player={player} user={user} />
-                  )}
-                  <IconButton onClick={handleAuthClick} color="inherit">
-                    {user ? <Logout /> : <Key />}
-                  </IconButton>
-                </Stack>
+                <IconButton
+                  sx={{ml: "auto"}}
+                  onClick={handleAuthClick}
+                  color="inherit">
+                  {user ? <Logout /> : <Key />}
+                </IconButton>
               </>
             )}
           </Toolbar>

@@ -20,13 +20,14 @@ const MobileAppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
-  const {season, seasons, user, setSeason, handleLogout} = useAppContext();
+  const {currentSeason, seasons, user, setCurrentSeasonId, handleLogout} =
+    useAppContext();
   const [login, setLogin] = useState<boolean>(false);
 
   const handleSeasonChange = (seasonId: string) => {
     const selectedSeason = seasons.find(s => s.id === seasonId);
     if (selectedSeason) {
-      setSeason(selectedSeason);
+      setCurrentSeasonId(selectedSeason.id!);
     }
   };
 
@@ -51,14 +52,14 @@ const MobileAppBar = ({
           <IconButton onClick={onMenuClick} color="inherit">
             {open ? <MenuOpen /> : <Menu />}
           </IconButton>
-          {season ? (
+          {currentSeason ? (
             <Select<string>
               sx={{color: "primary.contrastText", ml: 2}}
               options={seasons.map(season => ({
                 label: season.name,
-                value: season.id,
+                value: season.id!,
               }))}
-              value={season.id}
+              value={currentSeason.id}
               onChange={handleSeasonChange}
             />
           ) : (
