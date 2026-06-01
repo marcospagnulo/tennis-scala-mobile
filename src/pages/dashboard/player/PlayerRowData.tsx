@@ -62,7 +62,7 @@ const PlayerRowData = ({
           onCancel={handleCancel}
           color="textPrimary"
           type="string"
-          textFieldVariant="outlined"
+          textFieldVariant="standard"
         />
       )}
       {type === "gender" && edit && (
@@ -73,7 +73,7 @@ const PlayerRowData = ({
             value={(value as string) ?? "other"}
             onChange={e => handleConfirm(e.target.value)}
             autoFocus
-            variant="outlined"
+            variant="standard"
             size="small">
             <MenuItem value="other">Altro</MenuItem>
             <MenuItem value="male">Uomo</MenuItem>
@@ -96,6 +96,7 @@ const PlayerRowData = ({
           <MobileDatePicker
             sx={{"& .MuiPickersInputBase-sectionsContainer": {py: 1}}}
             format="DD/MM/YYYY"
+            slotProps={{textField: {variant: "standard", size: "small"}}}
             defaultValue={value ? dayjs((value as Timestamp).toDate()) : null}
             onAccept={handleEditBirthDate}
           />

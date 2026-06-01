@@ -7,7 +7,7 @@ import {useRef, useState} from "react";
 import {EditIcon} from "../../../icons";
 import {DashboardCard} from "../DashboardCard";
 
-const PlayerCard = () => {
+const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
   const {player, setPlayer} = useAppContext();
 
   const [hover, setHover] = useState(false);
@@ -41,6 +41,7 @@ const PlayerCard = () => {
 
   return (
     <DashboardCard
+      direction={direction}
       image={
         <Stack
           sx={{width: "100%", height: "100%", position: "relative"}}
@@ -87,7 +88,7 @@ const PlayerCard = () => {
         </Stack>
       }
       content={
-        <Stack spacing={1} sx={{p: 2, flex: 1}}>
+        <Stack sx={{px: 2, flex: 1}}>
           <PlayerRowData
             label="Nome"
             value={player.name}

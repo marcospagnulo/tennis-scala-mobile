@@ -1,20 +1,21 @@
 import {Box, Card, Stack} from "@mui/material";
-import {useAppContext} from "../../app/context";
 
 const DashboardCard = ({
   image,
   content,
+  direction = "row",
 }: {
   image: React.ReactNode | string;
   content: React.ReactNode;
+  direction?: "row" | "column";
 }) => {
-  const {mobile} = useAppContext();
+  const column = direction === "column";
 
   return (
     <Stack
       sx={{
         position: "relative",
-        mt: mobile ? 2 : 0,
+        mt: column ? 2 : 0,
         borderRadius: 2,
         m: "2px",
         p: "2px",
@@ -23,13 +24,13 @@ const DashboardCard = ({
       <Stack
         sx={{
           position: "absolute",
-          ...(!mobile && {
+          ...(!column && {
             height: "calc(100% - 4px)",
             borderTopLeftRadius: 4,
             borderBottomLeftRadius: 4,
             overflow: "hidden",
           }),
-          ...(mobile && {
+          ...(column && {
             width: "100%",
           }),
         }}>
@@ -37,7 +38,7 @@ const DashboardCard = ({
           sx={{
             width: 8 * 22,
             height: "100%",
-            ...(mobile && {
+            ...(column && {
               height: 8 * 22,
               top: 0,
               bottom: 0,
@@ -52,9 +53,9 @@ const DashboardCard = ({
       <Card
         sx={{
           display: "flex",
-          ...(!mobile && {pl: 22}),
-          ...(mobile && {mt: 11, pt: 9}),
-          flexDirection: mobile ? "column" : "row",
+          ...(!column && {pl: 22}),
+          ...(column && {mt: 11, pt: 12}),
+          flexDirection: column ? "column" : "row",
         }}>
         {content}
       </Card>
