@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Paper,
   Stack,
@@ -34,6 +33,7 @@ import {AddIcon, EditIcon, DeleteIcon} from "../icons";
 import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../hooks/useQueryCollection";
+import {ConfirmDialog} from "./ConfirmDialog";
 
 export interface Entity {
   id: string | undefined;
@@ -260,20 +260,13 @@ export function Crud<T extends Entity>({
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>Conferma Eliminazione</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Sei sicuro di voler eliminare "{itemToDelete?.name}"?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Annulla</Button>
-          <Button onClick={handleConfirmDelete} color="error">
-            Elimina
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmDialog
+        open={openDeleteDialog}
+        title="Conferma Eliminazione"
+        content={`Sei sicuro di voler eliminare "${itemToDelete?.name}"?`}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+      />
     </Stack>
   );
 }
