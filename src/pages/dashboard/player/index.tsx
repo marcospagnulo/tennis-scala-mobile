@@ -88,7 +88,7 @@ const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
         </Stack>
       }
       content={
-        <Stack sx={{px: 2, flex: 1}}>
+        <Stack sx={{px: 2, pb: 2, flex: 1}}>
           <PlayerRowData
             label="Nome"
             value={player.name}
@@ -102,6 +102,13 @@ const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
             editable
             type="string"
             onEdit={v => handleEdit("surname", v)}
+          />
+          <PlayerRowData
+            label="Telefono"
+            value={player.phone}
+            editable
+            type="tel"
+            onEdit={v => handleEdit("phone", v)}
           />
           <PlayerRowData
             label="Data di nascita"

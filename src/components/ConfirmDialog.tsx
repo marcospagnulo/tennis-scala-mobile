@@ -27,8 +27,10 @@ const ConfirmDialog = ({
         <DialogContentText>{content}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(false)}>Annulla</Button>
-        <Button onClick={onConfirm} color="error">
+        <Button onClick={() => onClose(false)} variant="outlined" color="error">
+          Annulla
+        </Button>
+        <Button onClick={onConfirm} color="primary" variant="contained">
           Conferma
         </Button>
       </DialogActions>

@@ -53,6 +53,7 @@ const DashboardCard = ({
       <Card
         sx={{
           display: "flex",
+          flex: 1,
           ...(!column && {pl: 22}),
           ...(column && {mt: 11, pt: 12}),
           flexDirection: column ? "column" : "row",

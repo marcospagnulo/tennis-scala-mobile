@@ -1,5 +1,7 @@
 import {
   Avatar,
+  Box,
+  Button,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -11,7 +13,9 @@ import {collections} from "../../../lib/firebase";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import {doc, getDoc} from "firebase/firestore";
-import {ReportProblem} from "@mui/icons-material";
+import {Refresh, ReportProblem} from "@mui/icons-material";
+import {useRefreshRanking} from "../../../functions/ranking/useRefreshRanking";
+import {useAppContext} from "../../../app/context";
 
 const RowData = ({label, value}: {label: string; value?: string}) => (
   <Stack direction="row" spacing={1}>
@@ -31,6 +35,8 @@ const PlayerInfo = ({
 }) => {
   const [player, setPlayer] = useState<Player>();
   const [loading, setLoading] = useState(true);
+  const {currentSeason} = useAppContext();
+  const {loading: refreshLoading, refreshRanking} = useRefreshRanking();
 
   useEffect(() => {
     if (!collections || !open) {
@@ -55,10 +61,15 @@ const PlayerInfo = ({
       .catch(() => setLoading(false));
   }, [ranking.player.id, open]);
 
+  const handleRefresh = () => {
+    refreshRanking(currentSeason!, ranking);
+    onClose();
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogContent
-        sx={{height: "360px", display: "flex", flexDirection: "column"}}>
+        sx={{height: "50vh", display: "flex", flexDirection: "column"}}>
         {loading && (
           <Stack sx={{alignItems: "center", justifyContent: "center", flex: 1}}>
             <CircularProgress />
@@ -83,6 +94,16 @@ const PlayerInfo = ({
                   : undefined
               }
             />
+            <Box>
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<Refresh />}
+                disabled={refreshLoading}
+                onClick={handleRefresh}>
+                Ricarica dati anagrafici
+              </Button>
+            </Box>
           </Stack>
         )}
         {!loading && !player && (

@@ -14,7 +14,7 @@ type EditableTypographyProps = {
   edit: boolean;
   sx?: SxProps;
   label?: string;
-  type?: "string" | "number";
+  type?: React.InputHTMLAttributes<unknown>["type"] | undefined;
   color?: TypographyProps["color"];
   textFieldVariant: "standard" | "outlined" | "filled";
   variant?:

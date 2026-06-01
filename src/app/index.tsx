@@ -58,12 +58,13 @@ const App = () => {
                 path="*"
                 element={
                   <Stack
+                    spacing={2}
                     sx={{
                       flex: 1,
                       alignItems: "center",
                       justifyContent: "center",
                     }}>
-                    <ReportProblem color="error" sx={{fontSize: 180, mb: 2}} />
+                    <ReportProblem color="error" sx={{fontSize: 180}} />
                     <Typography variant="h4">Pagina non trovata</Typography>
                   </Stack>
                 }

@@ -1,11 +1,4 @@
-import {
-  Box,
-  IconButton,
-  Link,
-  Stack,
-  Typography,
-  type SxProps,
-} from "@mui/material";
+import {IconButton, Link, Stack, Typography, type SxProps} from "@mui/material";
 import type {Player, Ranking} from "../../../domain/types";
 import {useState} from "react";
 import {useAppContext} from "../../../app/context";
@@ -13,12 +6,11 @@ import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
 import {DeleteIcon} from "../../../icons";
-import {ExpandLess, ExpandMore, Refresh} from "@mui/icons-material";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
 import {ConfirmDialog, PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
 import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
-import {useRefreshRanking} from "../../../functions/ranking/useRefreshRanking";
 
 const RankingRow = ({
   ranking,
@@ -36,10 +28,8 @@ const RankingRow = ({
 
   const {loading: swapLoading, swapPositions} = useSwapPositions();
   const {loading: deleteLoading, deleteRanking} = useDeleteRanking();
-  const {loading: refreshLoading, refreshRanking} = useRefreshRanking();
   const {loading: editRankingLoading, editRanking} = useEditRanking();
-  const loading =
-    swapLoading || deleteLoading || refreshLoading || editRankingLoading;
+  const loading = swapLoading || deleteLoading || editRankingLoading;
 
   const [hover, setHover] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -95,6 +85,8 @@ const RankingRow = ({
         direction={"row"}
         sx={{
           alignItems: "center",
+          flex: 1,
+          inlineSize: "0px",
           gap: 1,
         }}>
         {ranking.position <= 3 && (
@@ -103,13 +95,18 @@ const RankingRow = ({
             size={isSmallScreen ? 32 : undefined}
           />
         )}
-        <Link href="#" underline="hover" onClick={() => setOpen(true)}>
+        <Link
+          href="#"
+          underline="hover"
+          onClick={() => setOpen(true)}
+          sx={{display: "block", flex: 1, minWidth: 0}}>
           {isSmallScreen ? (
-            <Typography color="textPrimary" variant="subtitle1" sx={truncateSx}>
+            <Typography sx={truncateSx} color="textPrimary" variant="subtitle1">
               {player.surname} {player.name ? player.name[0] : ""}.
             </Typography>
           ) : (
             <Typography
+              sx={truncateSx}
               color="textPrimary"
               variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
           )}
@@ -119,49 +116,46 @@ const RankingRow = ({
           open={open}
           onClose={() => setOpen(false)}
         />
+        {isAdmin && !mobile && (
+          <Stack
+            direction={"row"}
+            spacing={0}
+            sx={{
+              flex: 1,
+              display: hover && !loading ? "flex" : "none",
+            }}>
+            {ranking.position > 1 && (
+              <IconButton
+                size="small"
+                onClick={() =>
+                  swapPositions(
+                    currentSeason,
+                    ranking.position,
+                    ranking.position - 1,
+                  )
+                }>
+                <ExpandLess color="primary" fontSize="inherit" />
+              </IconButton>
+            )}
+            {ranking.position < currentSeason.ranking!.length && (
+              <IconButton
+                size="small"
+                onClick={() =>
+                  swapPositions(
+                    currentSeason,
+                    ranking.position,
+                    ranking.position + 1,
+                  )
+                }>
+                <ExpandMore color="primary" fontSize="inherit" />
+              </IconButton>
+            )}
+            <IconButton size="small" onClick={handleDelete}>
+              <DeleteIcon color="error" fontSize="inherit" />
+            </IconButton>
+          </Stack>
+        )}
       </Stack>
-      <Box sx={{flex: 1}} />
-      {isAdmin && !mobile && (
-        <Stack
-          direction={"row"}
-          spacing={1}
-          sx={{ml: 1, display: hover && !loading ? "flex" : "none"}}>
-          {ranking.position > 1 && (
-            <IconButton
-              size="small"
-              onClick={() =>
-                swapPositions(
-                  currentSeason,
-                  ranking.position,
-                  ranking.position - 1,
-                )
-              }>
-              <ExpandLess color="primary" fontSize="inherit" />
-            </IconButton>
-          )}
-          {ranking.position < currentSeason.ranking!.length && (
-            <IconButton
-              size="small"
-              onClick={() =>
-                swapPositions(
-                  currentSeason,
-                  ranking.position,
-                  ranking.position + 1,
-                )
-              }>
-              <ExpandMore color="primary" fontSize="inherit" />
-            </IconButton>
-          )}
-          <IconButton
-            size="small"
-            onClick={() => refreshRanking(currentSeason, ranking)}>
-            <Refresh color="primary" fontSize="inherit" />
-          </IconButton>
-          <IconButton size="small" onClick={handleDelete}>
-            <DeleteIcon color="error" fontSize="inherit" />
-          </IconButton>
-        </Stack>
-      )}
       <EditableField
         width={mobile ? 25 : 100}
         field="points"

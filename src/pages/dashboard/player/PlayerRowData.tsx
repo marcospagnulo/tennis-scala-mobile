@@ -23,7 +23,7 @@ const PlayerRowData = ({
   label: string;
   value: string | Timestamp | undefined | null;
   editable?: boolean;
-  type: "string" | "date" | "gender";
+  type: "tel" | "string" | "date" | "gender";
   onEdit: (value: string | number | Timestamp) => void;
 }) => {
   const [edit, setEdit] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const PlayerRowData = ({
       <Typography color="textSecondary" variant="subtitle1">
         {label}
       </Typography>
-      {type === "string" && (
+      {(type === "string" || type === "tel") && (
         <EditableTypography
           variant="body1"
           edit={edit}
@@ -61,7 +61,7 @@ const PlayerRowData = ({
           onConfirm={handleConfirm}
           onCancel={handleCancel}
           color="textPrimary"
-          type="string"
+          type={type}
           textFieldVariant="standard"
         />
       )}
