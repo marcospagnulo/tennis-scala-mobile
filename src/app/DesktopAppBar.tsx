@@ -81,7 +81,7 @@ const DesktopAppBar = () => {
   return (
     <>
       <AppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
-        <Container>
+        <Container maxWidth="md">
           <Toolbar>
             <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
               <img src={`logo.png`} alt="Logo" style={{height: 48}} />

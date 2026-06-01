@@ -39,6 +39,7 @@ const App = () => {
         <Stack sx={{flex: "1 1 0", overflow: "hidden"}}>
           <Toolbar />
           <Container
+            maxWidth="md"
             sx={{
               flex: "1 1 0",
               display: "flex",
