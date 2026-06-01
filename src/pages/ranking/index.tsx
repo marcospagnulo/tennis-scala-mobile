@@ -20,6 +20,7 @@ import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
+import {RankingIcon} from "../../icons";
 
 type groupedPlayersType = {
   1: Ranking[];
@@ -102,25 +103,38 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   return (
     <Stack sx={{...sx}}>
-      <Stack
-        sx={{
-          gap: 1,
-          flex: "1 1 0",
-          overflow: "hidden",
-        }}
-        divider={<Divider />}>
-        <RankingHeader />
+      {(currentSeason?.ranking.length ?? 0) > 12 ? (
         <Stack
           sx={{
-            overflow: "auto",
+            gap: 1,
             flex: "1 1 0",
-          }}>
-          <Stack>{renderGroup(groupedPlayers[1], 1)}</Stack>
-          <Stack>{renderGroup(groupedPlayers[2], 2)}</Stack>
-          <Stack>{renderGroup(groupedPlayers[3], 3)}</Stack>
-          <Stack>{renderGroup(groupedPlayers[4], 4)}</Stack>
+            overflow: "hidden",
+          }}
+          divider={<Divider />}>
+          <RankingHeader />
+          <Stack
+            sx={{
+              overflow: "auto",
+              flex: "1 1 0",
+            }}>
+            <Stack>{renderGroup(groupedPlayers[1], 1)}</Stack>
+            <Stack>{renderGroup(groupedPlayers[2], 2)}</Stack>
+            <Stack>{renderGroup(groupedPlayers[3], 3)}</Stack>
+            <Stack>{renderGroup(groupedPlayers[4], 4)}</Stack>
+          </Stack>
         </Stack>
-      </Stack>
+      ) : (
+        <Stack
+          sx={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+          }}>
+          <RankingIcon color="primary" sx={{fontSize: 180}} />
+          <Typography variant="h5">Classifica non disponibile</Typography>
+        </Stack>
+      )}
       {isAdmin && (
         <Fab
           color="primary"
