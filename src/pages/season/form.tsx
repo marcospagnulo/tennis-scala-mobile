@@ -8,9 +8,14 @@ const Form = (
   formData: Partial<Season>,
   handleChange: (key: keyof Partial<Season>, value: any) => void,
 ) => {
-  const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+  const handleStartChange = (date: dayjs.Dayjs | null) => {
     if (!date) return;
-    handleChange("startDate", new Timestamp(date.toDate().getTime() / 1000, 0));
+    handleChange("start", new Timestamp(date.toDate().getTime() / 1000, 0));
+  };
+
+  const handleEndChange = (date: dayjs.Dayjs | null) => {
+    if (!date) return;
+    handleChange("end", new Timestamp(date.toDate().getTime() / 1000, 0));
   };
 
   return (
@@ -26,20 +31,19 @@ const Form = (
       <Box sx={{mt: 2, mb: 1}}>
         <DatePicker
           format="DD/MM/YYYY"
-          label="Data di Inizio"
-          value={formData.startDate ? dayjs(formData.startDate.toDate()) : null}
-          onChange={handleStartDateChange}
+          label="Inizio"
+          value={formData.start ? dayjs(formData.start.toDate()) : null}
+          onChange={handleStartChange}
         />
       </Box>
-      <TextField
-        fullWidth
-        label="Settimane"
-        name="weeks"
-        type="number"
-        value={formData.weeks}
-        onChange={e => handleChange("weeks", parseInt(e.target.value, 10))}
-        margin="normal"
-      />
+      <Box sx={{mt: 2, mb: 1}}>
+        <DatePicker
+          format="DD/MM/YYYY"
+          label="Fine"
+          value={formData.end ? dayjs(formData.end.toDate()) : null}
+          onChange={handleEndChange}
+        />
+      </Box>
     </>
   );
 };

@@ -37,17 +37,10 @@ export interface Player {
 export interface Season {
   id: string | undefined;
   name: string;
-  startDate: Timestamp;
-  weeks: number;
+  start: Timestamp;
+  end: Timestamp;
   ranking?: Ranking[];
-  createdAt: Timestamp;
-}
-
-export interface Period {
-  id: string | undefined;
-  seasonId: string;
-  startDate: Timestamp;
-  endDate: Timestamp;
+  periods?: Period[];
   createdAt: Timestamp;
 }
 
@@ -58,6 +51,22 @@ export interface Ranking {
   wins: number;
   losses: number;
   status: PlayerStatus;
+}
+
+export interface Period {
+  startDate: Timestamp;
+  endDate: Timestamp;
+  matches: Match[];
+}
+
+export interface Match {
+  playerId1: string;
+  playerId2: string;
+  result: number[][];
+  player1Approval: boolean;
+  player2Approval: boolean;
+  createdBy: string;
+  date: Timestamp;
 }
 
 export type querySort = {
