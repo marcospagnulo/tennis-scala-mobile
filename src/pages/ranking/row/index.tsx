@@ -15,7 +15,7 @@ import type {Theme} from "@emotion/react";
 import {DeleteIcon} from "../../../icons";
 import {deletePlayer, refreshPlayer, swapPositions} from "../functions";
 import {ExpandLess, ExpandMore, Refresh} from "@mui/icons-material";
-import {PlayerAvatar} from "../../../components";
+import {ConfirmDialog, PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
 
 const RankingRow = ({
@@ -32,6 +32,7 @@ const RankingRow = ({
   const player = ranking.player as Player;
   const [hover, setHover] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
   const {user, mobile, season} = useAppContext();
   const isAdmin = user?.role === "admin";
   const isSmallScreen = useDownBreakpoint("sm");
@@ -39,6 +40,15 @@ const RankingRow = ({
   const handleEdit = (field: string, value: string | number) => {
     onEdit(field, Number(value));
     setHover(false);
+  };
+
+  const handleDelete = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    deletePlayer(season!, ranking);
+    setOpenDeleteDialog(false);
   };
 
   const truncateSx: SxProps<Theme> = {
@@ -130,9 +140,7 @@ const RankingRow = ({
             onClick={() => refreshPlayer(season, ranking)}>
             <Refresh color="primary" fontSize="inherit" />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={() => deletePlayer(season, ranking)}>
+          <IconButton size="small" onClick={handleDelete}>
             <DeleteIcon color="error" fontSize="inherit" />
           </IconButton>
         </Stack>
@@ -173,7 +181,15 @@ const RankingRow = ({
         sx={{
           width: 16,
           gap: 1,
-        }}></Stack>
+        }}
+      />
+      <ConfirmDialog
+        open={openDeleteDialog}
+        title="Conferma eliminazione"
+        content={`Sei sicuro di voler eliminare ${player.surname} ${player.name}?`}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setOpenDeleteDialog(false)}
+      />
     </Stack>
   );
 };
