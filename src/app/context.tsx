@@ -127,7 +127,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
         doc => ({...doc.data(), id: doc.id}) as Season,
       );
       const lastSeason = seasons.sort(
-        (a, b) => b.startDate.seconds - a.startDate.seconds,
+        (a, b) => b.start.seconds - a.start.seconds,
       )[0];
       if (lastSeason) {
         setSeasons(seasons);
