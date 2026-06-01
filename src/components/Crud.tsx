@@ -32,7 +32,7 @@ import type {Theme} from "@emotion/react";
 import {AddIcon, EditIcon, DeleteIcon} from "../icons";
 import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
-import {useQueryCollection} from "../hooks/useQueryCollection";
+import {useQueryCollection} from "../functions/useQueryCollection";
 import {ConfirmDialog} from "./ConfirmDialog";
 
 export interface Entity {

@@ -13,32 +13,40 @@ import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
 import {DeleteIcon} from "../../../icons";
-import {deletePlayer, refreshPlayer, swapPositions} from "../functions";
 import {ExpandLess, ExpandMore, Refresh} from "@mui/icons-material";
 import {ConfirmDialog, PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
+import {useEditRanking, useSwapPositions} from "../../../functions";
+import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
+import {useRefreshRanking} from "../../../functions/ranking/useRefreshRanking";
 
 const RankingRow = ({
   ranking,
   bgColor,
   divider,
-  onEdit,
 }: {
   ranking: Ranking;
   divider: boolean;
   bgColor?: string;
-  onEdit: (field: string, value: string | number) => void;
 }) => {
   const player = ranking.player as Player;
-  const [hover, setHover] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
-  const {user, mobile, season} = useAppContext();
+  const {user, mobile, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
   const isSmallScreen = useDownBreakpoint("sm");
 
+  const {loading: swapLoading, swapPositions} = useSwapPositions();
+  const {loading: deleteLoading, deleteRanking} = useDeleteRanking();
+  const {loading: refreshLoading, refreshRanking} = useRefreshRanking();
+  const {loading: editRankingLoading, editRanking} = useEditRanking();
+  const loading =
+    swapLoading || deleteLoading || refreshLoading || editRankingLoading;
+
+  const [hover, setHover] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
   const handleEdit = (field: string, value: string | number) => {
-    onEdit(field, Number(value));
+    editRanking(currentSeason!, ranking, field, value);
     setHover(false);
   };
 
@@ -47,7 +55,7 @@ const RankingRow = ({
   };
 
   const handleConfirmDelete = () => {
-    deletePlayer(season!, ranking);
+    deleteRanking(currentSeason!, ranking);
     setOpenDeleteDialog(false);
   };
 
@@ -57,7 +65,7 @@ const RankingRow = ({
     whiteSpace: "nowrap",
   };
 
-  if (!season) return null;
+  if (!currentSeason) return null;
 
   return (
     <Stack
@@ -72,6 +80,7 @@ const RankingRow = ({
           borderBottom: "2px solid",
           borderColor: "primary.main",
         }),
+        opacity: loading ? 0.5 : 1,
       }}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
@@ -116,28 +125,36 @@ const RankingRow = ({
         <Stack
           direction={"row"}
           spacing={1}
-          sx={{ml: 1, display: hover ? "flex" : "none"}}>
+          sx={{ml: 1, display: hover && !loading ? "flex" : "none"}}>
           {ranking.position > 1 && (
             <IconButton
               size="small"
               onClick={() =>
-                swapPositions(season, ranking.position, ranking.position - 1)
+                swapPositions(
+                  currentSeason,
+                  ranking.position,
+                  ranking.position - 1,
+                )
               }>
               <ExpandLess color="primary" fontSize="inherit" />
             </IconButton>
           )}
-          {ranking.position < season.ranking!.length && (
+          {ranking.position < currentSeason.ranking!.length && (
             <IconButton
               size="small"
               onClick={() =>
-                swapPositions(season, ranking.position, ranking.position + 1)
+                swapPositions(
+                  currentSeason,
+                  ranking.position,
+                  ranking.position + 1,
+                )
               }>
               <ExpandMore color="primary" fontSize="inherit" />
             </IconButton>
           )}
           <IconButton
             size="small"
-            onClick={() => refreshPlayer(season, ranking)}>
+            onClick={() => refreshRanking(currentSeason, ranking)}>
             <Refresh color="primary" fontSize="inherit" />
           </IconButton>
           <IconButton size="small" onClick={handleDelete}>

@@ -22,8 +22,15 @@ import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
-  const {appLoading, season, seasons, user, player, setSeason, handleLogout} =
-    useAppContext();
+  const {
+    appLoading,
+    currentSeason,
+    seasons,
+    user,
+    player,
+    setCurrentSeasonId,
+    handleLogout,
+  } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const downLg = useDownBreakpoint("lg");
@@ -34,7 +41,7 @@ const DesktopAppBar = () => {
   const handleSeasonChange = (seasonId: string) => {
     const selectedSeason = seasons.find(s => s.id === seasonId);
     if (selectedSeason) {
-      setSeason(selectedSeason);
+      setCurrentSeasonId(selectedSeason.id!);
     }
   };
 
@@ -79,14 +86,14 @@ const DesktopAppBar = () => {
             <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
               <img src={`logo.png`} alt="Logo" style={{height: 48}} />
             </Link>
-            {season ? (
+            {currentSeason ? (
               <Select<string>
                 sx={{color: "primary.contrastText", ml: 2}}
                 options={seasons.map(season => ({
                   label: season.name,
                   value: season.id!,
                 }))}
-                value={season.id}
+                value={currentSeason.id}
                 onChange={handleSeasonChange}
               />
             ) : (

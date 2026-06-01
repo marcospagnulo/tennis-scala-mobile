@@ -1,4 +1,6 @@
 import {
+  Backdrop,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -17,7 +19,7 @@ import {RankingRow} from "./row";
 import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
-import {addPlayers, editRanking} from "./functions";
+import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 
 type groupedPlayersType = {
   1: Ranking[];
@@ -28,8 +30,10 @@ type groupedPlayersType = {
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
-  const {user, season} = useAppContext();
+  const {user, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
+
+  const {loading, addPlayers} = useAddPlayers();
 
   const [dialog, setDialog] = useState(false);
   const [groupedPlayers, setGroupedPlayers] = useState<groupedPlayersType>({
@@ -40,22 +44,24 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   });
 
   useEffect(() => {
-    if (!season || !season.ranking) return;
+    if (!currentSeason || !currentSeason.ranking) return;
 
     const groupSize =
-      season.ranking.length > 4 ? Math.round(season.ranking.length / 4) : 1;
+      currentSeason.ranking.length > 4
+        ? Math.round(currentSeason.ranking.length / 4)
+        : 1;
     const newGroupedPlayers: groupedPlayersType = {1: [], 2: [], 3: [], 4: []};
-    season.ranking.forEach((player, index) => {
+    currentSeason.ranking.forEach((player, index) => {
       const group = Math.min(Math.floor(index / groupSize) + 1, 4);
       newGroupedPlayers[group as 1 | 2 | 3 | 4].push(player);
     });
     setGroupedPlayers(newGroupedPlayers);
-  }, [season]);
+  }, [currentSeason]);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
-    if (!season) return;
-    await addPlayers(season, players);
+    if (!currentSeason) return;
+    await addPlayers(currentSeason, players);
   };
 
   const getRankingBgColor = (
@@ -86,7 +92,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               key={`ranking-${r.position}`}
               ranking={r}
               divider={(index + 1) % group.length === 0 && gindex !== 4}
-              onEdit={(field, value) => editRanking(season!, r, field, value)}
               bgColor={getRankingBgColor(index, group.length, gindex)}
             />
           ))}
@@ -134,6 +139,9 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <PlayerList onSelect={handleAddPlayers} sx={{height: "70vh"}} />
         </DialogContent>
       </Dialog>
+      <Backdrop open={loading} sx={{zIndex: theme => theme.zIndex.drawer + 1}}>
+        <CircularProgress />
+      </Backdrop>
     </Stack>
   );
 };

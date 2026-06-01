@@ -79,7 +79,7 @@ const addPlayers = async (season: Season, players: Player[]) => {
   });
 };
 
-const deletePlayer = async (season: Season, ranking: Ranking) => {
+const deleteRanking = async (season: Season, ranking: Ranking) => {
   if (!collections) return;
 
   const updatedSeason = {...season};
@@ -94,14 +94,14 @@ const deletePlayer = async (season: Season, ranking: Ranking) => {
   });
 };
 
-const refreshPlayer = async (season: Season, ranking: Ranking) => {
+const refreshRanking = async (season: Season, ranking: Ranking) => {
   if (!collections) return;
 
   const playerRef = doc(collections.players, ranking.player.id);
   const playerSnap = await getDoc(playerRef);
 
   if (!playerSnap.exists()) {
-    deletePlayer(season, ranking);
+    deleteRanking(season, ranking);
     return;
   }
 
@@ -126,4 +126,4 @@ const refreshPlayer = async (season: Season, ranking: Ranking) => {
   });
 };
 
-export {editRanking, deletePlayer, addPlayers, swapPositions, refreshPlayer};
+export {swapPositions, editRanking, addPlayers, deleteRanking, refreshRanking};

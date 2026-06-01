@@ -2,6 +2,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {collections} from "../lib/firebase";
 import {
   addDoc,
+  doc,
   getDocs,
   onSnapshot,
   query,
@@ -26,8 +27,8 @@ export type AppContextType = {
   setPlayer: (player: Player) => void;
   appLoading: boolean;
   setAppLoading: (loading: boolean) => void;
-  season?: Season;
-  setSeason: (season: Season) => void;
+  currentSeason?: Season;
+  setCurrentSeasonId: (id: string) => void;
   handleLogout: () => Promise<void>;
   mobile: boolean;
   seasons: Season[];
@@ -47,9 +48,10 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
   const downMd = useDownBreakpoint("md");
-  const [user, setUser] = useState<User | null | undefined>(undefined);
-  const [player, setPlayer] = useState<Player | null | undefined>(undefined);
-  const [season, setSeason] = useState<Season | undefined>(undefined);
+  const [user, setUser] = useState<User | null | undefined>();
+  const [player, setPlayer] = useState<Player | null | undefined>();
+  const [currentSeasonId, setCurrentSeasonId] = useState<string>();
+  const [currentSeason, setCurrentSeason] = useState<Season>();
   const [mobile, setMobile] = useState<boolean>(downMd);
   const [appLoading, setAppLoading] = useState<boolean>(true);
 
@@ -118,10 +120,25 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     return () => unsubscribe();
   }, []);
 
-  // Set current season
+  // Refresh current season
+  useEffect(() => {
+    if (!collections || !currentSeasonId) return;
+
+    const seasonDoc = doc(collections.seasons, currentSeasonId);
+    const unsubscribe = onSnapshot(seasonDoc, snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        setCurrentSeason({...data, id: snapshot.id} as Season);
+      } else {
+        setCurrentSeason(undefined);
+      }
+    });
+    return () => unsubscribe();
+  }, [currentSeasonId]);
+
   useEffect(() => {
     if (seasons.length > 0) {
-      setSeason(seasons[0]);
+      setCurrentSeasonId(seasons[0].id);
     }
   }, [seasons]);
 
@@ -139,12 +156,12 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   return (
     <AppContext.Provider
       value={{
-        season,
         mobile,
-        setSeason,
         user,
         player,
         setPlayer,
+        currentSeason,
+        setCurrentSeasonId,
         handleLogout,
         appLoading,
         setAppLoading,

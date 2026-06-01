@@ -1,6 +1,6 @@
 import {Button, Stack, TextField, type SxProps} from "@mui/material";
 import type {Player, queryFilter, querySort} from "../../../domain/types";
-import {useQueryCollection} from "../../../hooks/useQueryCollection";
+import {useQueryCollection} from "../../../functions/useQueryCollection";
 import {collections} from "../../../lib/firebase";
 import {useState} from "react";
 import type {
