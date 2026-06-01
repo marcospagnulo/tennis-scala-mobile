@@ -84,7 +84,7 @@ const DesktopAppBar = () => {
                 sx={{color: "primary.contrastText", ml: 2}}
                 options={seasons.map(season => ({
                   label: season.name,
-                  value: season.id,
+                  value: season.id!,
                 }))}
                 value={season.id}
                 onChange={handleSeasonChange}
