@@ -18,6 +18,7 @@ import {
 import {auth} from "../lib/firebase";
 import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 import {Backdrop, CircularProgress} from "@mui/material";
+import {useQueryCollection} from "../functions";
 
 export type AppContextType = {
   user?: User | null;
@@ -49,9 +50,14 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [player, setPlayer] = useState<Player | null | undefined>(undefined);
   const [season, setSeason] = useState<Season | undefined>(undefined);
-  const [seasons, setSeasons] = useState<Season[]>([]);
   const [mobile, setMobile] = useState<boolean>(downMd);
   const [appLoading, setAppLoading] = useState<boolean>(true);
+
+  const {items: seasons, loading: seasonLoading} = useQueryCollection<Season>({
+    collection: collections?.seasons,
+    sort: [{field: "start", direction: "desc"}],
+    skip: user === undefined, // Skip query until auth state is resolved
+  });
 
   useEffect(() => {
     setMobile(downMd);
@@ -112,31 +118,16 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     return () => unsubscribe();
   }, []);
 
-  // Fetch current season after auth state has been resolved
+  // Set current season
   useEffect(() => {
-    if (user === undefined) {
-      return;
+    if (seasons.length > 0) {
+      setSeason(seasons[0]);
     }
-    if (!collections) {
-      setAppLoading(false);
-      return;
-    }
+  }, [seasons]);
 
-    const unsubscribe = onSnapshot(collections?.seasons, snapshot => {
-      const seasons = snapshot.docs.map(
-        doc => ({...doc.data(), id: doc.id}) as Season,
-      );
-      const lastSeason = seasons.sort(
-        (a, b) => b.start.seconds - a.start.seconds,
-      )[0];
-      if (lastSeason) {
-        setSeasons(seasons);
-        setSeason(lastSeason);
-      }
-      setAppLoading(false);
-    });
-    return () => unsubscribe();
-  }, [user]);
+  useEffect(() => {
+    setAppLoading(seasonLoading);
+  }, [seasonLoading]);
 
   const handleLogout = async () => {
     if (auth) {
