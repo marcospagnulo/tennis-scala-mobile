@@ -11,6 +11,8 @@ import dayjs from "dayjs";
 const initialFormData: Partial<Season> = {
   name: `Stagione ${dayjs().year()}/${dayjs().add(1, "year").year()}`,
   start: new Timestamp(new Date().getTime() / 1000, 0),
+  periods: [],
+  ranking: [],
 };
 
 export function SeasonsPage({sx}: {sx?: SxProps<Theme>}) {

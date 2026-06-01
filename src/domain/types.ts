@@ -39,8 +39,8 @@ export interface Season {
   name: string;
   start: Timestamp;
   end: Timestamp;
-  ranking?: Ranking[];
-  periods?: Period[];
+  ranking: Ranking[];
+  periods: Period[];
   createdAt: Timestamp;
 }
 
@@ -54,19 +54,25 @@ export interface Ranking {
 }
 
 export interface Period {
-  startDate: Timestamp;
-  endDate: Timestamp;
+  start: Timestamp;
+  end: Timestamp;
   matches: Match[];
 }
 
 export interface Match {
-  playerId1: string;
-  playerId2: string;
-  result: number[][];
-  player1Approval: boolean;
-  player2Approval: boolean;
-  createdBy: string;
-  date: Timestamp;
+  pid1: string;
+  pid2: string;
+  result: {
+    value: number[][];
+    p1Approved: boolean;
+    p2Approved: boolean;
+  };
+  challenge: {
+    p1Approved: boolean;
+    p2Approved: boolean;
+  };
+  status: "pending" | "approved" | "rejected";
+  createdAt: Timestamp;
 }
 
 export type querySort = {

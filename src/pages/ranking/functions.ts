@@ -37,7 +37,7 @@ const editRanking = async (
 
   const updatedRanking = {...ranking, [field]: value};
   const updatedSeason = {...season};
-  updatedSeason.ranking = updatedSeason.ranking?.map(r =>
+  updatedSeason.ranking = updatedSeason.ranking.map(r =>
     r.player.id === ranking.player.id ? updatedRanking : r,
   );
 
@@ -49,7 +49,7 @@ const editRanking = async (
 
 const addPlayers = async (season: Season, players: Player[]) => {
   const updatedSeason = {...season};
-  const lastPosition = updatedSeason.ranking ? updatedSeason.ranking.length : 0;
+  const lastPosition = updatedSeason.ranking.length;
   let newPlayers = players;
   if (updatedSeason.ranking) {
     //exclude already added players
@@ -83,8 +83,9 @@ const deletePlayer = async (season: Season, ranking: Ranking) => {
   if (!collections) return;
 
   const updatedSeason = {...season};
-  updatedSeason.ranking =
-    updatedSeason.ranking?.filter(r => r.player.id !== ranking.player.id) ?? [];
+  updatedSeason.ranking = updatedSeason.ranking.filter(
+    r => r.player.id !== ranking.player.id,
+  );
   updatedSeason.ranking = recalculatePositions(updatedSeason.ranking);
 
   const seasonDoc = doc(collections!.seasons, season.id);
@@ -115,7 +116,7 @@ const refreshPlayer = async (season: Season, ranking: Ranking) => {
   };
 
   const updatedSeason = {...season};
-  updatedSeason.ranking = updatedSeason.ranking?.map(r =>
+  updatedSeason.ranking = updatedSeason.ranking.map(r =>
     r.player.id === ranking.player.id ? updatedRanking : r,
   );
 
