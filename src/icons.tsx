@@ -8,6 +8,7 @@ import SeasonIcon from "@mui/icons-material/EmojiEvents";
 import RankingIcon from "@mui/icons-material/LeaderboardRounded";
 import ConfirmIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Close";
+import ChallengeIcon from "@mui/icons-material/SportsTennis";
 
 export {
   AddIcon,
@@ -20,4 +21,5 @@ export {
   RankingIcon,
   ConfirmIcon,
   CancelIcon,
+  ChallengeIcon,
 };

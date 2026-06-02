@@ -5,7 +5,7 @@ import {useAppContext} from "../../../app/context";
 import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
-import {DeleteIcon} from "../../../icons";
+import {ChallengeIcon, DeleteIcon} from "../../../icons";
 import {ExpandLess, ExpandMore} from "@mui/icons-material";
 import {ConfirmDialog, PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
@@ -16,10 +16,12 @@ const RankingRow = ({
   ranking,
   bgColor,
   divider,
+  challengeable,
 }: {
   ranking: Ranking;
   divider: boolean;
   bgColor?: string;
+  challengeable?: boolean;
 }) => {
   const player = ranking.player as Player;
   const {user, mobile, currentSeason} = useAppContext();
@@ -95,27 +97,39 @@ const RankingRow = ({
             size={isSmallScreen ? 32 : undefined}
           />
         )}
-        <Link
-          href="#"
-          underline="hover"
-          onClick={() => setOpen(true)}
-          sx={{display: "block", flex: 1, minWidth: 0}}>
-          {isSmallScreen ? (
-            <Typography sx={truncateSx} color="textPrimary" variant="subtitle1">
-              {player.surname} {player.name ? player.name[0] : ""}.
-            </Typography>
-          ) : (
-            <Typography
-              sx={truncateSx}
-              color="textPrimary"
-              variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
+        <Stack
+          spacing={1}
+          sx={{
+            flex: 1,
+            alignItems: "center",
+            minWidth: 0,
+            flexDirection: "row",
+          }}>
+          <Link
+            href="#"
+            underline="hover"
+            onClick={() => setOpen(true)}
+            sx={{display: "block", minWidth: 0, flex: 1}}>
+            {isSmallScreen ? (
+              <Typography
+                sx={truncateSx}
+                color="textPrimary"
+                variant="subtitle1">
+                {player.surname} {player.name ? player.name[0] : ""}.
+              </Typography>
+            ) : (
+              <Typography
+                sx={truncateSx}
+                color="textPrimary"
+                variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
+            )}
+          </Link>
+          {challengeable && (
+            <IconButton size="small">
+              <ChallengeIcon fontSize="inherit" />
+            </IconButton>
           )}
-        </Link>
-        <PlayerInfo
-          ranking={ranking}
-          open={open}
-          onClose={() => setOpen(false)}
-        />
+        </Stack>
         {isAdmin && !mobile && (
           <Stack
             direction={"row"}
@@ -200,6 +214,11 @@ const RankingRow = ({
         content={`Sei sicuro di voler eliminare ${player.surname} ${player.name}?`}
         onConfirm={handleConfirmDelete}
         onClose={() => setOpenDeleteDialog(false)}
+      />
+      <PlayerInfo
+        ranking={ranking}
+        open={open}
+        onClose={() => setOpen(false)}
       />
     </Stack>
   );

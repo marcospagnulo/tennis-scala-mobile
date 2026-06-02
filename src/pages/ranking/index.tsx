@@ -31,12 +31,14 @@ type groupedPlayersType = {
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
-  const {user, currentSeason} = useAppContext();
+  const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
 
   const {loading, addPlayers} = useAddPlayers();
 
-  const [dialog, setDialog] = useState(false);
+  const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
+  const [challengableRange, setChallengeableRange] = useState<number[]>();
+  const [dialog, setDialog] = useState<boolean>(false);
   const [groupedPlayers, setGroupedPlayers] = useState<groupedPlayersType>({
     1: [],
     2: [],
@@ -46,6 +48,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   useEffect(() => {
     if (!currentSeason || !currentSeason.ranking) return;
+
+    setRankingPlayer(
+      currentSeason.ranking.find(r => r.player.id === player?.id),
+    );
 
     const groupSize =
       currentSeason.ranking.length > 4
@@ -57,7 +63,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
       newGroupedPlayers[group as 1 | 2 | 3 | 4].push(player);
     });
     setGroupedPlayers(newGroupedPlayers);
-  }, [currentSeason]);
+  }, [currentSeason, player?.id]);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
@@ -67,20 +73,80 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   const getRankingBgColor = (
     index: number,
+    playerId: string,
     length: number,
     groupIndex: number,
   ) => {
+    const color =
+      player?.id === playerId
+        ? theme.palette.secondary.main
+        : theme.palette.primary.main;
+
     const alternate = groupIndex % 2 === 0;
     const compare = alternate
       ? (a: number, b: number) => a < b
       : (a: number, b: number) => a >= b;
-    return compare(index, length / 2)
-      ? theme.palette.primary.main + "10"
-      : theme.palette.primary.main + "20";
+    return compare(index, length / 2) ? color + "10" : color + "20";
   };
 
-  const renderGroup = (group: Ranking[], gindex: number) => {
+  const findPlayerGroup = (
+    groupedPlayers: groupedPlayersType,
+    playerId?: string,
+  ): number | null => {
+    if (!playerId) return null;
+    for (const group in groupedPlayers) {
+      if (
+        groupedPlayers[group as unknown as 1 | 2 | 3 | 4].some(
+          r => r.player.id === playerId,
+        )
+      ) {
+        return parseInt(group);
+      }
+    }
+    return null;
+  };
+
+  // è possibile sfidare la seconda metà del gruppo precedente se si è nella prima metà del gruppo attuale, altrimenti si possono sfidare tutti quelli del gruppo precedente
+  useEffect(() => {
+    const playerGroupIndex = findPlayerGroup(groupedPlayers, player?.id);
+    const playerGroup = playerGroupIndex
+      ? groupedPlayers[playerGroupIndex as 1 | 2 | 3 | 4]
+      : null;
+
+    if (!playerGroup || !playerGroupIndex) return;
+
+    if (playerGroupIndex > 1) {
+      const prevGroup = groupedPlayers[(playerGroupIndex - 1) as 1 | 2 | 3];
+      const prevGroupMiddlePosition =
+        prevGroup[Math.floor(prevGroup.length / 2)].position;
+      const lastChangellablePosition =
+        playerGroup[playerGroup.length - 1].position;
+
+      const playerIndexInGroup = playerGroup.findIndex(
+        r => r.player.id === player?.id,
+      );
+
+      const start =
+        playerIndexInGroup < Math.floor(playerGroup.length / 2)
+          ? prevGroupMiddlePosition
+          : playerGroup[0].position;
+
+      setChallengeableRange([start, lastChangellablePosition]);
+    } else {
+      setChallengeableRange([
+        playerGroup[0].position,
+        playerGroup[playerGroup.length - 1].position,
+      ]);
+    }
+  }, [groupedPlayers, player?.id]);
+
+  const renderGroup = (
+    groupedPlayers: groupedPlayersType,
+    gindex: 1 | 2 | 3 | 4,
+  ) => {
+    const group = groupedPlayers[gindex];
     if (group.length === 0) return null;
+
     return (
       <Stack direction={"row"}>
         <Stack
@@ -88,14 +154,33 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <Typography variant="h5">{gindex}</Typography>
         </Stack>
         <Stack sx={{flex: 1}}>
-          {group.map((r, index) => (
-            <RankingRow
-              key={`ranking-${r.position}`}
-              ranking={r}
-              divider={(index + 1) % group.length === 0 && gindex !== 4}
-              bgColor={getRankingBgColor(index, group.length, gindex)}
-            />
-          ))}
+          {group.map((r, index) => {
+            let challengablePosition = false;
+            const samePlayer = r.player.id === player?.id;
+            if (
+              challengableRange &&
+              challengableRange.length === 2 &&
+              rankingPlayer
+            ) {
+              challengablePosition =
+                r.position >= challengableRange[0] &&
+                r.position <= challengableRange[1];
+            }
+            return (
+              <RankingRow
+                key={`ranking-${r.position}`}
+                ranking={r}
+                challengeable={!samePlayer && challengablePosition}
+                divider={(index + 1) % group.length === 0 && gindex !== 4}
+                bgColor={getRankingBgColor(
+                  index,
+                  r.player.id!,
+                  group.length,
+                  gindex,
+                )}
+              />
+            );
+          })}
         </Stack>
       </Stack>
     );
@@ -117,10 +202,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               overflow: "auto",
               flex: "1 1 0",
             }}>
-            <Stack>{renderGroup(groupedPlayers[1], 1)}</Stack>
-            <Stack>{renderGroup(groupedPlayers[2], 2)}</Stack>
-            <Stack>{renderGroup(groupedPlayers[3], 3)}</Stack>
-            <Stack>{renderGroup(groupedPlayers[4], 4)}</Stack>
+            <Stack>{renderGroup(groupedPlayers, 1)}</Stack>
+            <Stack>{renderGroup(groupedPlayers, 2)}</Stack>
+            <Stack>{renderGroup(groupedPlayers, 3)}</Stack>
+            <Stack>{renderGroup(groupedPlayers, 4)}</Stack>
           </Stack>
         </Stack>
       ) : (
