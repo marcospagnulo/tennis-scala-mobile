@@ -98,18 +98,25 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     const unsubscribe = onAuthStateChanged(
       auth,
       async (firebaseUser: FirebaseUser | null) => {
-        let user: User | null = null;
-        if (firebaseUser) {
-          const claims = (await firebaseUser.getIdTokenResult()).claims;
-          user = {
-            id: firebaseUser.uid,
-            displayName: firebaseUser.displayName || "",
-            email: firebaseUser.email || "",
-            role: claims.role ? (claims.role as role) : "user",
-          };
+        try {
+          let user: User | null = null;
+          if (firebaseUser) {
+            const claims = (await firebaseUser.getIdTokenResult()).claims;
+            user = {
+              id: firebaseUser.uid,
+              displayName: firebaseUser.displayName || "",
+              email: firebaseUser.email || "",
+              role: claims.role ? (claims.role as role) : "user",
+            };
+          }
+          setUser(user);
+          ensurePlayer(user);
+        } catch (error) {
+          console.error("Error processing auth state change:", error);
+          setUser(null);
+        } finally {
+          setAppLoading(false);
         }
-        setUser(user);
-        ensurePlayer(user);
       },
       (error: Error) => {
         setAppLoading(false);
