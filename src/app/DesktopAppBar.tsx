@@ -8,6 +8,9 @@ import {
   Container,
   Tab,
   Tabs,
+  Tooltip,
+  Stack,
+  Avatar,
 } from "@mui/material";
 import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
@@ -24,6 +27,7 @@ const DesktopAppBar = () => {
     currentSeason,
     seasons,
     user,
+    player,
     setCurrentSeasonId,
     handleLogout,
   } = useAppContext();
@@ -115,12 +119,29 @@ const DesktopAppBar = () => {
                       />
                     ))}
                 </Tabs>
-                <IconButton
-                  sx={{ml: "auto"}}
-                  onClick={handleAuthClick}
-                  color="inherit">
-                  {user ? <Logout /> : <Key />}
-                </IconButton>
+                <Stack
+                  direction={"row"}
+                  sx={{alignItems: "center", ml: "auto"}}
+                  spacing={2}>
+                  {player && (
+                    <>
+                      <Avatar src={player.avatar ?? undefined} />
+                      <Stack>
+                        <Typography variant="body2">{player.name}</Typography>
+                        <Typography variant="body2">
+                          {player.surname}
+                        </Typography>
+                      </Stack>
+                    </>
+                  )}
+                  <IconButton onClick={handleAuthClick} color="inherit">
+                    <Tooltip
+                      title={user ? "Logout" : "Login"}
+                      placement="bottom">
+                      {user ? <Logout /> : <Key />}
+                    </Tooltip>
+                  </IconButton>
+                </Stack>
               </>
             )}
           </Toolbar>
