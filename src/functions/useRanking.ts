@@ -1,0 +1,98 @@
+import {useEffect, useState} from "react";
+import type {Ranking} from "../domain/types";
+import {useAppContext} from "../app/context";
+
+type rankingGroupsType = {
+  1: Ranking[];
+  2: Ranking[];
+  3: Ranking[];
+  4: Ranking[];
+};
+
+const useRanking = () => {
+  const {currentSeason, player} = useAppContext();
+
+  const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
+  const [challengeableRange, setChallengeableRange] =
+    useState<[number, number]>();
+  const [rankingGroups, setRankingGroups] = useState<rankingGroupsType>({
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  });
+
+  const findPlayerGroup = (
+    rankingGroups: rankingGroupsType,
+    playerId?: string,
+  ): number | null => {
+    if (!playerId) return null;
+    for (const group in rankingGroups) {
+      if (
+        rankingGroups[group as unknown as 1 | 2 | 3 | 4].some(
+          r => r.player.id === playerId,
+        )
+      ) {
+        return parseInt(group);
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (!currentSeason || !currentSeason.ranking) return;
+
+    setRankingPlayer(
+      currentSeason.ranking.find(r => r.player.id === player?.id),
+    );
+
+    const groupSize =
+      currentSeason.ranking.length > 4
+        ? Math.round(currentSeason.ranking.length / 4)
+        : 1;
+    const newrankingGroups: rankingGroupsType = {1: [], 2: [], 3: [], 4: []};
+    currentSeason.ranking.forEach((player, index) => {
+      const group = Math.min(Math.floor(index / groupSize) + 1, 4);
+      newrankingGroups[group as 1 | 2 | 3 | 4].push(player);
+    });
+    setRankingGroups(newrankingGroups);
+  }, [currentSeason, player?.id]);
+
+  // è possibile sfidare la seconda metà del gruppo precedente se si è nella prima metà del gruppo attuale, altrimenti si possono sfidare tutti quelli del gruppo precedente
+  useEffect(() => {
+    const playerGroupIndex = findPlayerGroup(rankingGroups, player?.id);
+    const playerGroup = playerGroupIndex
+      ? rankingGroups[playerGroupIndex as 1 | 2 | 3 | 4]
+      : null;
+
+    if (!playerGroup || !playerGroupIndex) return;
+
+    if (playerGroupIndex > 1) {
+      const prevGroup = rankingGroups[(playerGroupIndex - 1) as 1 | 2 | 3];
+      const prevGroupMiddlePosition =
+        prevGroup[Math.floor(prevGroup.length / 2)].position;
+      const lastChangellablePosition =
+        playerGroup[playerGroup.length - 1].position;
+
+      const playerIndexInGroup = playerGroup.findIndex(
+        r => r.player.id === player?.id,
+      );
+
+      const start =
+        playerIndexInGroup < Math.floor(playerGroup.length / 2)
+          ? prevGroupMiddlePosition
+          : playerGroup[0].position;
+
+      setChallengeableRange([start, lastChangellablePosition]);
+    } else {
+      setChallengeableRange([
+        playerGroup[0].position,
+        playerGroup[playerGroup.length - 1].position,
+      ]);
+    }
+  }, [rankingGroups, player?.id]);
+
+  return {challengeableRange, rankingPlayer, rankingGroups};
+};
+
+export {useRanking, type rankingGroupsType};

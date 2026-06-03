@@ -11,59 +11,27 @@ import {
   useTheme,
   type SxProps,
 } from "@mui/material";
-import type {Player, Ranking} from "../../domain/types";
+import type {Player} from "../../domain/types";
 import {Add} from "@mui/icons-material";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
 import {RankingRow} from "./row";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 import {RankingIcon} from "../../icons";
-
-type groupedPlayersType = {
-  1: Ranking[];
-  2: Ranking[];
-  3: Ranking[];
-  4: Ranking[];
-};
+import {useRanking} from "../../functions";
+import type {rankingGroupsType} from "../../functions/useRanking";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
   const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
-
   const {loading, addPlayers} = useAddPlayers();
+  const {challengeableRange, rankingPlayer, rankingGroups} = useRanking();
 
-  const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
-  const [challengableRange, setChallengeableRange] = useState<number[]>();
   const [dialog, setDialog] = useState<boolean>(false);
-  const [groupedPlayers, setGroupedPlayers] = useState<groupedPlayersType>({
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-  });
-
-  useEffect(() => {
-    if (!currentSeason || !currentSeason.ranking) return;
-
-    setRankingPlayer(
-      currentSeason.ranking.find(r => r.player.id === player?.id),
-    );
-
-    const groupSize =
-      currentSeason.ranking.length > 4
-        ? Math.round(currentSeason.ranking.length / 4)
-        : 1;
-    const newGroupedPlayers: groupedPlayersType = {1: [], 2: [], 3: [], 4: []};
-    currentSeason.ranking.forEach((player, index) => {
-      const group = Math.min(Math.floor(index / groupSize) + 1, 4);
-      newGroupedPlayers[group as 1 | 2 | 3 | 4].push(player);
-    });
-    setGroupedPlayers(newGroupedPlayers);
-  }, [currentSeason, player?.id]);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
@@ -89,62 +57,11 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     return compare(index, length / 2) ? color + "10" : color + "20";
   };
 
-  const findPlayerGroup = (
-    groupedPlayers: groupedPlayersType,
-    playerId?: string,
-  ): number | null => {
-    if (!playerId) return null;
-    for (const group in groupedPlayers) {
-      if (
-        groupedPlayers[group as unknown as 1 | 2 | 3 | 4].some(
-          r => r.player.id === playerId,
-        )
-      ) {
-        return parseInt(group);
-      }
-    }
-    return null;
-  };
-
-  // è possibile sfidare la seconda metà del gruppo precedente se si è nella prima metà del gruppo attuale, altrimenti si possono sfidare tutti quelli del gruppo precedente
-  useEffect(() => {
-    const playerGroupIndex = findPlayerGroup(groupedPlayers, player?.id);
-    const playerGroup = playerGroupIndex
-      ? groupedPlayers[playerGroupIndex as 1 | 2 | 3 | 4]
-      : null;
-
-    if (!playerGroup || !playerGroupIndex) return;
-
-    if (playerGroupIndex > 1) {
-      const prevGroup = groupedPlayers[(playerGroupIndex - 1) as 1 | 2 | 3];
-      const prevGroupMiddlePosition =
-        prevGroup[Math.floor(prevGroup.length / 2)].position;
-      const lastChangellablePosition =
-        playerGroup[playerGroup.length - 1].position;
-
-      const playerIndexInGroup = playerGroup.findIndex(
-        r => r.player.id === player?.id,
-      );
-
-      const start =
-        playerIndexInGroup < Math.floor(playerGroup.length / 2)
-          ? prevGroupMiddlePosition
-          : playerGroup[0].position;
-
-      setChallengeableRange([start, lastChangellablePosition]);
-    } else {
-      setChallengeableRange([
-        playerGroup[0].position,
-        playerGroup[playerGroup.length - 1].position,
-      ]);
-    }
-  }, [groupedPlayers, player?.id]);
-
   const renderGroup = (
-    groupedPlayers: groupedPlayersType,
+    rankingGroupsType: rankingGroupsType,
     gindex: 1 | 2 | 3 | 4,
   ) => {
-    const group = groupedPlayers[gindex];
+    const group = rankingGroupsType[gindex];
     if (group.length === 0) return null;
 
     return (
@@ -158,13 +75,13 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
             let challengablePosition = false;
             const samePlayer = r.player.id === player?.id;
             if (
-              challengableRange &&
-              challengableRange.length === 2 &&
+              challengeableRange &&
+              challengeableRange.length === 2 &&
               rankingPlayer
             ) {
               challengablePosition =
-                r.position >= challengableRange[0] &&
-                r.position <= challengableRange[1];
+                r.position >= challengeableRange[0] &&
+                r.position <= challengeableRange[1];
             }
             return (
               <RankingRow
@@ -202,10 +119,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               overflow: "auto",
               flex: "1 1 0",
             }}>
-            <Stack>{renderGroup(groupedPlayers, 1)}</Stack>
-            <Stack>{renderGroup(groupedPlayers, 2)}</Stack>
-            <Stack>{renderGroup(groupedPlayers, 3)}</Stack>
-            <Stack>{renderGroup(groupedPlayers, 4)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 1)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 2)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 3)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 4)}</Stack>
           </Stack>
         </Stack>
       ) : (
