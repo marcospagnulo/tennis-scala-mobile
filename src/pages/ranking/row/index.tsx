@@ -10,6 +10,7 @@ import {PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
 import {SwapPosition} from "./SwapPosition";
+import {ChallengeDialog} from "./ChallengeDialog";
 
 const RankingRow = ({
   ranking,
@@ -32,7 +33,8 @@ const RankingRow = ({
   const loading = swapLoading || editRankingLoading;
 
   const [hover, setHover] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
+  const [playerOpen, setPlayerOpen] = useState<boolean>(false);
+  const [challengePlayerId, setChallengePlayerId] = useState<string>();
 
   const handleEdit = (field: string, value: string | number) => {
     editRanking(currentSeason!, ranking, field, value);
@@ -96,7 +98,7 @@ const RankingRow = ({
           <Link
             href="#"
             underline="hover"
-            onClick={() => setOpen(true)}
+            onClick={() => setPlayerOpen(true)}
             sx={{display: "block", minWidth: 0, flex: 1}}>
             {isSmallScreen ? (
               <Typography
@@ -127,7 +129,9 @@ const RankingRow = ({
           />
         </Stack>
         {challengeable && (
-          <IconButton size="small">
+          <IconButton
+            size="small"
+            onClick={() => setChallengePlayerId(ranking.player.id)}>
             <ChallengeIcon color="primary" fontSize="inherit" />
           </IconButton>
         )}
@@ -172,8 +176,13 @@ const RankingRow = ({
       />
       <PlayerInfo
         ranking={ranking}
-        open={open}
-        onClose={() => setOpen(false)}
+        open={playerOpen}
+        onClose={() => setPlayerOpen(false)}
+      />
+      <ChallengeDialog
+        open={!!challengePlayerId}
+        challengePlayerId={challengePlayerId}
+        onClose={() => setChallengePlayerId(undefined)}
       />
     </Stack>
   );
