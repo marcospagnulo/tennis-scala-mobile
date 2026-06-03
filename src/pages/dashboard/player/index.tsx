@@ -1,4 +1,4 @@
-import {Box, IconButton, Stack} from "@mui/material";
+import {Avatar, Box, IconButton, Stack} from "@mui/material";
 import {useAppContext} from "../../../app/context";
 import {collections} from "../../../lib/firebase";
 import {doc, Timestamp, updateDoc} from "firebase/firestore";
@@ -47,16 +47,20 @@ const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
           sx={{width: "100%", height: "100%", position: "relative"}}
           onMouseOver={() => setHover(true)}
           onMouseOut={() => setHover(false)}>
-          <Box
-            sx={{
-              backgroundImage: `url(${player.avatar})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              width: "100%",
-              height: "100%",
-            }}
-          />
+          {player.avatar ? (
+            <Box
+              sx={{
+                backgroundImage: `url(${player.avatar})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                width: "100%",
+                height: "100%",
+              }}
+            />
+          ) : (
+            <Avatar sx={{width: "100%", height: "100%"}} />
+          )}
 
           <input
             ref={inputFileRef}
