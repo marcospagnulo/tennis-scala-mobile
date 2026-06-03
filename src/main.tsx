@@ -7,6 +7,7 @@ import {App} from "./app";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {yellow, blue} from "@mui/material/colors";
+import {itIT} from "@mui/x-date-pickers/locales";
 
 const theme = createTheme({
   palette: {
@@ -29,7 +30,11 @@ const theme = createTheme({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider
+      dateAdapter={AdapterDayjs}
+      localeText={
+        itIT.components.MuiLocalizationProvider.defaultProps.localeText
+      }>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
