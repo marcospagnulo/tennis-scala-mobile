@@ -18,11 +18,7 @@ const addChallenge = async (
     pid1: player1.id!,
     pid2: player2.id!,
     result: {
-      value: [[0, 0]],
-      p1Approved: false,
-      p2Approved: false,
-    },
-    challenge: {
+      value: "",
       p1Approved: false,
       p2Approved: false,
     },
@@ -30,7 +26,24 @@ const addChallenge = async (
     date: new Timestamp(date.getTime() / 1000, 0),
   };
 
-  currentPeriod.matches.push(newMatch);
+  const matches = Object.values(currentPeriod.matches);
+
+  // verifico che non ci siano già sfide tra questi due giocatori nel periodo corrente
+  const existingMatch = matches.find(
+    m =>
+      (m.pid1 === player1.id && m.pid2 === player2.id) ||
+      (m.pid1 === player2.id && m.pid2 === player1.id),
+  );
+  if (existingMatch) {
+    throw new Error(
+      "Puoi giocare contro lo stesso avversario solo una volta per periodo. Attendi la fine del periodo corrente per sfidarlo di nuovo.",
+    );
+  }
+
+  currentPeriod.matches = {
+    ...currentPeriod.matches,
+    [Object.keys(currentPeriod.matches).length + 1]: newMatch,
+  };
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {

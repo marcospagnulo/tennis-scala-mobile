@@ -1,4 +1,4 @@
-import {Stack, Typography} from "@mui/material";
+import {Stack} from "@mui/material";
 import {useRanking} from "../../../functions";
 import {useAppContext} from "../../../app/context";
 import {RankingRow} from "../../ranking/row";
@@ -17,7 +17,7 @@ const ChallengesCardContent = () => {
         {currentSeason.ranking
           .filter(
             r =>
-              r.position > challengeableRange[0] &&
+              r.position >= challengeableRange[0] &&
               r.position <= challengeableRange[1],
           )
           .map(r => (

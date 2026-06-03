@@ -14,10 +14,11 @@ import {useFindById} from "../../../functions/useFindById";
 import type {Player} from "../../../domain/types";
 import {ChallengeIcon} from "../../../icons";
 import {useAddChallenge} from "../../../functions/season/useAddChallenge";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {Dayjs} from "dayjs";
 import dayjs from "dayjs";
 import {MobileDateTimePicker} from "@mui/x-date-pickers";
+import {ErrorBox} from "../../../components/ErrorBox";
 
 const ChallengeDialog = ({
   open,
@@ -33,7 +34,13 @@ const ChallengeDialog = ({
     collection: collections?.players,
     id: challengePlayerId,
   });
-  const {loading: adding, addChallenge} = useAddChallenge();
+  const {
+    loading: adding,
+    success,
+    error,
+    addChallenge,
+    clear,
+  } = useAddChallenge();
 
   const [date, setDate] = useState<Dayjs | null>(dayjs());
 
@@ -43,8 +50,16 @@ const ChallengeDialog = ({
   };
 
   const handleClose = () => {
+    clear();
     onClose();
   };
+
+  useEffect(() => {
+    if (success) {
+      clear();
+      onClose();
+    }
+  }, [success, onClose, clear]);
 
   const renderPlayer = (player: Player) => {
     return (
@@ -76,8 +91,10 @@ const ChallengeDialog = ({
           </Typography>
         </Stack>
 
+        <ErrorBox error={error} />
+
         {!loading && (
-          <Stack direction="row" sx={{gap: 2}}>
+          <Stack direction="row" sx={{gap: 2, justifyContent: "center"}}>
             {player && renderPlayer(player)}
             <Typography variant="h6" align="center" sx={{alignSelf: "center"}}>
               VS

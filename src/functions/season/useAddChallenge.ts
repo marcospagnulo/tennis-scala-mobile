@@ -4,8 +4,14 @@ import {addChallenge as coreAddChallenge} from "./core";
 
 const useAddChallenge = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
+
+  const clear = () => {
+    setLoading(false);
+    setError(undefined);
+    setSuccess(false);
+  };
 
   const addChallenge = async (
     season: Season,
@@ -14,21 +20,20 @@ const useAddChallenge = () => {
     date: Date,
   ) => {
     setLoading(true);
-    setError(false);
+    setError(undefined);
     setSuccess(false);
 
     try {
       await coreAddChallenge(season, player1, player2, date);
       setSuccess(true);
     } catch (error) {
-      console.error("Error adding challenge:", error);
-      setError(true);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  return {loading, error, success, addChallenge};
+  return {loading, error, success, addChallenge, clear};
 };
 
 export {useAddChallenge};
