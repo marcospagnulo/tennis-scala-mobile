@@ -55,7 +55,7 @@ export interface Ranking {
 
 export interface Period {
   start: Timestamp;
-  end: Timestamp;
+  end?: Timestamp;
   matches: Match[];
 }
 
