@@ -19,7 +19,7 @@ const RankingRow = ({
   challengeable,
 }: {
   ranking: Ranking;
-  divider: boolean;
+  divider?: boolean;
   bgColor?: string;
   challengeable?: boolean;
 }) => {

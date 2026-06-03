@@ -1,11 +1,12 @@
-import {Box, Stack, Typography} from "@mui/material";
+import {Box, Stack, Typography, type SxProps} from "@mui/material";
 import {useAppContext} from "../../app/context";
+import type {Theme} from "@emotion/react";
 
-const RankingHeader = () => {
+const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
   const {mobile} = useAppContext();
 
   return (
-    <Stack direction="row" sx={{alignItems: "center"}}>
+    <Stack direction="row" sx={{alignItems: "center", ...sx}}>
       <Box sx={{minWidth: 30}} />
       <Stack
         direction={"row"}

@@ -1,4 +1,4 @@
-import {Button, Chip, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, Stack, Typography} from "@mui/material";
 import {useAppContext} from "../../../app/context";
 import {SeasonIcon} from "../../../icons";
 import {DashboardCard} from "../DashboardCard";
@@ -29,8 +29,8 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
     addPlayers(currentSeason!, [player!]);
   };
 
-  const canJoin =
-    currentSeason?.ranking.find(r => r.player.id === player?.id) === undefined;
+  const isMember =
+    currentSeason?.ranking.find(r => r.player.id === player?.id) !== undefined;
 
   const expired = currentSeason
     ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
@@ -52,7 +52,7 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
         </Stack>
       }
       content={
-        <Stack sx={{flex: 1, px: 2, pb: 2, position: "relative"}}>
+        <Stack sx={{px: 2, pb: 2, position: "relative"}}>
           {currentSeason ? (
             <>
               <Typography variant="h5" sx={{my: 1}}>
@@ -70,12 +70,7 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 label="Fine"
                 value={dayjs(currentSeason.end.toDate()).format("D MMMM YYYY")}
               />
-              <Chip
-                label={expired ? "Scaduta" : "In corso"}
-                color={expired ? "error" : "success"}
-                sx={{position: "absolute", top: 16, right: 16}}
-              />
-              {canJoin && !expired && (
+              {!isMember && !expired && (
                 <Button
                   loading={loading}
                   variant="contained"
@@ -84,6 +79,15 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                   Partecipa
                 </Button>
               )}
+              <Box sx={{mt: 2, ml: "auto"}}>
+                <Chip
+                  label={expired ? "Scaduta" : "In corso"}
+                  color={expired ? "error" : "success"}
+                />
+                {isMember && (
+                  <Chip label="Iscritto" color="primary" sx={{ml: 1}} />
+                )}
+              </Box>
             </>
           ) : (
             <Typography

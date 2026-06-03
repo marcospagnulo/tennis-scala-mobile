@@ -36,10 +36,10 @@ const DashboardCard = ({
         }}>
         <Box
           sx={{
-            width: 8 * 22,
+            width: 8 * 18,
             height: "100%",
             ...(column && {
-              height: 8 * 22,
+              height: 8 * 18,
               top: 0,
               bottom: 0,
               borderRadius: "50%",
@@ -54,8 +54,8 @@ const DashboardCard = ({
         sx={{
           display: "flex",
           flex: 1,
-          ...(!column && {pl: 22}),
-          ...(column && {mt: 11, pt: 12}),
+          ...(!column && {pl: 18}),
+          ...(column && {mt: 9, pt: 10}),
           flexDirection: column ? "column" : "row",
         }}>
         {content}

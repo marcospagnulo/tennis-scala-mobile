@@ -13,8 +13,9 @@ const useRanking = () => {
   const {currentSeason, player} = useAppContext();
 
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
-  const [challengeableRange, setChallengeableRange] =
-    useState<[number, number]>();
+  const [challengeableRange, setChallengeableRange] = useState<
+    [number, number]
+  >([0, 0]);
   const [rankingGroups, setRankingGroups] = useState<rankingGroupsType>({
     1: [],
     2: [],
