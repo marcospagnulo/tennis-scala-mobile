@@ -44,6 +44,17 @@ const Form = (
           onChange={handleEndChange}
         />
       </Box>
+      <TextField
+        fullWidth
+        label="Sfide per periodo"
+        name="maxChallengesPerPeriod"
+        type="number"
+        value={formData.maxChallengesPerPeriod ?? 3}
+        onChange={e =>
+          handleChange("maxChallengesPerPeriod", parseInt(e.target.value, 10))
+        }
+        margin="normal"
+      />
     </>
   );
 };
