@@ -15,7 +15,7 @@ const navigationItems: NavigationItem[] = [
     path: "/",
     label: "Dashboard",
     icon: DashboardIcon,
-    element: <DashboardPage sx={{flex: 1, py: 2}} />,
+    element: <DashboardPage sx={{py: 2}} />,
   },
   {
     path: "/seasons",

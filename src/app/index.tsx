@@ -44,6 +44,7 @@ const App = () => {
               flex: "1 1 0",
               display: "flex",
               flexDirection: "column",
+              overflow: "auto",
               ...(mobile && {pl: "0 !important", pr: "0 !important"}),
             }}>
             <Routes>
