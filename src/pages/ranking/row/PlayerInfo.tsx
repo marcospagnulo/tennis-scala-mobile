@@ -12,11 +12,11 @@ import type {Player, Ranking} from "../../../domain/types";
 import {collections} from "../../../lib/firebase";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
-import {doc, getDoc} from "firebase/firestore";
 import {Delete, Refresh, ReportProblem} from "@mui/icons-material";
 import {useRefreshRanking} from "../../../functions/ranking/useRefreshRanking";
 import {useAppContext} from "../../../app/context";
 import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
+import {useFindById} from "../../../functions/useFindById";
 
 const RowData = ({label, value}: {label: string; value?: string}) => (
   <Stack direction="row" spacing={1}>
@@ -35,18 +35,23 @@ const PlayerInfo = ({
   onClose: () => void;
 }) => {
   const [player, setPlayer] = useState<Player>();
-  const [loading, setLoading] = useState<boolean>(true);
   const [deleting, setDeleting] = useState<boolean>(false);
 
   const {currentSeason, user} = useAppContext();
   const isAdmin = user?.role === "admin";
   const {loading: refreshLoading, refreshRanking} = useRefreshRanking();
   const {loading: deleteLoading, deleteRanking} = useDeleteRanking();
+  const {data, loading} = useFindById({
+    collection: collections?.players,
+    id: ranking.player.id,
+  });
+
+  useEffect(() => {
+    setPlayer(data);
+  }, [data]);
 
   const handleClose = () => {
     setTimeout(() => {
-      setPlayer(undefined);
-      setLoading(true);
       setDeleting(false);
     }, 300);
     onClose();
@@ -62,29 +67,6 @@ const PlayerInfo = ({
     handleClose();
   };
 
-  useEffect(() => {
-    if (!collections || !open) {
-      setLoading(false);
-      return;
-    }
-
-    const playerId = ranking.player.id;
-    const playerDoc = doc(collections.players, playerId);
-    getDoc(playerDoc)
-      .then(snapshot => {
-        if (snapshot.exists()) {
-          setPlayer({
-            ...snapshot.data(),
-            id: snapshot.id,
-          } as Player);
-        } else {
-          console.error(`info - Player with id ${playerId} not found`);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [ranking.player.id, open]);
-
   const handleRefresh = () => {
     refreshRanking(currentSeason!, ranking);
     handleClose();
@@ -93,8 +75,7 @@ const PlayerInfo = ({
   return (
     <>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogContent
-          sx={{height: "50vh", display: "flex", flexDirection: "column"}}>
+        <DialogContent sx={{display: "flex", flexDirection: "column"}}>
           {loading && (
             <Stack
               sx={{alignItems: "center", justifyContent: "center", flex: 1}}>
