@@ -13,6 +13,11 @@ import {collections} from "../../../lib/firebase";
 import {useFindById} from "../../../functions/useFindById";
 import type {Player} from "../../../domain/types";
 import {ChallengeIcon} from "../../../icons";
+import {useAddChallenge} from "../../../functions/season/useAddChallenge";
+import {useState} from "react";
+import type {Dayjs} from "dayjs";
+import dayjs from "dayjs";
+import {MobileDateTimePicker} from "@mui/x-date-pickers";
 
 const ChallengeDialog = ({
   open,
@@ -23,11 +28,19 @@ const ChallengeDialog = ({
   challengePlayerId?: string;
   onClose: () => void;
 }) => {
-  const {player} = useAppContext();
+  const {player, currentSeason} = useAppContext();
   const {data: challengePlayer, loading} = useFindById({
     collection: collections?.players,
     id: challengePlayerId,
   });
+  const {loading: adding, addChallenge} = useAddChallenge();
+
+  const [date, setDate] = useState<Dayjs | null>(dayjs());
+
+  const handleChallenge = () => {
+    if (!currentSeason || !player || !challengePlayer || !date) return;
+    addChallenge(currentSeason, player, challengePlayer, date.toDate());
+  };
 
   const handleClose = () => {
     onClose();
@@ -77,6 +90,14 @@ const ChallengeDialog = ({
             <CircularProgress sx={{alignSelf: "center"}} />
           </Stack>
         )}
+        <MobileDateTimePicker
+          label="Data della sfida"
+          sx={{mt: 2, "& .MuiPickersInputBase-sectionsContainer": {py: 1}}}
+          format="DD/MM/YYYY HH:mm"
+          slotProps={{textField: {variant: "standard", size: "small"}}}
+          value={date}
+          onAccept={setDate}
+        />
       </DialogContent>
       {
         <DialogActions>
@@ -84,9 +105,9 @@ const ChallengeDialog = ({
             Chiudi
           </Button>
           <Button
-            disabled={loading}
-            loading={loading}
-            onClick={handleClose}
+            disabled={loading || adding || !date}
+            loading={loading || adding || !date}
+            onClick={handleChallenge}
             color="primary"
             variant="contained">
             Sfida

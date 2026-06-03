@@ -72,7 +72,7 @@ export interface Match {
     p2Approved: boolean;
   };
   status: "pending" | "approved" | "rejected";
-  createdAt: Timestamp;
+  date: Timestamp;
 }
 
 export type querySort = {
