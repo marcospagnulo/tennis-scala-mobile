@@ -5,12 +5,11 @@ import {useAppContext} from "../../../app/context";
 import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
-import {ChallengeIcon, DeleteIcon} from "../../../icons";
-import {ExpandLess, ExpandMore} from "@mui/icons-material";
-import {ConfirmDialog, PlayerAvatar} from "../../../components";
+import {ChallengeIcon} from "../../../icons";
+import {PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
-import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
+import {SwapPosition} from "./SwapPosition";
 
 const RankingRow = ({
   ranking,
@@ -29,26 +28,15 @@ const RankingRow = ({
   const isSmallScreen = useDownBreakpoint("sm");
 
   const {loading: swapLoading, swapPositions} = useSwapPositions();
-  const {loading: deleteLoading, deleteRanking} = useDeleteRanking();
   const {loading: editRankingLoading, editRanking} = useEditRanking();
-  const loading = swapLoading || deleteLoading || editRankingLoading;
+  const loading = swapLoading || editRankingLoading;
 
   const [hover, setHover] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   const handleEdit = (field: string, value: string | number) => {
     editRanking(currentSeason!, ranking, field, value);
     setHover(false);
-  };
-
-  const handleDelete = () => {
-    setOpenDeleteDialog(true);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteRanking(currentSeason!, ranking);
-    setOpenDeleteDialog(false);
   };
 
   const truncateSx: SxProps<Theme> = {
@@ -124,50 +112,24 @@ const RankingRow = ({
                 variant="subtitle1">{`${player.surname ?? ""} ${player.name ?? ""}`}</Typography>
             )}
           </Link>
-          {challengeable && (
-            <IconButton size="small">
-              <ChallengeIcon fontSize="inherit" />
-            </IconButton>
-          )}
         </Stack>
-        {isAdmin && !mobile && (
-          <Stack
-            direction={"row"}
-            spacing={0}
-            sx={{
-              flex: 1,
-              display: hover && !loading ? "flex" : "none",
-            }}>
-            {ranking.position > 1 && (
-              <IconButton
-                size="small"
-                onClick={() =>
-                  swapPositions(
-                    currentSeason,
-                    ranking.position,
-                    ranking.position - 1,
-                  )
-                }>
-                <ExpandLess color="primary" fontSize="inherit" />
-              </IconButton>
-            )}
-            {ranking.position < currentSeason.ranking!.length && (
-              <IconButton
-                size="small"
-                onClick={() =>
-                  swapPositions(
-                    currentSeason,
-                    ranking.position,
-                    ranking.position + 1,
-                  )
-                }>
-                <ExpandMore color="primary" fontSize="inherit" />
-              </IconButton>
-            )}
-            <IconButton size="small" onClick={handleDelete}>
-              <DeleteIcon color="error" fontSize="inherit" />
-            </IconButton>
-          </Stack>
+
+        <Stack
+          direction={"row"}
+          spacing={0}
+          sx={{
+            display: hover && !loading ? "flex" : "none",
+          }}>
+          <SwapPosition
+            season={currentSeason}
+            ranking={ranking}
+            onSwap={swapPositions}
+          />
+        </Stack>
+        {challengeable && (
+          <IconButton size="small">
+            <ChallengeIcon color="primary" fontSize="inherit" />
+          </IconButton>
         )}
       </Stack>
       <EditableField
@@ -207,13 +169,6 @@ const RankingRow = ({
           width: 16,
           gap: 1,
         }}
-      />
-      <ConfirmDialog
-        open={openDeleteDialog}
-        title="Conferma eliminazione"
-        content={`Sei sicuro di voler eliminare ${player.surname} ${player.name}?`}
-        onConfirm={handleConfirmDelete}
-        onClose={() => setOpenDeleteDialog(false)}
       />
       <PlayerInfo
         ranking={ranking}
