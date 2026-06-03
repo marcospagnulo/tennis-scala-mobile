@@ -29,7 +29,8 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
   const {loading, addPlayers} = useAddPlayers();
-  const {challengeableRange, rankingPlayer, rankingGroups} = useRanking();
+  const {challengeableRange, rankingPlayer, rankingGroups, validRanking} =
+    useRanking();
 
   const [dialog, setDialog] = useState<boolean>(false);
 
@@ -105,7 +106,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   return (
     <Stack sx={{...sx}}>
-      {(currentSeason?.ranking.length ?? 0) > 12 ? (
+      {validRanking ? (
         <Stack
           sx={{
             gap: 1,

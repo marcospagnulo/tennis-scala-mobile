@@ -3,6 +3,7 @@ import {DashboardCard} from "../DashboardCard";
 import {ChallengeIcon} from "../../../icons";
 import {ChallengesCardContent} from "./Content";
 import {useAppContext} from "../../../app/context";
+import {useRanking} from "../../../functions";
 
 const ChallengesCard = ({direction}: {direction?: "row" | "column"}) => {
   const {player, currentSeason} = useAppContext();
@@ -10,7 +11,9 @@ const ChallengesCard = ({direction}: {direction?: "row" | "column"}) => {
   const isMember =
     currentSeason?.ranking.find(r => r.player.id === player?.id) !== undefined;
 
-  if (!isMember) return <></>;
+  const {validRanking} = useRanking();
+
+  if (!isMember || !validRanking) return <></>;
   return (
     <DashboardCard
       direction={direction}

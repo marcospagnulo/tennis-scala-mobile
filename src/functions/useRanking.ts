@@ -12,6 +12,7 @@ type rankingGroupsType = {
 const useRanking = () => {
   const {currentSeason, player} = useAppContext();
 
+  const [validRanking, setValidRanking] = useState<boolean>(false);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
   const [challengeableRange, setChallengeableRange] = useState<
     [number, number]
@@ -93,7 +94,11 @@ const useRanking = () => {
     }
   }, [rankingGroups, player?.id]);
 
-  return {challengeableRange, rankingPlayer, rankingGroups};
+  useEffect(() => {
+    setValidRanking((currentSeason?.ranking.length ?? 0) > 12);
+  }, [currentSeason?.ranking]);
+
+  return {challengeableRange, rankingPlayer, rankingGroups, validRanking};
 };
 
 export {useRanking, type rankingGroupsType};
