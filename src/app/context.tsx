@@ -74,8 +74,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
     );
     const snapshot = await getDocs(playerQuery);
     if (snapshot.empty) {
-      const player: WithFieldValue<Player> = {
-        id: undefined,
+      const player: WithFieldValue<Partial<Player>> = {
         userId: user.id,
         email: user.email,
         createdAt: serverTimestamp(),

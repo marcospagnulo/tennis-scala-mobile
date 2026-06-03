@@ -1,19 +1,49 @@
-import {Stack} from "@mui/material";
+import {Divider, Stack, Typography} from "@mui/material";
 import {useRanking} from "../../../functions";
 import {useAppContext} from "../../../app/context";
 import {RankingRow} from "../../ranking/row";
 import {RankingHeader} from "../../ranking/Header";
+import {useEffect, useState} from "react";
+import type {Match} from "../../../domain/types";
+import {MatchInfo} from "./MatchInfo";
 
 const ChallengesCardContent = () => {
   const {currentSeason, player} = useAppContext();
   const {challengeableRange} = useRanking();
 
+  const [matches, setMatches] = useState<Match[]>([]);
+
+  useEffect(() => {
+    const period = currentSeason?.periods.find(p => !p.end);
+    if (period) {
+      const matchesArray = Object.values(period.matches).filter(
+        m => m.pid1 === player?.id || m.pid2 === player?.id,
+      );
+      setMatches(matchesArray);
+    }
+  }, [currentSeason, player]);
+
   if (!currentSeason) return null;
 
   return (
-    <Stack>
-      <Stack sx={{px: 2}}>
+    <Stack sx={{px: 2, gap: 2}}>
+      <Stack sx={{gap: 1}}>
+        <Typography align="center" variant="h6">
+          Sfide in corso
+        </Typography>
+        <Divider />
+        <Stack sx={{gap: 1}} divider={<Divider />}>
+          {matches.map((m, index) => (
+            <MatchInfo key={`match-info-${index}`} match={m} />
+          ))}
+        </Stack>
+      </Stack>
+      <Stack sx={{my: 2}}>
+        <Typography align="center" variant="h6">
+          Sfida un giocatore
+        </Typography>
         <RankingHeader sx={{ml: "-30px"}} />
+        <Divider />
         {currentSeason.ranking
           .filter(
             r =>

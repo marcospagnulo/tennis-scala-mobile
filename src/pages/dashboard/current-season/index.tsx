@@ -70,7 +70,7 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 label="Fine"
                 value={dayjs(currentSeason.end.toDate()).format("D MMMM YYYY")}
               />
-              {!isMember && !expired && (
+              {!isMember && !expired && player && (
                 <Button
                   loading={loading}
                   variant="contained"
