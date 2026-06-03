@@ -56,18 +56,14 @@ export interface Ranking {
 export interface Period {
   start: Timestamp;
   end?: Timestamp;
-  matches: Match[];
+  matches: {[key: number]: Match};
 }
 
 export interface Match {
   pid1: string;
   pid2: string;
-  result: {
-    value: number[][];
-    p1Approved: boolean;
-    p2Approved: boolean;
-  };
-  challenge: {
+  result?: {
+    value: string;
     p1Approved: boolean;
     p2Approved: boolean;
   };

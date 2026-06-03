@@ -18,7 +18,7 @@ const initialFormData: Partial<Season> = {
   periods: [
     {
       start: new Timestamp(now / 1000, 0),
-      matches: [],
+      matches: {},
     },
   ],
   ranking: [],
