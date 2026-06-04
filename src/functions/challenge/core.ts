@@ -155,10 +155,6 @@ const updateChallengeStatus = async (
           {
             ...match,
             status,
-            result: {
-              ...match.result,
-              p2Approved: status === "approved" ? true : false,
-            },
           },
         ];
       }

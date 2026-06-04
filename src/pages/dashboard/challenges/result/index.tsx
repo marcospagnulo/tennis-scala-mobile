@@ -130,7 +130,7 @@ const Result = ({match}: {match: Match}) => {
 
   const handleApprove = async () => {
     const pid = player!.id!;
-    let resultString = `${result[0][0]}-${result[0][1]} ${result[1][0] ?? 0}-${result[1][1] ?? 0}`;
+    let resultString = `${result[0][0]}-${result[1][0]} ${result[0][1] ?? 0}-${result[1][1] ?? 0}`;
     if (result[0][2] !== null && result[1][2] !== null) {
       resultString += ` ${result[0][2]}-${result[1][2]}`;
     }
