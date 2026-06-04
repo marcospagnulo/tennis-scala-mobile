@@ -16,8 +16,8 @@ const ResultRow = ({
   error,
   playerIndex,
   canApprove,
-  canEdit,
   sx,
+  canEdit,
   onChangeResult,
   onApprove,
 }: {
@@ -56,7 +56,7 @@ const ResultRow = ({
     <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
       <TextField
         sx={{...sx}}
-        disabled={loading || matchApproved || !canEdit}
+        disabled={loading || !canEdit}
         value={result[playerIndex][0] ?? ""}
         onChange={e => onChangeResult(playerIndex, 0, e.target.value)}
         type="number"
@@ -64,7 +64,7 @@ const ResultRow = ({
       />
       <TextField
         sx={{...sx}}
-        disabled={loading || matchApproved || !canEdit}
+        disabled={loading || !canEdit}
         value={result[playerIndex][1] ?? ""}
         onChange={e => onChangeResult(playerIndex, 1, e.target.value)}
         type="number"
@@ -72,7 +72,7 @@ const ResultRow = ({
       />
       <TextField
         sx={{...sx}}
-        disabled={loading || matchApproved || !canEdit}
+        disabled={loading || !canEdit}
         value={result[playerIndex][2] ?? ""}
         onChange={e => onChangeResult(playerIndex, 2, e.target.value)}
         type="number"

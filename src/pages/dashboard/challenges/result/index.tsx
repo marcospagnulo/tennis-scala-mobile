@@ -118,7 +118,9 @@ const Result = ({match}: {match: Match}) => {
     match.pid1 === player?.id && !p1Approved && !matchApproved;
   const canP2Approve =
     match.pid2 === player?.id && !p2Approved && !matchApproved;
-  const canEdit = player?.id === match.pid1 || player?.id === match.pid2;
+  const canEdit =
+    (match.pid1 === player?.id && canP1Approve) ||
+    (match.pid2 === player?.id && canP2Approve);
 
   return (
     <Stack sx={{gap: 1, flex: 1}}>
