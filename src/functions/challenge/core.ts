@@ -72,6 +72,49 @@ const addChallenge = async (
   });
 };
 
+const updateChallengeResult = async (
+  season: Season,
+  pid1: string,
+  pid2: string,
+  result: string,
+  p1Approved: boolean,
+  p2Approved: boolean,
+) => {
+  const updatedSeason = {...season};
+  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  if (!currentPeriod) {
+    throw new Error("No active period found");
+  }
+
+  currentPeriod.matches = Object.fromEntries(
+    Object.entries(currentPeriod.matches).map(([key, match]) => {
+      if (
+        (match.pid1 === pid1 && match.pid2 === pid2) ||
+        (match.pid1 === pid2 && match.pid2 === pid1)
+      ) {
+        return [
+          key,
+          {
+            ...match,
+            result: {
+              ...match.result,
+              value: result,
+              p1Approved,
+              p2Approved,
+            },
+          },
+        ];
+      }
+      return [key, match];
+    }),
+  );
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
 const updateChallengeStatus = async (
   season: Season,
   pid1: string,
@@ -155,4 +198,9 @@ const deleteChallenge = (
   });
 };
 
-export {addChallenge, updateChallengeStatus, deleteChallenge};
+export {
+  addChallenge,
+  updateChallengeResult,
+  updateChallengeStatus,
+  deleteChallenge,
+};

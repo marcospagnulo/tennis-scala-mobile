@@ -8,7 +8,8 @@ import {Close, Delete, Done} from "@mui/icons-material";
 import {useUpdateChallengeStatus} from "../../../functions";
 import {ConfirmDialog} from "../../../components";
 import {useState} from "react";
-import {deleteChallenge} from "../../../functions/season/core";
+import {deleteChallenge} from "../../../functions/challenge/core";
+import {Result} from "./Result";
 
 const Player = ({id}: {id: string}) => {
   const {data: player, loading} = useFindById({
@@ -17,12 +18,12 @@ const Player = ({id}: {id: string}) => {
   });
 
   return (
-    <Stack direction={"row"} sx={{alignItems: "center", gap: 1, minWidth: 150}}>
+    <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
       {loading && <CircularProgress size={20} sx={{margin: "0 auto"}} />}
       {!loading && player && (
         <>
-          <Avatar src={player.avatar} />
-          <Typography>
+          <Avatar src={player.avatar} sx={{width: 28, height: 28}} />
+          <Typography variant="body1">
             {player.surname} {player.name}
           </Typography>
         </>
@@ -97,12 +98,12 @@ const MatchInfo = ({match}: {match: Match}) => {
           {dayjs(match.date.toDate()).format("d MMMM YYYY HH:mm")}
         </Typography>
       </Stack>
-      <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
-        <Player id={match.pid1} />
-        <Typography variant="body2" color="textSecondary">
-          vs
-        </Typography>
-        <Player id={match.pid2} />
+      <Stack direction={"row"} sx={{gap: 2}}>
+        <Stack sx={{gap: 1, flex: 1, maxWidth: 200}}>
+          <Player id={match.pid1} />
+          <Player id={match.pid2} />
+        </Stack>
+        {match.status === "approved" && <Result match={match} />}
       </Stack>
 
       <ConfirmDialog

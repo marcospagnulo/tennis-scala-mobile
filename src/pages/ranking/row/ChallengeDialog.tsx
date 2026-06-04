@@ -13,7 +13,7 @@ import {collections} from "../../../lib/firebase";
 import {useFindById} from "../../../functions/useFindById";
 import type {Player} from "../../../domain/types";
 import {ChallengeIcon} from "../../../icons";
-import {useAddChallenge} from "../../../functions/season/useAddChallenge";
+import {useAddChallenge} from "../../../functions/challenge/useAddChallenge";
 import {useEffect, useState} from "react";
 import type {Dayjs} from "dayjs";
 import dayjs from "dayjs";

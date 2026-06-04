@@ -3,5 +3,5 @@ export {useEditRanking} from "./ranking/useEditRanking";
 export {useQueryCollection} from "./useQueryCollection";
 export {useLiveCollection} from "./useLiveCollection";
 export {useRanking} from "./useRanking";
-export {useUpdateChallengeStatus} from "./season/useUpdateChallengeStatus";
-export {useAddChallenge} from "./season/useAddChallenge";
+export {useUpdateChallengeStatus} from "./challenge/useUpdateChallengeStatus";
+export {useAddChallenge} from "./challenge/useAddChallenge";
