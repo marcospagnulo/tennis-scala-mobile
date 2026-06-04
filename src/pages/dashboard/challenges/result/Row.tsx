@@ -18,6 +18,8 @@ const ResultRow = ({
   canApprove,
   sx,
   canEdit,
+  enable3Set,
+  winner,
   onChangeResult,
   onApprove,
 }: {
@@ -29,6 +31,8 @@ const ResultRow = ({
   canApprove: boolean;
   canEdit: boolean;
   sx?: SxProps<Theme>;
+  enable3Set: boolean;
+  winner: boolean;
   onChangeResult: (
     playerIndex: number,
     setIndex: number,
@@ -36,10 +40,7 @@ const ResultRow = ({
   ) => void;
   onApprove: () => void;
 }) => {
-  const wonSet1 = (result[playerIndex][0] ?? 0) >= 6;
-  const wonSet2 = (result[playerIndex][1] ?? 0) >= 6;
-  const wonSet3 = (result[playerIndex][2] ?? 0) >= 6;
-  const winner = wonSet3 || (wonSet1 && wonSet2);
+  const hasError = error[playerIndex].some(e => e);
 
   if (matchApproved) {
     return (
@@ -72,13 +73,13 @@ const ResultRow = ({
       />
       <TextField
         sx={{...sx}}
-        disabled={loading || !canEdit}
+        disabled={loading || !canEdit || !enable3Set}
         value={result[playerIndex][2] ?? ""}
         onChange={e => onChangeResult(playerIndex, 2, e.target.value)}
         type="number"
         error={error[playerIndex][2]}
       />
-      {canApprove && (
+      {canApprove && !hasError && (
         <IconButton size="small" disabled={loading} onClick={onApprove}>
           <Done fontSize="inherit" />
         </IconButton>

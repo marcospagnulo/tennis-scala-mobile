@@ -5,8 +5,12 @@ import type {Theme} from "@emotion/react";
 import {useUpdateChallengeResult} from "../../../../functions/challenge/useUpdateChallengeResult";
 import {useAppContext} from "../../../../app/context";
 import {ResultRow} from "./Row";
+import {getWinnerIndex, shouldEnable3Set} from "../../../../util";
 
 const Result = ({match}: {match: Match}) => {
+  const {currentSeason, player} = useAppContext();
+
+  const [enable3Set, setEnable3Set] = useState<boolean>(false);
   const [result, setResult] = useState<(number | null)[][]>([
     [null, null, null],
     [null, null, null],
@@ -15,7 +19,6 @@ const Result = ({match}: {match: Match}) => {
     [false, false, false],
     [false, false, false],
   ]);
-  const {currentSeason, player} = useAppContext();
 
   const {loading, updateChallengeResult} = useUpdateChallengeResult();
 
@@ -48,6 +51,25 @@ const Result = ({match}: {match: Match}) => {
     }
   }, [match.result]);
 
+  const validateSuperTieBreak = (
+    p1: number | null,
+    p2: number | null,
+  ): boolean => {
+    if (p1 === null || p2 === null) return false;
+    if (p1 < 0 || p2 < 0) return false;
+    if (p1 === p2) return false;
+
+    const winnerPoints = Math.max(p1, p2);
+    const loserPoints = Math.min(p1, p2);
+
+    // Un tie-break termina a 10 oppure prosegue fino a quando un giocatore non ha almeno 2 punti di vantaggio
+    if (winnerPoints < 10) return false;
+    if (winnerPoints === 10) {
+      return loserPoints <= 8;
+    }
+    return winnerPoints - loserPoints >= 2;
+  };
+
   const validateSet = (p1: number | null, p2: number | null): boolean => {
     // controllo che i punteggi siano non negativi
     if (p1 === null || p2 === null) return false;
@@ -78,7 +100,8 @@ const Result = ({match}: {match: Match}) => {
     const newResult = [...result];
     newResult[playerIndex][setIndex] = parseInt(value) || 0;
     setResult(newResult);
-    if (!validateSet(newResult[0][setIndex], newResult[1][setIndex])) {
+    const validatSet = setIndex < 2 ? validateSet : validateSuperTieBreak;
+    if (!validatSet(newResult[0][setIndex], newResult[1][setIndex])) {
       const newError = [...error];
       newError[0][setIndex] = true;
       newError[1][setIndex] = true;
@@ -89,6 +112,20 @@ const Result = ({match}: {match: Match}) => {
       newError[1][setIndex] = false;
       setError(newError);
     }
+
+    // se il 3° set non è abilitato, resetto eventuali errori e punteggi inseriti
+    const enabled = shouldEnable3Set(result);
+    if (!enabled) {
+      const newResult = [...result];
+      newResult[0][2] = null;
+      newResult[1][2] = null;
+      setResult(newResult);
+      const newError = [...error];
+      newError[0][2] = false;
+      newError[1][2] = false;
+      setError(newError);
+    }
+    setEnable3Set(enabled);
   };
 
   const handleApprove = async () => {
@@ -133,6 +170,8 @@ const Result = ({match}: {match: Match}) => {
         canApprove={canP1Approve}
         canEdit={canEdit}
         sx={tfSx}
+        enable3Set={enable3Set}
+        winner={getWinnerIndex(result) === 0}
         onChangeResult={handleChangeResult}
         onApprove={handleApprove}
       />
@@ -145,6 +184,8 @@ const Result = ({match}: {match: Match}) => {
         canApprove={canP2Approve}
         canEdit={canEdit}
         sx={tfSx}
+        enable3Set={enable3Set}
+        winner={getWinnerIndex(result) === 1}
         onChangeResult={handleChangeResult}
         onApprove={handleApprove}
       />
