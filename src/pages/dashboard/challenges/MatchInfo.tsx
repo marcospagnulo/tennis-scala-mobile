@@ -4,10 +4,11 @@ import {useFindById} from "../../../functions/useFindById";
 import {collections} from "../../../lib/firebase";
 import dayjs from "dayjs";
 import {useAppContext} from "../../../app/context";
-import {Close, Done} from "@mui/icons-material";
+import {Close, Delete, Done} from "@mui/icons-material";
 import {useUpdateChallengeStatus} from "../../../functions";
 import {ConfirmDialog} from "../../../components";
 import {useState} from "react";
+import {deleteChallenge} from "../../../functions/season/core";
 
 const Player = ({id}: {id: string}) => {
   const {data: player, loading} = useFindById({
@@ -36,6 +37,7 @@ const MatchInfo = ({match}: {match: Match}) => {
 
   const [dialogApprove, setDialogApprove] = useState<boolean>(false);
   const [dialogReject, setDialogReject] = useState<boolean>(false);
+  const [dialogDelete, setDialogDelete] = useState<boolean>(false);
 
   const handleUpdateChallengeStatus = async (
     status: "approved" | "rejected",
@@ -43,6 +45,11 @@ const MatchInfo = ({match}: {match: Match}) => {
     await updateChallengeStatus(currentSeason!, match.pid1, match.pid2, status);
     setDialogApprove(false);
     setDialogReject(false);
+  };
+
+  const handleDeleteChallenge = async (pid1: string, pid2: string) => {
+    await deleteChallenge(currentSeason!, pid1, pid2);
+    setDialogDelete(false);
   };
 
   return (
@@ -75,6 +82,16 @@ const MatchInfo = ({match}: {match: Match}) => {
               />
             </>
           )}
+          {match.status === "pending" && match.pid1 === player?.id && (
+            <Chip
+              variant="outlined"
+              disabled={loading}
+              label="Cancella"
+              icon={<Delete fontSize="small" />}
+              onClick={() => setDialogDelete(true)}
+              color="error"
+            />
+          )}
         </Stack>
         <Typography variant="body2" color="textSecondary">
           {dayjs(match.date.toDate()).format("d MMMM YYYY HH:mm")}
@@ -102,6 +119,14 @@ const MatchInfo = ({match}: {match: Match}) => {
         onClose={() => setDialogReject(false)}
         content="Confermi di voler rifiutare la sfida?"
         onConfirm={() => handleUpdateChallengeStatus("rejected")}
+      />
+
+      <ConfirmDialog
+        title="Cancella Sfida"
+        open={dialogDelete}
+        onClose={() => setDialogDelete(false)}
+        content="Confermi di voler cancellare la sfida?"
+        onConfirm={() => handleDeleteChallenge(match.pid1, match.pid2)}
       />
     </Stack>
   );

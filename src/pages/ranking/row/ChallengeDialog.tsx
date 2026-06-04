@@ -46,7 +46,7 @@ const ChallengeDialog = ({
 
   const handleChallenge = () => {
     if (!currentSeason || !player || !challengePlayer || !date) return;
-    addChallenge(currentSeason, player, challengePlayer, date.toDate());
+    addChallenge(currentSeason, player.id!, challengePlayer.id!, date.toDate());
   };
 
   const handleClose = () => {

@@ -1,11 +1,11 @@
 import {doc, Timestamp, updateDoc} from "firebase/firestore";
-import type {Match, Player, Season} from "../../domain/types";
+import type {Match, Season} from "../../domain/types";
 import {collections} from "../../lib/firebase";
 
 const addChallenge = async (
   season: Season,
-  player1: Player,
-  player2: Player,
+  player1Id: string,
+  player2Id: string,
   date: Date,
 ) => {
   const updatedSeason = {...season};
@@ -15,8 +15,8 @@ const addChallenge = async (
   }
 
   const newMatch: Match = {
-    pid1: player1.id!,
-    pid2: player2.id!,
+    pid1: player1Id!,
+    pid2: player2Id!,
     result: {
       value: "",
       p1Approved: false,
@@ -31,8 +31,8 @@ const addChallenge = async (
   // verifico che non ci siano già sfide tra questi due giocatori nel periodo corrente
   const existingMatch = matches.find(
     m =>
-      (m.pid1 === player1.id && m.pid2 === player2.id) ||
-      (m.pid1 === player2.id && m.pid2 === player1.id),
+      (m.pid1 === player1Id && m.pid2 === player2Id) ||
+      (m.pid1 === player2Id && m.pid2 === player1Id),
   );
   if (existingMatch) {
     throw new Error(
@@ -44,13 +44,11 @@ const addChallenge = async (
   const maxChallenges = season.maxChallengesPerPeriod || 3;
   const player1Matches = matches.filter(
     m =>
-      m.status === "approved" &&
-      (m.pid1 === player1.id || m.pid2 === player1.id),
+      m.status !== "rejected" && (m.pid1 === player1Id || m.pid2 === player1Id),
   );
   const player2Matches = matches.filter(
     m =>
-      m.status === "approved" &&
-      (m.pid1 === player2.id || m.pid2 === player2.id),
+      m.status !== "rejected" && (m.pid1 === player2Id || m.pid2 === player2Id),
   );
   if (player1Matches.length >= maxChallenges) {
     throw new Error(
@@ -131,4 +129,30 @@ const updateChallengeStatus = async (
   });
 };
 
-export {addChallenge, updateChallengeStatus};
+const deleteChallenge = (
+  season: Season,
+  playerId1: string,
+  playerId2: string,
+) => {
+  const updatedSeason = {...season};
+  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  if (!currentPeriod) {
+    throw new Error("No active period found");
+  }
+
+  currentPeriod.matches = Object.fromEntries(
+    Object.entries(currentPeriod.matches).filter(([, match]) => {
+      return !(
+        (match.pid1 === playerId1 && match.pid2 === playerId2) ||
+        (match.pid1 === playerId2 && match.pid2 === playerId1)
+      );
+    }),
+  );
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  return updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
+export {addChallenge, updateChallengeStatus, deleteChallenge};
