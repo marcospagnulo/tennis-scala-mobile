@@ -1,10 +1,10 @@
-import {IconButton, Stack, TextField, type SxProps} from "@mui/material";
-import type {Match} from "../../../domain/types";
+import {Stack, type SxProps} from "@mui/material";
+import type {Match} from "../../../../domain/types";
 import {useEffect, useState} from "react";
 import type {Theme} from "@emotion/react";
-import {useUpdateChallengeResult} from "../../../functions/challenge/useUpdateChallengeResult";
-import {Done} from "@mui/icons-material";
-import {useAppContext} from "../../../app/context";
+import {useUpdateChallengeResult} from "../../../../functions/challenge/useUpdateChallengeResult";
+import {useAppContext} from "../../../../app/context";
+import {ResultRow} from "./Row";
 
 const Result = ({match}: {match: Match}) => {
   const [result, setResult] = useState<(number | null)[][]>([
@@ -91,13 +91,16 @@ const Result = ({match}: {match: Match}) => {
     }
   };
 
-  const handleApprove = async (pid: string) => {
+  const handleApprove = async () => {
+    const pid = player!.id!;
     let resultString = `${result[0][0]}-${result[0][1]} ${result[1][0] ?? 0}-${result[1][1] ?? 0}`;
     if (result[0][2] !== null && result[1][2] !== null) {
       resultString += ` ${result[0][2]}-${result[1][2]}`;
     }
-    const pid1Approved = pid === match.pid1;
-    const pid2Approved = pid === match.pid2;
+    const pid1Approved =
+      pid === match.pid1 ? true : match.result?.p1Approved || false;
+    const pid2Approved =
+      pid === match.pid2 ? true : match.result?.p2Approved || false;
     await updateChallengeResult(
       currentSeason!,
       match.pid1,
@@ -108,78 +111,41 @@ const Result = ({match}: {match: Match}) => {
     );
   };
 
-  const p1Approved = match.result?.p1Approved;
-  const p2Approved = match.result?.p2Approved;
-  const disabled =
-    (p1Approved && match.pid1 === player?.id) ||
-    (p2Approved && match.pid2 === player?.id);
+  const p1Approved = match.result?.p1Approved ?? false;
+  const p2Approved = match.result?.p2Approved ?? false;
+  const matchApproved = p1Approved && p2Approved;
+  const canP1Approve =
+    match.pid1 === player?.id && !p1Approved && !matchApproved;
+  const canP2Approve =
+    match.pid2 === player?.id && !p2Approved && !matchApproved;
+  const canEdit = player?.id === match.pid1 || player?.id === match.pid2;
 
   return (
     <Stack sx={{gap: 1, flex: 1}}>
-      <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[0][0] ?? ""}
-          onChange={e => handleChangeResult(0, 0, e.target.value)}
-          type="number"
-          error={error[0][0]}
-        />
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[0][1] ?? ""}
-          onChange={e => handleChangeResult(0, 1, e.target.value)}
-          type="number"
-          error={error[0][1]}
-        />
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[0][2] ?? ""}
-          onChange={e => handleChangeResult(0, 2, e.target.value)}
-          type="number"
-          error={error[0][2]}
-        />
-        <IconButton
-          size="small"
-          disabled={loading || disabled}
-          onClick={() => handleApprove(player!.id!)}>
-          <Done fontSize="inherit" />
-        </IconButton>
-      </Stack>
-      <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[1][0] ?? ""}
-          onChange={e => handleChangeResult(1, 0, e.target.value)}
-          type="number"
-          error={error[1][0]}
-        />
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[1][1] ?? ""}
-          onChange={e => handleChangeResult(1, 1, e.target.value)}
-          type="number"
-          error={error[1][1]}
-        />
-        <TextField
-          sx={tfSx}
-          disabled={loading || disabled}
-          value={result[1][2] ?? ""}
-          onChange={e => handleChangeResult(1, 2, e.target.value)}
-          type="number"
-          error={error[1][2]}
-        />
-        <IconButton
-          size="small"
-          disabled={loading || p2Approved || match.pid2 !== player?.id}
-          onClick={() => handleApprove(player!.id!)}>
-          <Done fontSize="inherit" />
-        </IconButton>
-      </Stack>
+      <ResultRow
+        loading={loading}
+        matchApproved={matchApproved}
+        result={result}
+        error={error}
+        playerIndex={0}
+        canApprove={canP1Approve}
+        canEdit={canEdit}
+        sx={tfSx}
+        onChangeResult={handleChangeResult}
+        onApprove={handleApprove}
+      />
+      <ResultRow
+        loading={loading}
+        matchApproved={matchApproved}
+        result={result}
+        error={error}
+        playerIndex={1}
+        canApprove={canP2Approve}
+        canEdit={canEdit}
+        sx={tfSx}
+        onChangeResult={handleChangeResult}
+        onApprove={handleApprove}
+      />
     </Stack>
   );
 };

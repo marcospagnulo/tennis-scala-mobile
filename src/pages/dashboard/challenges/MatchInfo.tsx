@@ -9,7 +9,7 @@ import {useUpdateChallengeStatus} from "../../../functions";
 import {ConfirmDialog} from "../../../components";
 import {useState} from "react";
 import {deleteChallenge} from "../../../functions/challenge/core";
-import {Result} from "./Result";
+import {Result} from "./result";
 
 const Player = ({id}: {id: string}) => {
   const {data: player, loading} = useFindById({
