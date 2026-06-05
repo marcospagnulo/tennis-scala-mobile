@@ -1,14 +1,14 @@
 import {Avatar, Chip, CircularProgress, Stack, Typography} from "@mui/material";
-import {matchStatusMap, type Match} from "../../../domain/types";
-import {useFindById} from "../../../functions/useFindById";
-import {collections} from "../../../lib/firebase";
+import {matchStatusMap, type Match} from "../../domain/types";
+import {useFindById} from "../../functions/useFindById";
+import {collections} from "../../lib/firebase";
 import dayjs from "dayjs";
-import {useAppContext} from "../../../app/context";
+import {useAppContext} from "../../app/context";
 import {Close, Delete, Done} from "@mui/icons-material";
-import {useUpdateChallengeStatus} from "../../../functions";
-import {ConfirmDialog} from "../../../components";
+import {useUpdateChallengeStatus} from "../../functions";
+import {ConfirmDialog} from "..";
 import {useState} from "react";
-import {deleteChallenge} from "../../../functions/challenge/core";
+import {deleteChallenge} from "../../functions/challenge/core";
 import {Result} from "./result";
 
 const Player = ({id}: {id: string}) => {
@@ -42,7 +42,13 @@ const matchStatusColorMap: Record<
   completed: "default",
 };
 
-const MatchInfo = ({match}: {match: Match}) => {
+const MatchInfo = ({
+  match,
+  readonly = false,
+}: {
+  match: Match;
+  readonly?: boolean;
+}) => {
   const {player, currentSeason} = useAppContext();
   const {loading, updateChallengeStatus} = useUpdateChallengeStatus();
 
@@ -114,7 +120,7 @@ const MatchInfo = ({match}: {match: Match}) => {
           <Player id={match.pid2} />
         </Stack>
         {match.status === "approved" || match.status === "completed" ? (
-          <Result match={match} />
+          <Result match={match} readonly={readonly} />
         ) : null}
       </Stack>
 

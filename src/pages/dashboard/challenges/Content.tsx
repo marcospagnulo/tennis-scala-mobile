@@ -5,7 +5,7 @@ import {RankingRow} from "../../ranking/row";
 import {RankingHeader} from "../../ranking/Header";
 import {useEffect, useState} from "react";
 import type {Match} from "../../../domain/types";
-import {MatchInfo} from "./MatchInfo";
+import {MatchInfo} from "../../../components/match";
 
 const ChallengesCardContent = () => {
   const {currentSeason, player} = useAppContext();
@@ -29,7 +29,7 @@ const ChallengesCardContent = () => {
     <Stack sx={{px: 2, gap: 2}}>
       <Stack sx={{gap: 1}}>
         <Typography align="center" variant="h6">
-          Sfide in corso
+          Le tue sfide
         </Typography>
         <Divider />
         <Stack sx={{gap: 1}} divider={<Divider />}>
@@ -42,7 +42,7 @@ const ChallengesCardContent = () => {
         <Typography align="center" variant="h6">
           Sfida un giocatore
         </Typography>
-        <RankingHeader sx={{ml: "-30px"}} />
+        <RankingHeader sx={{ml: "-30px"}} mode="compact" />
         <Divider />
         {currentSeason.ranking
           .filter(
@@ -52,6 +52,7 @@ const ChallengesCardContent = () => {
           )
           .map(r => (
             <RankingRow
+              mode="compact"
               key={`challenge-${r.position}`}
               ranking={r}
               challengeable={r.player.id !== player?.id}

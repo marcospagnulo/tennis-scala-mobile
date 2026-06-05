@@ -10,7 +10,6 @@ import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
 import {Auth} from "../components/auth";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
-import {Select} from "../components/Select";
 
 const MobileAppBar = ({
   onMenuClick,
@@ -20,16 +19,8 @@ const MobileAppBar = ({
   open: boolean;
 }) => {
   const theme = useTheme();
-  const {currentSeason, seasons, user, setCurrentSeasonId, handleLogout} =
-    useAppContext();
+  const {user, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
-
-  const handleSeasonChange = (seasonId: string) => {
-    const selectedSeason = seasons.find(s => s.id === seasonId);
-    if (selectedSeason) {
-      setCurrentSeasonId(selectedSeason.id!);
-    }
-  };
 
   const handleAuthClick = () => {
     if (user) {
@@ -52,21 +43,9 @@ const MobileAppBar = ({
           <IconButton onClick={onMenuClick} color="inherit">
             {open ? <MenuOpen /> : <Menu />}
           </IconButton>
-          {currentSeason ? (
-            <Select<string>
-              sx={{color: "primary.contrastText", ml: 2}}
-              options={seasons.map(season => ({
-                label: season.name,
-                value: season.id!,
-              }))}
-              value={currentSeason.id}
-              onChange={handleSeasonChange}
-            />
-          ) : (
-            <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
-              {"Scala Mobile"}
-            </Typography>
-          )}
+          <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
+            {"Scala Mobile"}
+          </Typography>
           <IconButton
             onClick={handleAuthClick}
             color="inherit"

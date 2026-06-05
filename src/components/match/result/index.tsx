@@ -1,13 +1,13 @@
 import {Stack, type SxProps} from "@mui/material";
-import type {Match} from "../../../../domain/types";
 import {useEffect, useState} from "react";
 import type {Theme} from "@emotion/react";
-import {useUpdateChallengeResult} from "../../../../functions/challenge/useUpdateChallengeResult";
-import {useAppContext} from "../../../../app/context";
 import {ResultRow} from "./Row";
-import {getWinnerIndex, shouldEnable3Set} from "../../../../util";
+import type {Match} from "../../../domain/types";
+import {useAppContext} from "../../../app/context";
+import {useUpdateChallengeResult} from "../../../functions/challenge/useUpdateChallengeResult";
+import {getWinnerIndex, shouldEnable3Set} from "../../../util";
 
-const Result = ({match}: {match: Match}) => {
+const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
   const {currentSeason, player} = useAppContext();
 
   const [enable3Set, setEnable3Set] = useState<boolean>(false);
@@ -159,9 +159,11 @@ const Result = ({match}: {match: Match}) => {
     (match.pid1 === player?.id && canP1Approve) ||
     (match.pid2 === player?.id && canP2Approve);
 
+  const winnerIndex = getWinnerIndex(result);
   return (
     <Stack sx={{gap: 1, flex: 1}}>
       <ResultRow
+        readonly={readonly}
         loading={loading}
         matchApproved={matchApproved}
         result={result}
@@ -171,11 +173,12 @@ const Result = ({match}: {match: Match}) => {
         canEdit={canEdit}
         sx={tfSx}
         enable3Set={enable3Set}
-        winner={getWinnerIndex(result) === 0}
+        winner={winnerIndex === 0}
         onChangeResult={handleChangeResult}
         onApprove={handleApprove}
       />
       <ResultRow
+        readonly={readonly}
         loading={loading}
         matchApproved={matchApproved}
         result={result}
@@ -185,7 +188,7 @@ const Result = ({match}: {match: Match}) => {
         canEdit={canEdit}
         sx={tfSx}
         enable3Set={enable3Set}
-        winner={getWinnerIndex(result) === 1}
+        winner={winnerIndex === 1}
         onChangeResult={handleChangeResult}
         onApprove={handleApprove}
       />

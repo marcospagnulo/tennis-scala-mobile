@@ -58,7 +58,6 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
             <>
               <Select<string>
                 sx={{
-                  color: "text.primary",
                   fontSize: "h6.fontSize",
                   fontWeight: "bold",
                 }}

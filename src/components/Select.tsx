@@ -69,7 +69,7 @@ const Select = <T,>({
         </IconButton>
       ) : (
         <Button
-          sx={{...sx}}
+          sx={{...sx, color: "text.primary"}}
           startIcon={Icon && <Icon />}
           onClick={handleMenuClick}
           variant={variant}

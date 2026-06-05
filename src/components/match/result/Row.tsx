@@ -7,7 +7,7 @@ import {
   type SxProps,
   Typography,
 } from "@mui/material";
-import {WinnerIcon} from "../../../../icons";
+import {WinnerIcon} from "../../../icons";
 
 const ResultRow = ({
   loading,
@@ -20,9 +20,11 @@ const ResultRow = ({
   canEdit,
   enable3Set,
   winner,
+  readonly = false,
   onChangeResult,
   onApprove,
 }: {
+  readonly: boolean;
   loading: boolean;
   matchApproved: boolean;
   result: (number | null)[][];
@@ -42,7 +44,7 @@ const ResultRow = ({
 }) => {
   const hasError = error[playerIndex].some(e => e);
 
-  if (matchApproved) {
+  if (matchApproved || readonly) {
     return (
       <Stack direction={"row"} sx={{alignItems: "center", gap: 1, height: 28}}>
         <Typography variant="body1">{result[playerIndex][0] ?? ""}</Typography>
