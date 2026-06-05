@@ -1,18 +1,22 @@
 import {useState} from "react";
 import {EditableTypography} from "../../../components/EditableTypography";
-import {IconButton, Stack} from "@mui/material";
+import {IconButton, Stack, Typography} from "@mui/material";
 import {EditIcon} from "../../../icons";
 
 const EditableField = ({
   field,
   value,
+  live,
+  liveColor,
   isAdmin,
   hover,
   width,
   onEdit,
 }: {
   field: string;
-  value: string | number;
+  value: number;
+  live?: number;
+  liveColor?: string;
   isAdmin: boolean;
   hover: boolean;
   width: number;
@@ -31,17 +35,33 @@ const EditableField = ({
       sx={{
         minWidth: width,
         gap: 1,
+        position: "relative",
         alignItems: "center",
         justifyContent: "center",
       }}>
       <EditableTypography
+        sx={{
+          ...(edit && {
+            position: "absolute",
+            zIndex: 1,
+            left: 0,
+            p: 0.5,
+            bgcolor: "background.paper",
+          }),
+        }}
         variant="body2"
         value={value + ""}
         edit={edit}
-        onConfirm={handleEdit}
+        onConfirm={newValue => handleEdit(parseInt(newValue))}
         onCancel={() => setEdit(false)}
         type="number"
+        textFieldWidth={30}
       />
+      {live !== undefined && live !== 0 && (
+        <Typography
+          variant="body2"
+          sx={{color: liveColor}}>{`+${live}`}</Typography>
+      )}
       {isAdmin && (
         <IconButton
           sx={{visibility: hover ? "visible" : "hidden", mr: -4}}

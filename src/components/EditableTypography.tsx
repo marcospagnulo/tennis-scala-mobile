@@ -16,7 +16,8 @@ type EditableTypographyProps = {
   label?: string;
   type?: React.InputHTMLAttributes<unknown>["type"] | undefined;
   color?: TypographyProps["color"];
-  textFieldVariant: "standard" | "outlined" | "filled";
+  textFieldVariant?: "standard" | "outlined" | "filled";
+  textFieldWidth?: number;
   variant?:
     | "h1"
     | "h2"
@@ -43,6 +44,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
   type = "string",
   color = "textPrimary",
   textFieldVariant = "standard",
+  textFieldWidth = 50,
 }) => {
   const [currentText, setCurrentText] = useState<string>(value);
 
@@ -55,7 +57,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
       {edit ? (
         <Stack direction="row" sx={{...sx, gap: 1, alignItems: "center"}}>
           <TextField
-            sx={{minWidth: 50}}
+            sx={{minWidth: textFieldWidth}}
             type={type}
             label={label}
             value={currentText}

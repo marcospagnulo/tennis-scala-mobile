@@ -11,18 +11,19 @@ import {
   useTheme,
   type SxProps,
 } from "@mui/material";
-import type {Player} from "../../domain/types";
+import type {Player, Ranking} from "../../domain/types";
 import {Add} from "@mui/icons-material";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
 import {RankingRow} from "./row";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 import {RankingIcon} from "../../icons";
 import {useRanking} from "../../functions";
 import type {rankingGroupsType} from "../../functions/useRanking";
+import {calculateRankingInPeriod} from "../../util";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
@@ -32,6 +33,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {challengeableRange, rankingPlayer, rankingGroups, validRanking} =
     useRanking();
 
+  const [liveRanking, setLiveRanking] = useState<Record<string, Ranking>>({});
   const [dialog, setDialog] = useState<boolean>(false);
 
   const handleAddPlayers = async (players: Player[]) => {
@@ -39,6 +41,19 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     if (!currentSeason) return;
     await addPlayers(currentSeason, players);
   };
+
+  useEffect(() => {
+    const currentPeriod = currentSeason?.periods.find(p => !p.end);
+    if (!currentPeriod || !currentSeason) return;
+
+    const newRanking = calculateRankingInPeriod(
+      currentPeriod,
+      currentSeason.ranking,
+    );
+
+    setLiveRanking(newRanking);
+    console.log("Live ranking calculated", newRanking);
+  }, [currentSeason]);
 
   const getRankingBgColor = (
     index: number,
@@ -90,6 +105,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 ranking={r}
                 challengeable={!samePlayer && challengablePosition}
                 divider={(index + 1) % group.length === 0 && gindex !== 4}
+                liveRanking={liveRanking[r.player.id!]}
                 bgColor={getRankingBgColor(
                   index,
                   r.player.id!,

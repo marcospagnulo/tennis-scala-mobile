@@ -69,6 +69,7 @@ const addPlayers = async (season: Season, players: Player[]) => {
     losses: 0,
     wins: 0,
     points: 0,
+    draws: 0,
     status: "active",
   }));
   updatedSeason.ranking = [...updatedSeason.ranking, ...ranking];

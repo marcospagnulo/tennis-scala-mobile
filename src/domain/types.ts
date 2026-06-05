@@ -51,6 +51,7 @@ export interface Ranking {
   points: number;
   wins: number;
   losses: number;
+  draws: number;
   status: PlayerStatus;
 }
 

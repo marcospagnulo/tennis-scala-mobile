@@ -30,28 +30,35 @@ const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
         </Typography>
         <Box sx={{flex: 1}} />
         <Typography
-          sx={{width: mobile ? 25 : 100}}
+          sx={{width: mobile ? 25 : 70}}
           variant="body2"
           color="text.secondary"
           align="center">
           {mobile ? "Pnt" : "Punti"}
         </Typography>
         <Typography
-          sx={{width: mobile ? 25 : 100}}
+          sx={{width: mobile ? 25 : 70}}
           variant="body2"
           color="text.secondary"
           align="center">
           {mobile ? "G" : "Partite"}
         </Typography>
         <Typography
-          sx={{width: mobile ? 25 : 100}}
+          sx={{width: mobile ? 25 : 70}}
           variant="body2"
           color="text.secondary"
           align="center">
           {mobile ? "V" : "Vittorie"}
         </Typography>
         <Typography
-          sx={{width: mobile ? 25 : 100}}
+          sx={{width: mobile ? 25 : 70}}
+          variant="body2"
+          color="text.secondary"
+          align="center">
+          {mobile ? "Par" : "Pareggi"}
+        </Typography>
+        <Typography
+          sx={{width: mobile ? 25 : 70}}
           variant="body2"
           color="text.secondary"
           align="center">

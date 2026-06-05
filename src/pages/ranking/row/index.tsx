@@ -11,14 +11,17 @@ import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
 import {SwapPosition} from "./SwapPosition";
 import {ChallengeDialog} from "./ChallengeDialog";
+import {green, red} from "@mui/material/colors";
 
 const RankingRow = ({
   ranking,
   bgColor,
   divider,
   challengeable,
+  liveRanking,
 }: {
   ranking: Ranking;
+  liveRanking?: Ranking;
   divider?: boolean;
   bgColor?: string;
   challengeable?: boolean;
@@ -137,32 +140,48 @@ const RankingRow = ({
         )}
       </Stack>
       <EditableField
-        width={mobile ? 25 : 100}
+        width={mobile ? 25 : 70}
         field="points"
         value={ranking.points}
+        live={liveRanking?.points}
+        liveColor={green[500]}
         isAdmin={isAdmin}
         hover={hover}
         onEdit={handleEdit}
       />
       <Typography
-        sx={{width: mobile ? 25 : 100}}
+        sx={{width: mobile ? 25 : 70}}
         variant="body2"
         color="text.secondary"
         align="center">
-        {ranking.wins + ranking.losses}
+        {ranking.wins + ranking.losses + ranking.draws}
       </Typography>
       <EditableField
-        width={mobile ? 25 : 100}
+        width={mobile ? 25 : 70}
         field="wins"
         value={ranking.wins}
+        live={liveRanking?.wins}
+        liveColor={green[500]}
         isAdmin={isAdmin}
         hover={hover}
         onEdit={handleEdit}
       />
       <EditableField
-        width={mobile ? 25 : 100}
+        width={mobile ? 25 : 70}
+        field="draws"
+        value={ranking.draws}
+        live={liveRanking?.draws}
+        liveColor={green[500]}
+        isAdmin={isAdmin}
+        hover={hover}
+        onEdit={handleEdit}
+      />
+      <EditableField
+        width={mobile ? 25 : 70}
         field="losses"
         value={ranking.losses}
+        live={liveRanking?.losses}
+        liveColor={red[500]}
         isAdmin={isAdmin}
         hover={hover}
         onEdit={handleEdit}
