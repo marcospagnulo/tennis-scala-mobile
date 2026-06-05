@@ -60,6 +60,12 @@ export interface Period {
   matches: {[key: number]: Match};
 }
 
+export const matchStatusMap: Record<string, string> = {
+  pending: "In attesa",
+  approved: "Approvata",
+  rejected: "Rifiutata",
+  completed: "Completata",
+};
 export interface Match {
   pid1: string;
   pid2: string;
@@ -68,7 +74,7 @@ export interface Match {
     p1Approved: boolean;
     p2Approved: boolean;
   };
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "completed";
   date: Timestamp;
 }
 

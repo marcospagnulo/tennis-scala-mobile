@@ -1,5 +1,5 @@
 import {Avatar, Chip, CircularProgress, Stack, Typography} from "@mui/material";
-import type {Match} from "../../../domain/types";
+import {matchStatusMap, type Match} from "../../../domain/types";
 import {useFindById} from "../../../functions/useFindById";
 import {collections} from "../../../lib/firebase";
 import dayjs from "dayjs";
@@ -32,6 +32,16 @@ const Player = ({id}: {id: string}) => {
   );
 };
 
+const matchStatusColorMap: Record<
+  string,
+  "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning"
+> = {
+  pending: "warning",
+  approved: "success",
+  rejected: "error",
+  completed: "default",
+};
+
 const MatchInfo = ({match}: {match: Match}) => {
   const {player, currentSeason} = useAppContext();
   const {loading, updateChallengeStatus} = useUpdateChallengeStatus();
@@ -60,8 +70,8 @@ const MatchInfo = ({match}: {match: Match}) => {
         sx={{alignItems: "center", justifyContent: "space-between"}}>
         <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
           <Chip
-            label={match.status === "pending" ? "In attesa" : "Accettata"}
-            color={match.status === "pending" ? "warning" : "success"}
+            label={matchStatusMap[match.status]}
+            color={matchStatusColorMap[match.status]}
           />
           {match.status === "pending" && match.pid2 === player?.id && (
             <>

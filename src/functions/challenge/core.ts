@@ -96,6 +96,7 @@ const updateChallengeResult = async (
           key,
           {
             ...match,
+            status: p1Approved && p2Approved ? "completed" : match.status,
             result: {
               ...match.result,
               value: result,
