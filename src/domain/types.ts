@@ -11,7 +11,6 @@ export type User = {
 export const genderMap: Record<string, string> = {
   male: "Uomo",
   female: "Donna",
-  other: "Altro",
 };
 
 export const playerStatusMap: Record<string, string> = {

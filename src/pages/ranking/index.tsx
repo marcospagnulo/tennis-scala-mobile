@@ -4,56 +4,50 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
-  Fab,
+  FormControlLabel,
+  IconButton,
+  Paper,
   Stack,
+  Switch,
   Typography,
   useTheme,
   type SxProps,
 } from "@mui/material";
-import type {Player, Ranking} from "../../domain/types";
+import type {Player} from "../../domain/types";
 import {Add} from "@mui/icons-material";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
 import {RankingRow} from "./row";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 import {RankingIcon} from "../../icons";
 import {useRanking} from "../../functions";
 import type {rankingGroupsType} from "../../functions/useRanking";
-import {calculateRankingInPeriod} from "../../util";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
+  const [dialog, setDialog] = useState<boolean>(false);
+  const [mode, setMode] = useState<"compact" | "expanded">("compact");
+  const [live, setLive] = useState<boolean>(false);
+
   const theme = useTheme();
-  const {user, player, currentSeason} = useAppContext();
+  const {user, player, currentSeason, mobile} = useAppContext();
   const isAdmin = user?.role === "admin";
   const {loading, addPlayers} = useAddPlayers();
-  const {challengeableRange, rankingPlayer, rankingGroups, validRanking} =
-    useRanking();
-
-  const [liveRanking, setLiveRanking] = useState<Record<string, Ranking>>({});
-  const [dialog, setDialog] = useState<boolean>(false);
+  const {
+    challengeableRange,
+    rankingPlayer,
+    rankingGroups,
+    validRanking,
+    liveRanking,
+  } = useRanking(live);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
     if (!currentSeason) return;
     await addPlayers(currentSeason, players);
   };
-
-  useEffect(() => {
-    const currentPeriod = currentSeason?.periods.find(p => !p.end);
-    if (!currentPeriod || !currentSeason) return;
-
-    const newRanking = calculateRankingInPeriod(
-      currentPeriod,
-      currentSeason.ranking,
-    );
-
-    setLiveRanking(newRanking);
-    console.log("Live ranking calculated", newRanking);
-  }, [currentSeason]);
 
   const getRankingBgColor = (
     index: number,
@@ -76,6 +70,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const renderGroup = (
     rankingGroupsType: rankingGroupsType,
     gindex: 1 | 2 | 3 | 4,
+    mode: "compact" | "expanded",
   ) => {
     const group = rankingGroupsType[gindex];
     if (group.length === 0) return null;
@@ -106,6 +101,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 challengeable={!samePlayer && challengablePosition}
                 divider={(index + 1) % group.length === 0 && gindex !== 4}
                 liveRanking={liveRanking[r.player.id!]}
+                mode={mode}
                 bgColor={getRankingBgColor(
                   index,
                   r.player.id!,
@@ -121,27 +117,61 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   return (
-    <Stack sx={{...sx}}>
+    <Stack sx={{...sx, ...(mobile && {px: 2})}}>
+      <Stack direction={"row"} sx={{alignItems: "center", mb: 2, gap: 2}}>
+        <FormControlLabel
+          control={
+            <Switch checked={live} onChange={() => setLive(prev => !prev)} />
+          }
+          label="Live"
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={mode === "compact"}
+              onChange={() =>
+                setMode(prev => (prev === "compact" ? "expanded" : "compact"))
+              }
+            />
+          }
+          label="Compatta"
+        />
+
+        {isAdmin && (
+          <IconButton onClick={() => setDialog(true)} sx={{ml: "auto"}}>
+            <Add />
+          </IconButton>
+        )}
+      </Stack>
       {validRanking ? (
-        <Stack
-          sx={{
-            gap: 1,
-            flex: "1 1 0",
-            overflow: "hidden",
-          }}
-          divider={<Divider />}>
-          <RankingHeader />
+        <Paper sx={{display: "flex", flex: "1 1 0"}}>
           <Stack
             sx={{
-              overflow: "auto",
+              gap: 1,
               flex: "1 1 0",
+              overflow: "hidden",
             }}>
-            <Stack>{renderGroup(rankingGroups, 1)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 2)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 3)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 4)}</Stack>
+            <Stack
+              sx={{
+                overflow: "auto",
+                flex: "1 1 0",
+              }}>
+              <RankingHeader
+                mode={mode}
+                sx={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                  bgcolor: "background.paper",
+                }}
+              />
+              <Stack>{renderGroup(rankingGroups, 1, mode)}</Stack>
+              <Stack>{renderGroup(rankingGroups, 2, mode)}</Stack>
+              <Stack>{renderGroup(rankingGroups, 3, mode)}</Stack>
+              <Stack>{renderGroup(rankingGroups, 4, mode)}</Stack>
+            </Stack>
           </Stack>
-        </Stack>
+        </Paper>
       ) : (
         <Stack
           sx={{
@@ -153,14 +183,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <RankingIcon color="primary" sx={{fontSize: 180}} />
           <Typography variant="h5">Classifica non disponibile</Typography>
         </Stack>
-      )}
-      {isAdmin && (
-        <Fab
-          color="primary"
-          sx={{position: "absolute", bottom: 16, right: 16}}
-          onClick={() => setDialog(true)}>
-          <Add />
-        </Fab>
       )}
       <Dialog
         open={dialog}

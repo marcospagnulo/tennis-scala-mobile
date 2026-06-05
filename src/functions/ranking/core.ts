@@ -40,6 +40,7 @@ const editRanking = async (
   updatedSeason.ranking = updatedSeason.ranking.map(r =>
     r.player.id === ranking.player.id ? updatedRanking : r,
   );
+  updatedSeason.ranking = recalculatePositions(updatedSeason.ranking);
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {

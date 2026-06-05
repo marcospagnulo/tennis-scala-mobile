@@ -6,7 +6,7 @@ import {EditIcon} from "../../../icons";
 const EditableField = ({
   field,
   value,
-  live,
+  liveValue,
   liveColor,
   isAdmin,
   hover,
@@ -15,7 +15,7 @@ const EditableField = ({
 }: {
   field: string;
   value: number;
-  live?: number;
+  liveValue?: number;
   liveColor?: string;
   isAdmin: boolean;
   hover: boolean;
@@ -57,10 +57,14 @@ const EditableField = ({
         type="number"
         textFieldWidth={30}
       />
-      {live !== undefined && live !== 0 && (
+      {liveValue !== undefined && liveValue !== 0 && (
         <Typography
           variant="body2"
-          sx={{color: liveColor}}>{`+${live}`}</Typography>
+          sx={{
+            color: liveColor,
+            position: "absolute",
+            right: 0,
+          }}>{`+${liveValue}`}</Typography>
       )}
       {isAdmin && (
         <IconButton

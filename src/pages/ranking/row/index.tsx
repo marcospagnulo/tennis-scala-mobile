@@ -1,4 +1,11 @@
-import {IconButton, Link, Stack, Typography, type SxProps} from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Link,
+  Stack,
+  Typography,
+  type SxProps,
+} from "@mui/material";
 import type {Player, Ranking} from "../../../domain/types";
 import {useState} from "react";
 import {useAppContext} from "../../../app/context";
@@ -11,7 +18,7 @@ import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
 import {SwapPosition} from "./SwapPosition";
 import {ChallengeDialog} from "./ChallengeDialog";
-import {green, red} from "@mui/material/colors";
+import {green} from "@mui/material/colors";
 
 const RankingRow = ({
   ranking,
@@ -19,9 +26,11 @@ const RankingRow = ({
   divider,
   challengeable,
   liveRanking,
+  mode,
 }: {
   ranking: Ranking;
   liveRanking?: Ranking;
+  mode: "compact" | "expanded";
   divider?: boolean;
   bgColor?: string;
   challengeable?: boolean;
@@ -140,10 +149,10 @@ const RankingRow = ({
         )}
       </Stack>
       <EditableField
-        width={mobile ? 25 : 70}
+        width={mobile ? 80 : 120}
         field="points"
         value={ranking.points}
-        live={liveRanking?.points}
+        liveValue={liveRanking?.points}
         liveColor={green[500]}
         isAdmin={isAdmin}
         hover={hover}
@@ -156,43 +165,35 @@ const RankingRow = ({
         align="center">
         {ranking.wins + ranking.losses + ranking.draws}
       </Typography>
-      <EditableField
-        width={mobile ? 25 : 70}
-        field="wins"
-        value={ranking.wins}
-        live={liveRanking?.wins}
-        liveColor={green[500]}
-        isAdmin={isAdmin}
-        hover={hover}
-        onEdit={handleEdit}
-      />
-      <EditableField
-        width={mobile ? 25 : 70}
-        field="draws"
-        value={ranking.draws}
-        live={liveRanking?.draws}
-        liveColor={green[500]}
-        isAdmin={isAdmin}
-        hover={hover}
-        onEdit={handleEdit}
-      />
-      <EditableField
-        width={mobile ? 25 : 70}
-        field="losses"
-        value={ranking.losses}
-        live={liveRanking?.losses}
-        liveColor={red[500]}
-        isAdmin={isAdmin}
-        hover={hover}
-        onEdit={handleEdit}
-      />
-      <Stack
-        direction="row"
-        sx={{
-          width: 16,
-          gap: 1,
-        }}
-      />
+      {mode === "expanded" && (
+        <>
+          <EditableField
+            width={mobile ? 25 : 70}
+            field="wins"
+            value={ranking.wins}
+            isAdmin={isAdmin}
+            hover={hover}
+            onEdit={handleEdit}
+          />
+          <EditableField
+            width={mobile ? 25 : 70}
+            field="draws"
+            value={ranking.draws}
+            isAdmin={isAdmin}
+            hover={hover}
+            onEdit={handleEdit}
+          />
+          <EditableField
+            width={mobile ? 25 : 70}
+            field="losses"
+            value={ranking.losses}
+            isAdmin={isAdmin}
+            hover={hover}
+            onEdit={handleEdit}
+          />
+        </>
+      )}
+      <Box sx={{width: 8}} />
       <PlayerInfo
         ranking={ranking}
         open={playerOpen}

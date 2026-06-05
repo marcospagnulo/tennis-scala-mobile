@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import type {Ranking} from "../domain/types";
 import {useAppContext} from "../app/context";
+import {calculateRankingInPeriod} from "../util";
 
 type rankingGroupsType = {
   1: Ranking[];
@@ -9,9 +10,10 @@ type rankingGroupsType = {
   4: Ranking[];
 };
 
-const useRanking = () => {
+const useRanking = (live?: boolean) => {
   const {currentSeason, player} = useAppContext();
 
+  const [liveRanking, setLiveRanking] = useState<Record<string, Ranking>>({});
   const [validRanking, setValidRanking] = useState<boolean>(false);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
   const [challengeableRange, setChallengeableRange] = useState<
@@ -42,23 +44,47 @@ const useRanking = () => {
   };
 
   useEffect(() => {
+    const currentPeriod = currentSeason?.periods.find(p => !p.end);
+    if (!currentPeriod || !currentSeason) return;
+
+    const newRanking = calculateRankingInPeriod(
+      currentPeriod,
+      currentSeason.ranking,
+    );
+
+    setLiveRanking(newRanking);
+  }, [currentSeason]);
+
+  useEffect(() => {
     if (!currentSeason || !currentSeason.ranking) return;
 
     setRankingPlayer(
       currentSeason.ranking.find(r => r.player.id === player?.id),
     );
 
-    const groupSize =
-      currentSeason.ranking.length > 4
-        ? Math.round(currentSeason.ranking.length / 4)
-        : 1;
+    let ranking = [...currentSeason.ranking];
+    if (live) {
+      // merge with live ranking
+      ranking = ranking
+        .map(r => ({
+          ...r,
+          points: liveRanking[r.player.id!]?.points ?? r.points,
+          wins: liveRanking[r.player.id!]?.wins ?? r.wins,
+          losses: liveRanking[r.player.id!]?.losses ?? r.losses,
+          draws: liveRanking[r.player.id!]?.draws ?? r.draws,
+        }))
+        .sort((a, b) => b.points - a.points)
+        .map((r, index) => ({...r, position: index + 1}));
+    }
+
+    const groupSize = ranking.length > 4 ? Math.round(ranking.length / 4) : 1;
     const newrankingGroups: rankingGroupsType = {1: [], 2: [], 3: [], 4: []};
-    currentSeason.ranking.forEach((player, index) => {
+    ranking.forEach((player, index) => {
       const group = Math.min(Math.floor(index / groupSize) + 1, 4);
       newrankingGroups[group as 1 | 2 | 3 | 4].push(player);
     });
     setRankingGroups(newrankingGroups);
-  }, [currentSeason, player?.id]);
+  }, [currentSeason, player?.id, live, liveRanking]);
 
   // è possibile sfidare la seconda metà del gruppo precedente se si è nella prima metà del gruppo attuale, altrimenti si possono sfidare tutti quelli del gruppo precedente
   useEffect(() => {
@@ -98,7 +124,13 @@ const useRanking = () => {
     setValidRanking((currentSeason?.ranking.length ?? 0) > 12);
   }, [currentSeason?.ranking]);
 
-  return {challengeableRange, rankingPlayer, rankingGroups, validRanking};
+  return {
+    challengeableRange,
+    rankingPlayer,
+    rankingGroups,
+    validRanking,
+    liveRanking,
+  };
 };
 
 export {useRanking, type rankingGroupsType};

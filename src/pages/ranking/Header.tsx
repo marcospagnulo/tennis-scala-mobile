@@ -2,7 +2,13 @@ import {Box, Stack, Typography, type SxProps} from "@mui/material";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
 
-const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
+const RankingHeader = ({
+  sx,
+  mode,
+}: {
+  sx?: SxProps<Theme>;
+  mode: "compact" | "expanded";
+}) => {
   const {mobile} = useAppContext();
 
   return (
@@ -12,8 +18,8 @@ const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
         direction={"row"}
         sx={{
           flex: 1,
-          pl: mobile ? 0 : "16px",
-          pr: mobile ? 0 : "26px",
+          py: 1,
+          px: mobile ? 0 : 2,
           gap: mobile ? 1 : 2,
           alignItems: "center",
         }}>
@@ -30,7 +36,7 @@ const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
         </Typography>
         <Box sx={{flex: 1}} />
         <Typography
-          sx={{width: mobile ? 25 : 70}}
+          sx={{width: mobile ? 80 : 120}}
           variant="body2"
           color="text.secondary"
           align="center">
@@ -43,28 +49,32 @@ const RankingHeader = ({sx}: {sx?: SxProps<Theme>}) => {
           align="center">
           {mobile ? "G" : "Partite"}
         </Typography>
-        <Typography
-          sx={{width: mobile ? 25 : 70}}
-          variant="body2"
-          color="text.secondary"
-          align="center">
-          {mobile ? "V" : "Vittorie"}
-        </Typography>
-        <Typography
-          sx={{width: mobile ? 25 : 70}}
-          variant="body2"
-          color="text.secondary"
-          align="center">
-          {mobile ? "Par" : "Pareggi"}
-        </Typography>
-        <Typography
-          sx={{width: mobile ? 25 : 70}}
-          variant="body2"
-          color="text.secondary"
-          align="center">
-          {mobile ? "S" : "Sconfitte"}
-        </Typography>
-        <Box sx={{width: 16}} />
+        {mode === "expanded" && (
+          <>
+            <Typography
+              sx={{width: mobile ? 25 : 70}}
+              variant="body2"
+              color="text.secondary"
+              align="center">
+              {mobile ? "V" : "Vittorie"}
+            </Typography>
+            <Typography
+              sx={{width: mobile ? 25 : 70}}
+              variant="body2"
+              color="text.secondary"
+              align="center">
+              {mobile ? "Par" : "Pareggi"}
+            </Typography>
+            <Typography
+              sx={{width: mobile ? 25 : 70}}
+              variant="body2"
+              color="text.secondary"
+              align="center">
+              {mobile ? "S" : "Sconfitte"}
+            </Typography>
+          </>
+        )}
+        <Box sx={{width: 8}} />
       </Stack>
     </Stack>
   );

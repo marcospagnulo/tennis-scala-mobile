@@ -102,9 +102,8 @@ const Form = (
           labelId="gender-label"
           label="Genere"
           name="gender"
-          value={formData.gender ?? "other"}
+          value={formData.gender ?? "male"}
           onChange={e => handleChange("gender", e.target.value)}>
-          <MenuItem value="other">Altro</MenuItem>
           <MenuItem value="male">Uomo</MenuItem>
           <MenuItem value="female">Donna</MenuItem>
         </Select>

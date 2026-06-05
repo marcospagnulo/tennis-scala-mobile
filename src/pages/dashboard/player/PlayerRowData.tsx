@@ -70,12 +70,11 @@ const PlayerRowData = ({
           <TextField
             select
             name="gender"
-            value={(value as string) ?? "other"}
+            value={(value as string) ?? "male"}
             onChange={e => handleConfirm(e.target.value)}
             autoFocus
             variant="standard"
             size="small">
-            <MenuItem value="other">Altro</MenuItem>
             <MenuItem value="male">Uomo</MenuItem>
             <MenuItem value="female">Donna</MenuItem>
           </TextField>
@@ -87,7 +86,7 @@ const PlayerRowData = ({
       {type === "gender" && !edit && (
         <Stack direction={"row"} spacing={1} sx={{alignItems: "center"}}>
           <Typography color="textPrimary" variant="body1">
-            {genderMap[value as string] ?? "Altro"}
+            {genderMap[value as string] ?? "Uomo"}
           </Typography>
         </Stack>
       )}
