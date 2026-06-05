@@ -1,6 +1,6 @@
 import type {SvgIconComponent} from "@mui/icons-material";
-import {DashboardIcon, PlayersIcon, RankingIcon, SeasonIcon} from "../icons";
-import {DashboardPage, PlayersPage, RankingPage, SeasonsPage} from "../pages";
+import {DashboardIcon, PlayersIcon, RankingIcon} from "../icons";
+import {DashboardPage, PlayersPage, RankingPage} from "../pages";
 
 type NavigationItem = {
   path: string;
@@ -16,13 +16,6 @@ const navigationItems: NavigationItem[] = [
     label: "Dashboard",
     icon: DashboardIcon,
     element: <DashboardPage sx={{py: 2}} />,
-  },
-  {
-    path: "/seasons",
-    label: "Stagioni",
-    icon: SeasonIcon,
-    element: <SeasonsPage sx={{flex: 1}} />,
-    admin: true,
   },
   {
     path: "/ranking",

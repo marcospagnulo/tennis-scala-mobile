@@ -25,7 +25,7 @@ const Select = <T,>({
   value,
   collapsable = false,
   disabled = false,
-  variant = "outlined",
+  variant = "text",
   sx,
   onChange,
 }: {

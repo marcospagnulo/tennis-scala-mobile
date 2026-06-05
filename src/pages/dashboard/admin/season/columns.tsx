@@ -1,7 +1,7 @@
 import type {GridColDef} from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import type {Timestamp} from "firebase/firestore";
-import type {Season} from "../../domain/types";
+import type {Season} from "../../../../domain/types";
 
 const columns: GridColDef<Season>[] = [
   {field: "name", headerName: "Nome", flex: 1},

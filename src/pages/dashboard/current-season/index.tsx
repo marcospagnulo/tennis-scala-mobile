@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import {ConfirmDialog} from "../../../components";
 import {useState} from "react";
 import {useAddPlayers} from "../../../functions/ranking/useAddPlayers";
+import {Select} from "../../../components/Select";
 
 const Row = ({label, value}: {label: string; value: string | number}) => (
   <Stack direction={"row"} spacing={2} sx={{height: 40, alignItems: "center"}}>
@@ -19,7 +20,7 @@ const Row = ({label, value}: {label: string; value: string | number}) => (
 );
 
 const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {currentSeason, player} = useAppContext();
+  const {currentSeason, player, seasons, setCurrentSeasonId} = useAppContext();
 
   const [open, setOpen] = useState<boolean>(false);
   const {loading, addPlayers} = useAddPlayers();
@@ -55,9 +56,19 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
         <Stack sx={{px: 2, pb: 2, position: "relative"}}>
           {currentSeason ? (
             <>
-              <Typography variant="h5" sx={{my: 1}}>
-                {currentSeason.name}
-              </Typography>
+              <Select<string>
+                sx={{
+                  color: "text.primary",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
+                }}
+                options={seasons.map(season => ({
+                  label: season.name,
+                  value: season.id!,
+                }))}
+                value={currentSeason.id}
+                onChange={setCurrentSeasonId}
+              />
               <Row label="Partecipanti" value={currentSeason.ranking.length} />
               <Row label="Periodi" value={currentSeason.periods.length} />
               <Row

@@ -16,33 +16,17 @@ import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
-import {Select} from "../components/Select";
 import {navigationItems} from "./navigation";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
-  const {
-    appLoading,
-    currentSeason,
-    seasons,
-    user,
-    player,
-    setCurrentSeasonId,
-    handleLogout,
-  } = useAppContext();
+  const {appLoading, user, player, handleLogout} = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [tabValue, setTabValue] = useState<string | boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
-
-  const handleSeasonChange = (seasonId: string) => {
-    const selectedSeason = seasons.find(s => s.id === seasonId);
-    if (selectedSeason) {
-      setCurrentSeasonId(selectedSeason.id!);
-    }
-  };
 
   const handleTabChange = (_e: React.SyntheticEvent, newValue: string) => {
     navigate(newValue);
@@ -85,21 +69,9 @@ const DesktopAppBar = () => {
             <Link to="/" style={{color: "inherit", textDecoration: "none"}}>
               <img src={`logo.png`} alt="Logo" style={{height: 48}} />
             </Link>
-            {currentSeason ? (
-              <Select<string>
-                sx={{color: "primary.contrastText", ml: 2}}
-                options={seasons.map(season => ({
-                  label: season.name,
-                  value: season.id!,
-                }))}
-                value={currentSeason.id}
-                onChange={handleSeasonChange}
-              />
-            ) : (
-              <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
-                {"Scala Mobile"}
-              </Typography>
-            )}
+            <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
+              {"Scala Mobile"}
+            </Typography>
             {!appLoading && (
               <>
                 <Tabs

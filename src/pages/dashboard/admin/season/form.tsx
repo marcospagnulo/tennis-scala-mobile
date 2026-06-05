@@ -1,6 +1,6 @@
 import {Box, TextField} from "@mui/material";
 import {Timestamp} from "firebase/firestore";
-import type {Season} from "../../domain/types";
+import type {Season} from "../../../../domain/types";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
