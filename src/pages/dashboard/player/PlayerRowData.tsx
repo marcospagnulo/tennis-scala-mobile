@@ -57,7 +57,7 @@ const PlayerRowData = ({
         <EditableTypography
           variant="body1"
           edit={edit}
-          value={(value as string) ?? "-"}
+          value={(value as string) ?? ""}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
           color="textPrimary"
@@ -96,7 +96,7 @@ const PlayerRowData = ({
             sx={{"& .MuiPickersInputBase-sectionsContainer": {py: 1}}}
             format="DD/MM/YYYY"
             slotProps={{textField: {variant: "standard", size: "small"}}}
-            defaultValue={value ? dayjs((value as Timestamp).toDate()) : null}
+            value={value ? dayjs((value as Timestamp).toDate()) : null}
             onAccept={handleEditBirthDate}
           />
           <IconButton size="small" onClick={() => setEdit(false)}>
@@ -108,7 +108,7 @@ const PlayerRowData = ({
         <Typography color="textPrimary" variant="body1">
           {value
             ? dayjs((value as Timestamp).toDate()).format("DD/MM/YYYY")
-            : "-"}
+            : ""}
         </Typography>
       )}
       {!edit && editable && hover && (

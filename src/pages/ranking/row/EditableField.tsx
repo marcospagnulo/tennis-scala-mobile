@@ -2,6 +2,7 @@ import {useState} from "react";
 import {EditableTypography} from "../../../components/EditableTypography";
 import {IconButton, Stack, Typography} from "@mui/material";
 import {EditIcon} from "../../../icons";
+import {useAppContext} from "../../../app/context";
 
 const EditableField = ({
   field,
@@ -22,6 +23,7 @@ const EditableField = ({
   width: number;
   onEdit: (field: string, value: string | number) => void;
 }) => {
+  const {mobile} = useAppContext();
   const [edit, setEdit] = useState(false);
 
   const handleEdit = (value: string | number) => {
@@ -63,7 +65,7 @@ const EditableField = ({
           sx={{
             color: liveColor,
             position: "absolute",
-            right: 0,
+            right: mobile ? 8 : 32,
           }}>{`+${liveValue}`}</Typography>
       )}
       {isAdmin && (
