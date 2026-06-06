@@ -35,11 +35,13 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           })) || []
         }
       />
-      {Object.values(period?.matches || {}).map((m, index) => (
-        <Paper key={`match-paper-${index}`} sx={{p: 2}}>
-          <MatchInfo match={m} readonly />
-        </Paper>
-      ))}
+      {Object.values(period?.matches || {})
+        .filter(m => m.status === "completed")
+        .map((m, index) => (
+          <Paper key={`match-paper-${index}`}>
+            <MatchInfo match={m} readonly />
+          </Paper>
+        ))}
     </Stack>
   );
 };
