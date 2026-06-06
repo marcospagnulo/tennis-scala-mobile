@@ -1,6 +1,13 @@
 import type {Period, Ranking} from "./domain/types";
 
-const calculateRankingInPeriod = (
+/**
+ * Calculate the matches in a given period and update the ranking accordingly.
+ *
+ * @param period The period for which to calculate the matches.
+ * @param ranking The current ranking of players.
+ * @returns An updated ranking based on the matches in the period.
+ */
+const calculateMatchesInPeriod = (
   period: Period,
   ranking: Ranking[],
 ): Record<string, Ranking> => {
@@ -152,7 +159,7 @@ const getWinnerIndex = (result: (number | null)[][]): number | null => {
 };
 
 export {
-  calculateRankingInPeriod,
+  calculateMatchesInPeriod,
   parseResult,
   countSetsWon,
   shouldEnable3Set,

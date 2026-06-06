@@ -1,11 +1,56 @@
-import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {doc, getDoc, Timestamp, updateDoc} from "firebase/firestore";
 import {collections} from "../../lib/firebase";
 import type {Player, Ranking, Season} from "../../domain/types";
+import {calculateMatchesInPeriod} from "../../util";
 
 const recalculatePositions = (ranking: Ranking[]) => {
   return ranking
     .sort((a, b) => b.points - a.points)
     .map((r, index) => ({...r, position: index + 1}));
+};
+
+const closePeriod = async (season: Season) => {
+  if (!collections) return;
+
+  const updatedSeason = {...season};
+  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  if (!currentPeriod) {
+    throw new Error("No active period found");
+  }
+
+  // Calculate the matches in the period and update the ranking accordingly
+  const periodScore = calculateMatchesInPeriod(
+    currentPeriod,
+    updatedSeason.ranking,
+  );
+  updatedSeason.ranking = updatedSeason.ranking.map(r => {
+    const periodPlayer = periodScore[r.player.id!];
+    if (periodPlayer) {
+      return {
+        ...r,
+        points: r.points + periodPlayer.points,
+        wins: r.wins + periodPlayer.wins,
+        losses: r.losses + periodPlayer.losses,
+        draws: r.draws + periodPlayer.draws,
+      };
+    }
+    return r;
+  });
+
+  // Close the period and recalculate positions
+  currentPeriod.end = new Timestamp(Date.now() / 1000, 0);
+  updatedSeason.ranking = recalculatePositions(updatedSeason.ranking);
+
+  // Start a new period
+  updatedSeason.periods.push({
+    start: new Timestamp(Date.now() / 1000, 0),
+    matches: {},
+  });
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
 };
 
 const swapPositions = (season: Season, pos1: number, pos2: number) => {
@@ -128,4 +173,11 @@ const refreshRanking = async (season: Season, ranking: Ranking) => {
   });
 };
 
-export {swapPositions, editRanking, addPlayers, deleteRanking, refreshRanking};
+export {
+  closePeriod,
+  swapPositions,
+  editRanking,
+  addPlayers,
+  deleteRanking,
+  refreshRanking,
+};

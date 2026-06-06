@@ -4,9 +4,10 @@ import type {Period} from "../../domain/types";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../app/context";
 import {MatchInfo} from "../../components/match";
-import {Paper} from "@mui/material";
+import {Paper, Typography} from "@mui/material";
 import {Select} from "../../components/Select";
 import dayjs from "dayjs";
+import {ChallengeIcon} from "../../icons";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {currentSeason, mobile} = useAppContext();
@@ -23,6 +24,11 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
     );
     setPeriod(selectedPeriod);
   };
+
+  const matches = Object.values(period?.matches || {}).filter(
+    m => m.status === "completed",
+  );
+
   return (
     <Stack sx={{...sx, py: 2, gap: 2, ...(mobile && {px: 2})}}>
       <Select<number>
@@ -35,13 +41,26 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           })) || []
         }
       />
-      {Object.values(period?.matches || {})
-        .filter(m => m.status === "completed")
-        .map((m, index) => (
-          <Paper key={`match-paper-${index}`}>
-            <MatchInfo match={m} readonly />
-          </Paper>
-        ))}
+      {matches.map((m, index) => (
+        <Paper key={`match-paper-${index}`}>
+          <MatchInfo match={m} readonly />
+        </Paper>
+      ))}
+
+      {matches.length === 0 && (
+        <Stack
+          sx={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+          }}>
+          <ChallengeIcon sx={{fontSize: 180, color: "text.secondary"}} />
+          <Typography variant="h6" color="text.secondary">
+            Non sono state concluse partite in questo periodo
+          </Typography>
+        </Stack>
+      )}
     </Stack>
   );
 };

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import type {Ranking} from "../domain/types";
 import {useAppContext} from "../app/context";
-import {calculateRankingInPeriod} from "../util";
+import {calculateMatchesInPeriod} from "../util";
 
 type rankingGroupsType = {
   1: Ranking[];
@@ -47,7 +47,7 @@ const useRanking = (live?: boolean) => {
     const currentPeriod = currentSeason?.periods.find(p => !p.end);
     if (!currentPeriod || !currentSeason) return;
 
-    const newRanking = calculateRankingInPeriod(
+    const newRanking = calculateMatchesInPeriod(
       currentPeriod,
       currentSeason.ranking,
     );

@@ -27,17 +27,20 @@ const ChallengesCardContent = () => {
 
   return (
     <Stack sx={{px: 2, gap: 2}}>
-      <Stack sx={{gap: 1}}>
-        <Typography align="center" variant="h6">
-          Le tue sfide
-        </Typography>
-        <Divider />
-        <Stack sx={{gap: 1}} divider={<Divider />}>
-          {matches.map((m, index) => (
-            <MatchInfo key={`match-info-${index}`} match={m} />
-          ))}
+      {matches.length > 0 && (
+        <Stack sx={{gap: 1}}>
+          <Typography align="center" variant="h6">
+            Le tue sfide
+          </Typography>
+          <Divider />
+          <Stack sx={{gap: 1}} divider={<Divider />}>
+            {matches.map((m, index) => (
+              <MatchInfo key={`match-info-${index}`} match={m} />
+            ))}
+          </Stack>
+          <Divider />
         </Stack>
-      </Stack>
+      )}
       <Stack sx={{my: 2}}>
         <Typography align="center" variant="h6">
           Sfida un giocatore
