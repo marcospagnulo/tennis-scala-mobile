@@ -19,6 +19,7 @@ import {useEditRanking, useSwapPositions} from "../../../functions";
 import {SwapPosition} from "./SwapPosition";
 import {ChallengeDialog} from "./ChallengeDialog";
 import {green} from "@mui/material/colors";
+import {DiffPosition} from "./DiffPosition";
 
 const RankingRow = ({
   ranking,
@@ -70,21 +71,34 @@ const RankingRow = ({
         backgroundColor: bgColor,
         py: 1,
         px: mobile ? 0 : 2,
+        opacity: loading ? 0.5 : 1,
         ...(divider && {
           borderBottom: "2px solid",
           borderColor: "primary.main",
         }),
-        opacity: loading ? 0.5 : 1,
       }}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>
-      <Typography
-        variant={ranking.position <= 3 ? "h6" : "body2"}
-        align="center"
-        sx={{minWidth: 20}}
-        color="textPrimary">
-        {ranking.position}
-      </Typography>
+      <Stack
+        direction={"row"}
+        sx={{
+          width: 50,
+          justifyContent: "start",
+          alignItems: "center",
+        }}>
+        <Typography
+          variant={ranking.position <= 3 ? "h6" : "body2"}
+          align="left"
+          sx={{mx: 1}}
+          color="textPrimary">
+          {ranking.position}
+        </Typography>
+        <DiffPosition
+          big={ranking.position <= 3}
+          position={ranking.position}
+          livePosition={liveRanking?.position}
+        />
+      </Stack>
       <Stack
         direction={"row"}
         sx={{

@@ -25,9 +25,9 @@ const RankingHeader = ({
         }}>
         <Typography
           variant="h6"
-          align="center"
+          align="left"
           sx={{
-            width: 20,
+            width: 50,
           }}>
           #
         </Typography>

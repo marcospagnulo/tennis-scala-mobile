@@ -59,14 +59,14 @@ const EditableField = ({
         type="number"
         textFieldWidth={30}
       />
-      {liveValue !== undefined && liveValue !== 0 && (
+      {liveValue !== undefined && liveValue !== 0 && liveValue - value > 0 && (
         <Typography
           variant="body2"
           sx={{
             color: liveColor,
             position: "absolute",
             right: mobile ? 8 : 32,
-          }}>{`+${liveValue}`}</Typography>
+          }}>{`+${liveValue - value}`}</Typography>
       )}
       {isAdmin && (
         <IconButton

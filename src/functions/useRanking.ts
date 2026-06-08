@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import type {Ranking} from "../domain/types";
 import {useAppContext} from "../app/context";
-import {calculateMatchesInPeriod} from "../util";
+import {calculateNewRanking} from "../util";
 
 type rankingGroupsType = {
   1: Ranking[];
@@ -13,7 +13,7 @@ type rankingGroupsType = {
 const useRanking = (live?: boolean) => {
   const {currentSeason, player} = useAppContext();
 
-  const [liveRanking, setLiveRanking] = useState<Record<string, Ranking>>({});
+  const [liveRanking, setLiveRanking] = useState<Ranking[]>([]);
   const [validRanking, setValidRanking] = useState<boolean>(false);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
   const [challengeableRange, setChallengeableRange] = useState<
@@ -47,7 +47,7 @@ const useRanking = (live?: boolean) => {
     const currentPeriod = currentSeason?.periods.find(p => !p.end);
     if (!currentPeriod || !currentSeason) return;
 
-    const newRanking = calculateMatchesInPeriod(
+    const newRanking = calculateNewRanking(
       currentPeriod,
       currentSeason.ranking,
     );
@@ -64,17 +64,7 @@ const useRanking = (live?: boolean) => {
 
     let ranking = [...currentSeason.ranking];
     if (live) {
-      // merge with live ranking
-      ranking = ranking
-        .map(r => ({
-          ...r,
-          points: liveRanking[r.player.id!]?.points ?? r.points,
-          wins: liveRanking[r.player.id!]?.wins ?? r.wins,
-          losses: liveRanking[r.player.id!]?.losses ?? r.losses,
-          draws: liveRanking[r.player.id!]?.draws ?? r.draws,
-        }))
-        .sort((a, b) => b.points - a.points)
-        .map((r, index) => ({...r, position: index + 1}));
+      ranking = liveRanking;
     }
 
     const groupSize = ranking.length > 4 ? Math.round(ranking.length / 4) : 1;

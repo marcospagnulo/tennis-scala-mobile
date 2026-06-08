@@ -1,13 +1,7 @@
 import {doc, getDoc, Timestamp, updateDoc} from "firebase/firestore";
 import {collections} from "../../lib/firebase";
 import type {Player, Ranking, Season} from "../../domain/types";
-import {calculateMatchesInPeriod} from "../../util";
-
-const recalculatePositions = (ranking: Ranking[]) => {
-  return ranking
-    .sort((a, b) => b.points - a.points)
-    .map((r, index) => ({...r, position: index + 1}));
-};
+import {calculateNewRanking, recalculatePositions} from "../../util";
 
 const closePeriod = async (season: Season) => {
   if (!collections) return;
@@ -19,23 +13,10 @@ const closePeriod = async (season: Season) => {
   }
 
   // Calculate the matches in the period and update the ranking accordingly
-  const periodScore = calculateMatchesInPeriod(
+  updatedSeason.ranking = calculateNewRanking(
     currentPeriod,
     updatedSeason.ranking,
   );
-  updatedSeason.ranking = updatedSeason.ranking.map(r => {
-    const periodPlayer = periodScore[r.player.id!];
-    if (periodPlayer) {
-      return {
-        ...r,
-        points: r.points + periodPlayer.points,
-        wins: r.wins + periodPlayer.wins,
-        losses: r.losses + periodPlayer.losses,
-        draws: r.draws + periodPlayer.draws,
-      };
-    }
-    return r;
-  });
 
   // Close the period and recalculate positions
   currentPeriod.end = new Timestamp(Date.now() / 1000, 0);

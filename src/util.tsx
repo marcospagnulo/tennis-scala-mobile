@@ -1,16 +1,33 @@
 import type {Period, Ranking} from "./domain/types";
 
 /**
+ * Ricalcola le posizioni in base ai punti, numero di vittorie e di partite
+ *
+ * @param ranking
+ * @returns ranking con posizioni ricalcolate
+ */
+const recalculatePositions = (ranking: Ranking[]) => {
+  return ranking
+    .sort((a, b) => {
+      if (b.points !== a.points) {
+        return b.points - a.points; // Ordina per punti
+      } else if (b.wins !== a.wins) {
+        return b.wins - a.wins; // Se i punti sono uguali, ordina per vittorie
+      } else {
+        return a.losses - b.losses; // Se anche le vittorie sono uguali, ordina per sconfitte (meno è meglio)
+      }
+    })
+    .map((r, index) => ({...r, position: index + 1}));
+};
+
+/**
  * Calculate the matches in a given period and update the ranking accordingly.
  *
  * @param period The period for which to calculate the matches.
  * @param ranking The current ranking of players.
- * @returns An updated ranking based on the matches in the period.
+ * @returns The updated ranking after calculating the matches in the period.
  */
-const calculateMatchesInPeriod = (
-  period: Period,
-  ranking: Ranking[],
-): Record<string, Ranking> => {
+const calculateNewRanking = (period: Period, ranking: Ranking[]): Ranking[] => {
   const periodRanking: Record<string, Ranking> = {};
 
   Object.values(period.matches)
@@ -74,7 +91,24 @@ const calculateMatchesInPeriod = (
       }
     });
 
-  return periodRanking;
+  ranking = ranking
+    .map(r => {
+      const periodPlayer = periodRanking[r.player.id!];
+      if (periodPlayer) {
+        return {
+          ...r,
+          points: r.points + periodPlayer.points,
+          wins: r.wins + periodPlayer.wins,
+          losses: r.losses + periodPlayer.losses,
+          draws: r.draws + periodPlayer.draws,
+        };
+      }
+      return r;
+    })
+    .sort((a, b) => b.points - a.points)
+    .map((r, index) => ({...r, position: index + 1}));
+
+  return ranking;
 };
 
 const parseResult = (value: string): number[][] => {
@@ -159,9 +193,10 @@ const getWinnerIndex = (result: (number | null)[][]): number | null => {
 };
 
 export {
-  calculateMatchesInPeriod,
+  calculateNewRanking,
   parseResult,
   countSetsWon,
   shouldEnable3Set,
   getWinnerIndex,
+  recalculatePositions,
 };

@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControlLabel,
   IconButton,
   Paper,
@@ -81,7 +82,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           sx={{minWidth: 30, justifyContent: "center", alignItems: "center"}}>
           <Typography variant="h5">{gindex}</Typography>
         </Stack>
-        <Stack sx={{flex: 1}}>
+        <Stack sx={{flex: 1}} divider={<Divider />}>
           {group.map((r, index) => {
             let challengablePosition = false;
             const samePlayer = r.player.id === player?.id;
@@ -100,7 +101,11 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 ranking={r}
                 challengeable={!samePlayer && challengablePosition}
                 divider={(index + 1) % group.length === 0 && gindex !== 4}
-                liveRanking={liveRanking[r.player.id!]}
+                liveRanking={
+                  live
+                    ? undefined
+                    : liveRanking.find(lr => lr.player.id === r.player.id)
+                }
                 mode={mode}
                 bgColor={getRankingBgColor(
                   index,
@@ -117,8 +122,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   return (
-    <Stack sx={{...sx, ...(mobile && {px: 2})}}>
-      <Stack direction={"row"} sx={{alignItems: "center", mb: 2, gap: 2}}>
+    <Stack sx={{...sx}}>
+      <Stack
+        direction={"row"}
+        sx={{alignItems: "center", mb: 2, gap: 2, ...(mobile && {px: 2})}}>
         <FormControlLabel
           control={
             <Switch checked={live} onChange={() => setLive(prev => !prev)} />
