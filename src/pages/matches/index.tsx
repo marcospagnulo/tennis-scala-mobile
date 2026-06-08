@@ -41,11 +41,13 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           })) || []
         }
       />
-      {matches.map((m, index) => (
-        <Paper key={`match-paper-${index}`}>
-          <MatchInfo match={m} readonly />
-        </Paper>
-      ))}
+      {matches
+        .sort((a, b) => a.date.toMillis() - b.date.toMillis())
+        .map((m, index) => (
+          <Paper key={`match-paper-${index}`}>
+            <MatchInfo match={m} readonly />
+          </Paper>
+        ))}
 
       {matches.length === 0 && (
         <Stack
