@@ -127,7 +127,7 @@ const MatchInfo = ({
               p: 1,
             }}>
             <Typography variant="h5">
-              {dayjs(match.date.toDate()).format("d")}
+              {dayjs(match.date.toDate()).format("D")}
             </Typography>
             <Typography variant="body2">
               {dayjs(match.date.toDate()).format("MMM")}
