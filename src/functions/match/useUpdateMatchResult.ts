@@ -15,8 +15,7 @@ const useUpdateMatchResult = () => {
 
   const updateMatchResult = async (
     season: Season,
-    pid1: string,
-    pid2: string,
+    mId: string,
     result: string,
     pid1Approved: boolean,
     pid2Approved: boolean,
@@ -28,8 +27,7 @@ const useUpdateMatchResult = () => {
     try {
       await coreupdateMatchResult(
         season,
-        pid1,
-        pid2,
+        mId,
         result,
         pid1Approved,
         pid2Approved,

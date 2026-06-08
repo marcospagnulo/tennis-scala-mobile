@@ -15,8 +15,7 @@ const useUpdateMatchStatus = () => {
 
   const updateMatchStatus = async (
     season: Season,
-    pid1: string,
-    pid2: string,
+    mId: string,
     status: "approved" | "rejected",
   ) => {
     setLoading(true);
@@ -24,7 +23,7 @@ const useUpdateMatchStatus = () => {
     setSuccess(false);
 
     try {
-      await coreUpdateMatchStatus(season, pid1, pid2, status);
+      await coreUpdateMatchStatus(season, mId, status);
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);

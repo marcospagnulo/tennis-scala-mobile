@@ -140,8 +140,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
       pid === match.pid2 ? true : match.result?.p2Approved || false;
     await updateMatchResult(
       currentSeason!,
-      match.pid1,
-      match.pid2,
+      match.id,
       resultString,
       pid1Approved,
       pid2Approved,

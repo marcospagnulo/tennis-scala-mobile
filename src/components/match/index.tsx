@@ -59,13 +59,13 @@ const MatchInfo = ({
   const [dialogDelete, setDialogDelete] = useState<boolean>(false);
 
   const handleUpdateMatchStatus = async (status: "approved" | "rejected") => {
-    await updateMatchStatus(currentSeason!, match.pid1, match.pid2, status);
+    await updateMatchStatus(currentSeason!, match.id, status);
     setDialogApprove(false);
     setDialogReject(false);
   };
 
-  const handleDeleteMatch = async (pid1: string, pid2: string) => {
-    await deleteMatch(currentSeason!, pid1, pid2);
+  const handleDeleteMatch = async () => {
+    await deleteMatch(currentSeason!, match.id);
     setDialogDelete(false);
   };
 
@@ -167,7 +167,7 @@ const MatchInfo = ({
         open={dialogDelete}
         onClose={() => setDialogDelete(false)}
         content="Confermi di voler cancellare la sfida?"
-        onConfirm={() => handleDeleteMatch(match.pid1, match.pid2)}
+        onConfirm={() => handleDeleteMatch()}
       />
     </Stack>
   );

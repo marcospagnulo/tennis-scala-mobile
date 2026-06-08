@@ -67,6 +67,7 @@ export const matchStatusMap: Record<string, string> = {
   completed: "Completata",
 };
 export interface Match {
+  id: string;
   pid1: string;
   pid2: string;
   result?: {

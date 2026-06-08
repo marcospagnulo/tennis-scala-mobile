@@ -15,6 +15,7 @@ const addMatch = async (
   }
 
   const newMatch: Match = {
+    id: `${Date.now()}`,
     pid1: player1Id!,
     pid2: player2Id!,
     result: {
@@ -29,11 +30,12 @@ const addMatch = async (
   const matches = Object.values(currentPeriod.matches);
 
   // verifico che non ci siano già sfide tra questi due giocatori nel periodo corrente
-  const existingMatch = matches.find(
-    m =>
+  const existingMatch = matches.find(m => {
+    const samePlayer =
       (m.pid1 === player1Id && m.pid2 === player2Id) ||
-      (m.pid1 === player2Id && m.pid2 === player1Id),
-  );
+      (m.pid1 === player2Id && m.pid2 === player1Id);
+    return samePlayer && m.status !== "rejected";
+  });
   if (existingMatch) {
     throw new Error(
       "Puoi giocare contro lo stesso avversario solo una volta per periodo. Attendi la fine del periodo corrente per sfidarlo di nuovo.",
@@ -74,8 +76,7 @@ const addMatch = async (
 
 const updateMatchResult = async (
   season: Season,
-  pid1: string,
-  pid2: string,
+  mId: string,
   result: string,
   p1Approved: boolean,
   p2Approved: boolean,
@@ -88,10 +89,7 @@ const updateMatchResult = async (
 
   currentPeriod.matches = Object.fromEntries(
     Object.entries(currentPeriod.matches).map(([key, match]) => {
-      if (
-        (match.pid1 === pid1 && match.pid2 === pid2) ||
-        (match.pid1 === pid2 && match.pid2 === pid1)
-      ) {
+      if (match.id === mId) {
         return [
           key,
           {
@@ -118,8 +116,7 @@ const updateMatchResult = async (
 
 const updateMatchStatus = async (
   season: Season,
-  pid1: string,
-  pid2: string,
+  mId: string,
   status: "approved" | "rejected",
 ) => {
   const updatedSeason = {...season};
@@ -128,29 +125,9 @@ const updateMatchStatus = async (
     throw new Error("No active period found");
   }
 
-  const approvedMatches = Object.values(currentPeriod.matches).filter(
-    m =>
-      m.status === "approved" &&
-      (m.pid1 === pid1 ||
-        m.pid2 === pid1 ||
-        m.pid1 === pid2 ||
-        m.pid2 === pid2),
-  ).length;
-  if (
-    status === "approved" &&
-    approvedMatches >= (season.maxMatchesPerPeriod || 3)
-  ) {
-    throw new Error(
-      `Hai raggiunto il limite di ${season.maxMatchesPerPeriod || 3} sfide per questo periodo. Attendi la fine del periodo corrente per sfidare nuovi avversari.`,
-    );
-  }
-
   currentPeriod.matches = Object.fromEntries(
     Object.entries(currentPeriod.matches).map(([key, match]) => {
-      if (
-        (match.pid1 === pid1 && match.pid2 === pid2) ||
-        (match.pid1 === pid2 && match.pid2 === pid1)
-      ) {
+      if (match.id === mId) {
         return [
           key,
           {
@@ -169,7 +146,7 @@ const updateMatchStatus = async (
   });
 };
 
-const deleteMatch = (season: Season, playerId1: string, playerId2: string) => {
+const deleteMatch = (season: Season, mId: string) => {
   const updatedSeason = {...season};
   const currentPeriod = updatedSeason.periods.find(p => !p.end);
   if (!currentPeriod) {
@@ -178,10 +155,7 @@ const deleteMatch = (season: Season, playerId1: string, playerId2: string) => {
 
   currentPeriod.matches = Object.fromEntries(
     Object.entries(currentPeriod.matches).filter(([, match]) => {
-      return !(
-        (match.pid1 === playerId1 && match.pid2 === playerId2) ||
-        (match.pid1 === playerId2 && match.pid2 === playerId1)
-      );
+      return !(match.id === mId);
     }),
   );
 

@@ -13,17 +13,13 @@ const useDeleteMatch = () => {
     setSuccess(false);
   };
 
-  const deleteMatch = async (
-    season: Season,
-    player1Id: string,
-    player2Id: string,
-  ) => {
+  const deleteMatch = async (season: Season, mId: string) => {
     setLoading(true);
     setError(undefined);
     setSuccess(false);
 
     try {
-      await coreDeleteMatch(season, player1Id, player2Id);
+      await coreDeleteMatch(season, mId);
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);
