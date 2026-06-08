@@ -74,6 +74,38 @@ const addMatch = async (
   });
 };
 
+const resetMatchApproval = async (season: Season, mId: string) => {
+  const updatedSeason = {...season};
+  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  if (!currentPeriod) {
+    throw new Error("No active period found");
+  }
+
+  currentPeriod.matches = Object.fromEntries(
+    Object.entries(currentPeriod.matches).map(([key, match]) => {
+      if (match.id === mId) {
+        return [
+          key,
+          {
+            ...match,
+            result: {
+              ...match.result,
+              p1Approved: false,
+              p2Approved: false,
+            },
+          },
+        ];
+      }
+      return [key, match];
+    }),
+  );
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
 const updateMatchResult = async (
   season: Season,
   mId: string,
@@ -165,4 +197,10 @@ const deleteMatch = (season: Season, mId: string) => {
   });
 };
 
-export {addMatch, updateMatchResult, updateMatchStatus, deleteMatch};
+export {
+  addMatch,
+  updateMatchResult,
+  updateMatchStatus,
+  deleteMatch,
+  resetMatchApproval,
+};

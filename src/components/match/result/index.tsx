@@ -1,4 +1,4 @@
-import {Stack, type SxProps} from "@mui/material";
+import {IconButton, Stack, type SxProps} from "@mui/material";
 import {useEffect, useState} from "react";
 import type {Theme} from "@emotion/react";
 import {ResultRow} from "./Row";
@@ -6,6 +6,9 @@ import type {Match} from "../../../domain/types";
 import {useAppContext} from "../../../app/context";
 import {useUpdateMatchResult} from "../../../functions/match/useUpdateMatchResult";
 import {getWinnerIndex, shouldEnable3Set} from "../../../util";
+import {Done} from "@mui/icons-material";
+import {EditIcon} from "../../../icons";
+import {ConfirmDialog} from "../../ConfirmDialog";
 
 const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
   const {currentSeason, player} = useAppContext();
@@ -20,7 +23,8 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
     [false, false, false],
   ]);
 
-  const {loading, updateMatchResult} = useUpdateMatchResult();
+  const {loading, updateMatchResult, resetMatchApproval} =
+    useUpdateMatchResult();
 
   const tfSx: SxProps<Theme> = {
     width: 40,
@@ -148,49 +152,85 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
     );
   };
 
-  const p1Approved = match.result?.p1Approved ?? false;
-  const p2Approved = match.result?.p2Approved ?? false;
-  const matchApproved = p1Approved && p2Approved;
-  const canP1Approve =
-    match.pid1 === player?.id && !p1Approved && !matchApproved;
-  const canP2Approve =
-    match.pid2 === player?.id && !p2Approved && !matchApproved;
+  const hasError = error.some(row => row.some(e => e));
+
+  const isCurrentPlayerP1 = match.pid1 === player?.id && !readonly;
+  const isCurrentPlayerP2 = match.pid2 === player?.id && !readonly;
+  const canP1Approve = isCurrentPlayerP1 && !match.result?.p1Approved;
+  const canP2Approve = isCurrentPlayerP2 && !match.result?.p2Approved;
+  const canApprove = canP1Approve || canP2Approve;
   const canEdit =
-    (match.pid1 === player?.id && canP1Approve) ||
-    (match.pid2 === player?.id && canP2Approve);
+    ((isCurrentPlayerP1 && match.result?.p1Approved) ||
+      (isCurrentPlayerP2 && match.result?.p2Approved)) ??
+    false;
+
+  const [confirmEditDialog, setConfirmEditDialog] = useState<boolean>(false);
+  const [editResult, setEditResult] = useState<boolean>(false);
+
+  useEffect(() => {
+    setEditResult(!readonly && canApprove);
+  }, [readonly, canApprove]);
+
+  const handleConfirmEdit = async () => {
+    setConfirmEditDialog(false);
+    await resetMatchApproval(currentSeason!, match.id);
+    setEditResult(true);
+  };
 
   const winnerIndex = getWinnerIndex(result);
   return (
-    <Stack sx={{gap: 1, flex: 1}}>
-      <ResultRow
-        readonly={readonly}
-        loading={loading}
-        matchApproved={matchApproved}
-        result={result}
-        error={error}
-        playerIndex={0}
-        canApprove={canP1Approve}
-        canEdit={canEdit}
-        sx={tfSx}
-        enable3Set={enable3Set}
-        winner={winnerIndex === 0}
-        onChangeResult={handleChangeResult}
-        onApprove={handleApprove}
-      />
-      <ResultRow
-        readonly={readonly}
-        loading={loading}
-        matchApproved={matchApproved}
-        result={result}
-        error={error}
-        playerIndex={1}
-        canApprove={canP2Approve}
-        canEdit={canEdit}
-        sx={tfSx}
-        enable3Set={enable3Set}
-        winner={winnerIndex === 1}
-        onChangeResult={handleChangeResult}
-        onApprove={handleApprove}
+    <Stack direction={"row"} sx={{gap: 1, flex: 1, alignItems: "center"}}>
+      <Stack sx={{gap: 1}}>
+        <ResultRow
+          loading={loading}
+          result={result}
+          error={error}
+          playerIndex={0}
+          edit={editResult}
+          sx={tfSx}
+          enable3Set={enable3Set}
+          winner={winnerIndex === 0}
+          onChangeResult={handleChangeResult}
+          onApprove={handleApprove}
+        />
+        <ResultRow
+          loading={loading}
+          result={result}
+          error={error}
+          playerIndex={1}
+          edit={editResult}
+          sx={tfSx}
+          enable3Set={enable3Set}
+          winner={winnerIndex === 1}
+          onChangeResult={handleChangeResult}
+          onApprove={handleApprove}
+        />
+      </Stack>
+
+      {canEdit && (
+        <IconButton
+          size="small"
+          disabled={loading}
+          onClick={() => setConfirmEditDialog(true)}>
+          <EditIcon fontSize="inherit" />
+        </IconButton>
+      )}
+
+      {canApprove && (
+        <IconButton
+          size="small"
+          disabled={loading || hasError}
+          onClick={handleApprove}>
+          <Done fontSize="inherit" />
+        </IconButton>
+      )}
+
+      <ConfirmDialog
+        open={confirmEditDialog}
+        onClose={() => setConfirmEditDialog(false)}
+        onConfirm={handleConfirmEdit}
+        title="Conferma modifica"
+        content="Sei sicuro di voler modificare il risultato? L'avversario dovrà approvare nuovamente il risultato."
       />
     </Stack>
   );

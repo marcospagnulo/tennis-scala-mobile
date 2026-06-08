@@ -1,37 +1,23 @@
 import type {Theme} from "@emotion/react";
-import {Done} from "@mui/icons-material";
-import {
-  Stack,
-  TextField,
-  IconButton,
-  type SxProps,
-  Typography,
-} from "@mui/material";
+import {Stack, TextField, type SxProps, Typography} from "@mui/material";
 import {WinnerIcon} from "../../../icons";
 
 const ResultRow = ({
   loading,
-  matchApproved,
   result,
   error,
   playerIndex,
-  canApprove,
   sx,
-  canEdit,
+  edit,
   enable3Set,
   winner,
-  readonly = false,
   onChangeResult,
-  onApprove,
 }: {
-  readonly: boolean;
   loading: boolean;
-  matchApproved: boolean;
   result: (number | null)[][];
   error: boolean[][];
   playerIndex: number;
-  canApprove: boolean;
-  canEdit: boolean;
+  edit: boolean;
   sx?: SxProps<Theme>;
   enable3Set: boolean;
   winner: boolean;
@@ -42,9 +28,7 @@ const ResultRow = ({
   ) => void;
   onApprove: () => void;
 }) => {
-  const hasError = error[playerIndex].some(e => e);
-
-  if (matchApproved || readonly) {
+  if (!edit) {
     return (
       <Stack direction={"row"} sx={{alignItems: "center", gap: 1, height: 28}}>
         <Typography variant="body1">{result[playerIndex][0] ?? ""}</Typography>
@@ -59,7 +43,7 @@ const ResultRow = ({
     <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
       <TextField
         sx={{...sx}}
-        disabled={loading || !canEdit}
+        disabled={loading}
         value={result[playerIndex][0] ?? ""}
         onChange={e => onChangeResult(playerIndex, 0, e.target.value)}
         type="number"
@@ -67,7 +51,7 @@ const ResultRow = ({
       />
       <TextField
         sx={{...sx}}
-        disabled={loading || !canEdit}
+        disabled={loading}
         value={result[playerIndex][1] ?? ""}
         onChange={e => onChangeResult(playerIndex, 1, e.target.value)}
         type="number"
@@ -75,17 +59,12 @@ const ResultRow = ({
       />
       <TextField
         sx={{...sx}}
-        disabled={loading || !canEdit || !enable3Set}
+        disabled={loading || !enable3Set}
         value={result[playerIndex][2] ?? ""}
         onChange={e => onChangeResult(playerIndex, 2, e.target.value)}
         type="number"
         error={error[playerIndex][2]}
       />
-      {canApprove && !hasError && (
-        <IconButton size="small" disabled={loading} onClick={onApprove}>
-          <Done fontSize="inherit" />
-        </IconButton>
-      )}
     </Stack>
   );
 };

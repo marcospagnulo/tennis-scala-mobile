@@ -1,6 +1,9 @@
 import {useState} from "react";
 import type {Season} from "../../domain/types";
-import {updateMatchResult as coreupdateMatchResult} from "./core";
+import {
+  updateMatchResult as coreupdateMatchResult,
+  resetMatchApproval as coreResetMatchApproval,
+} from "./core";
 
 const useUpdateMatchResult = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +43,29 @@ const useUpdateMatchResult = () => {
     }
   };
 
-  return {loading, error, success, updateMatchResult, clear};
+  const resetMatchApproval = async (season: Season, mId: string) => {
+    setLoading(true);
+    setError(undefined);
+    setSuccess(false);
+
+    try {
+      await coreResetMatchApproval(season, mId);
+      setSuccess(true);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    loading,
+    error,
+    success,
+    updateMatchResult,
+    resetMatchApproval,
+    clear,
+  };
 };
 
 export {useUpdateMatchResult};
