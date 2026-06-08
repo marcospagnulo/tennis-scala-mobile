@@ -1,11 +1,11 @@
 import {Stack} from "@mui/material";
 import {DashboardCard} from "../DashboardCard";
-import {ChallengeIcon} from "../../../icons";
-import {ChallengesCardContent} from "./Content";
+import {MatchIcon} from "../../../icons";
+import {MatchesCardContent} from "./Content";
 import {useAppContext} from "../../../app/context";
 import {useRanking} from "../../../functions";
 
-const ChallengesCard = ({direction}: {direction?: "row" | "column"}) => {
+const MatchesCard = ({direction}: {direction?: "row" | "column"}) => {
   const {player, currentSeason} = useAppContext();
 
   const isMember =
@@ -26,12 +26,12 @@ const ChallengesCard = ({direction}: {direction?: "row" | "column"}) => {
             alignItems: "center",
             justifyContent: "center",
           }}>
-          <ChallengeIcon color="secondary" sx={{width: "70%", height: "70%"}} />
+          <MatchIcon color="secondary" sx={{width: "70%", height: "70%"}} />
         </Stack>
       }
-      content={<ChallengesCardContent />}
+      content={<MatchesCardContent />}
     />
   );
 };
 
-export {ChallengesCard};
+export {MatchesCard};

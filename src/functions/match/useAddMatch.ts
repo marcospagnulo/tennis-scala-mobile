@@ -1,8 +1,8 @@
 import {useState} from "react";
 import type {Season} from "../../domain/types";
-import {deleteChallenge as coreDeleteChallenge} from "./core";
+import {addMatch as coreaddMatch} from "./core";
 
-const useDeleteChallenge = () => {
+const useAddMatch = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
@@ -13,17 +13,18 @@ const useDeleteChallenge = () => {
     setSuccess(false);
   };
 
-  const deleteChallenge = async (
+  const addMatch = async (
     season: Season,
     player1Id: string,
     player2Id: string,
+    date: Date,
   ) => {
     setLoading(true);
     setError(undefined);
     setSuccess(false);
 
     try {
-      await coreDeleteChallenge(season, player1Id, player2Id);
+      await coreaddMatch(season, player1Id, player2Id, date);
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);
@@ -32,7 +33,7 @@ const useDeleteChallenge = () => {
     }
   };
 
-  return {loading, error, success, deleteChallenge, clear};
+  return {loading, error, success, addMatch, clear};
 };
 
-export {useDeleteChallenge};
+export {useAddMatch};

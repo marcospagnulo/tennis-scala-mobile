@@ -1,8 +1,8 @@
 import {useState} from "react";
 import type {Season} from "../../domain/types";
-import {updateChallengeStatus as coreUpdateChallengeStatus} from "./core";
+import {updateMatchResult as coreupdateMatchResult} from "./core";
 
-const useUpdateChallengeStatus = () => {
+const useUpdateMatchResult = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
@@ -13,18 +13,27 @@ const useUpdateChallengeStatus = () => {
     setSuccess(false);
   };
 
-  const updateChallengeStatus = async (
+  const updateMatchResult = async (
     season: Season,
     pid1: string,
     pid2: string,
-    status: "approved" | "rejected",
+    result: string,
+    pid1Approved: boolean,
+    pid2Approved: boolean,
   ) => {
     setLoading(true);
     setError(undefined);
     setSuccess(false);
 
     try {
-      await coreUpdateChallengeStatus(season, pid1, pid2, status);
+      await coreupdateMatchResult(
+        season,
+        pid1,
+        pid2,
+        result,
+        pid1Approved,
+        pid2Approved,
+      );
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);
@@ -33,7 +42,7 @@ const useUpdateChallengeStatus = () => {
     }
   };
 
-  return {loading, error, success, updateChallengeStatus, clear};
+  return {loading, error, success, updateMatchResult, clear};
 };
 
-export {useUpdateChallengeStatus};
+export {useUpdateMatchResult};

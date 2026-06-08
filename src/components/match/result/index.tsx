@@ -4,7 +4,7 @@ import type {Theme} from "@emotion/react";
 import {ResultRow} from "./Row";
 import type {Match} from "../../../domain/types";
 import {useAppContext} from "../../../app/context";
-import {useUpdateChallengeResult} from "../../../functions/challenge/useUpdateChallengeResult";
+import {useUpdateMatchResult} from "../../../functions/match/useUpdateMatchResult";
 import {getWinnerIndex, shouldEnable3Set} from "../../../util";
 
 const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
@@ -20,7 +20,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
     [false, false, false],
   ]);
 
-  const {loading, updateChallengeResult} = useUpdateChallengeResult();
+  const {loading, updateMatchResult} = useUpdateMatchResult();
 
   const tfSx: SxProps<Theme> = {
     width: 40,
@@ -138,7 +138,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
       pid === match.pid1 ? true : match.result?.p1Approved || false;
     const pid2Approved =
       pid === match.pid2 ? true : match.result?.p2Approved || false;
-    await updateChallengeResult(
+    await updateMatchResult(
       currentSeason!,
       match.pid1,
       match.pid2,

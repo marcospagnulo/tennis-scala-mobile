@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 import type {Match} from "../../../domain/types";
 import {MatchInfo} from "../../../components/match";
 
-const ChallengesCardContent = () => {
+const MatchesCardContent = () => {
   const {currentSeason, player} = useAppContext();
   const {challengeableRange} = useRanking();
 
@@ -69,4 +69,4 @@ const ChallengesCardContent = () => {
   );
 };
 
-export {ChallengesCardContent};
+export {MatchesCardContent};

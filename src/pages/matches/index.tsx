@@ -7,7 +7,7 @@ import {MatchInfo} from "../../components/match";
 import {Paper, Typography} from "@mui/material";
 import {Select} from "../../components/Select";
 import dayjs from "dayjs";
-import {ChallengeIcon} from "../../icons";
+import {MatchIcon} from "../../icons";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {currentSeason, mobile} = useAppContext();
@@ -55,7 +55,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
             justifyContent: "center",
             gap: 2,
           }}>
-          <ChallengeIcon sx={{fontSize: 180, color: "text.secondary"}} />
+          <MatchIcon sx={{fontSize: 180, color: "text.secondary"}} />
           <Typography variant="h6" color="text.secondary">
             Non sono state concluse partite in questo periodo
           </Typography>

@@ -12,8 +12,8 @@ import {useAppContext} from "../../../app/context";
 import {collections} from "../../../lib/firebase";
 import {useFindById} from "../../../functions/useFindById";
 import type {Player} from "../../../domain/types";
-import {ChallengeIcon} from "../../../icons";
-import {useAddChallenge} from "../../../functions/challenge/useAddChallenge";
+import {MatchIcon} from "../../../icons";
+import {useAddMatch} from "../../../functions/match/useAddMatch";
 import {useEffect, useState} from "react";
 import type {Dayjs} from "dayjs";
 import dayjs from "dayjs";
@@ -34,19 +34,13 @@ const ChallengeDialog = ({
     collection: collections?.players,
     id: challengePlayerId,
   });
-  const {
-    loading: adding,
-    success,
-    error,
-    addChallenge,
-    clear,
-  } = useAddChallenge();
+  const {loading: adding, success, error, addMatch, clear} = useAddMatch();
 
   const [date, setDate] = useState<Dayjs | null>(dayjs());
 
   const handleChallenge = () => {
     if (!currentSeason || !player || !challengePlayer || !date) return;
-    addChallenge(currentSeason, player.id!, challengePlayer.id!, date.toDate());
+    addMatch(currentSeason, player.id!, challengePlayer.id!, date.toDate());
   };
 
   const handleClose = () => {
@@ -79,7 +73,7 @@ const ChallengeDialog = ({
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <Stack>
-          <ChallengeIcon
+          <MatchIcon
             color="action"
             sx={{
               alignSelf: "center",

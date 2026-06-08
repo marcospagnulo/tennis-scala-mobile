@@ -40,7 +40,7 @@ export interface Season {
   end: Timestamp;
   ranking: Ranking[];
   periods: Period[];
-  maxChallengesPerPeriod?: number;
+  maxMatchesPerPeriod?: number;
   createdAt: Timestamp;
 }
 

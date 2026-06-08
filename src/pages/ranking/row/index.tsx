@@ -12,7 +12,7 @@ import {useAppContext} from "../../../app/context";
 import {EditableField} from "./EditableField";
 import {useDownBreakpoint} from "../../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
-import {ChallengeIcon} from "../../../icons";
+import {MatchIcon} from "../../../icons";
 import {PlayerAvatar} from "../../../components";
 import {PlayerInfo} from "./PlayerInfo";
 import {useEditRanking, useSwapPositions} from "../../../functions";
@@ -144,7 +144,7 @@ const RankingRow = ({
           <IconButton
             size="small"
             onClick={() => setChallengePlayerId(ranking.player.id)}>
-            <ChallengeIcon color="primary" fontSize="inherit" />
+            <MatchIcon color="primary" fontSize="inherit" />
           </IconButton>
         )}
       </Stack>

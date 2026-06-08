@@ -2,7 +2,7 @@ import {doc, Timestamp, updateDoc} from "firebase/firestore";
 import type {Match, Season} from "../../domain/types";
 import {collections} from "../../lib/firebase";
 
-const addChallenge = async (
+const addMatch = async (
   season: Season,
   player1Id: string,
   player2Id: string,
@@ -41,7 +41,7 @@ const addChallenge = async (
   }
 
   // verifico che i giocatori non abbiamo sforato il limite di sfide per periodo
-  const maxChallenges = season.maxChallengesPerPeriod || 3;
+  const maxChallenges = season.maxMatchesPerPeriod || 3;
   const player1Matches = matches.filter(
     m =>
       m.status !== "rejected" && (m.pid1 === player1Id || m.pid2 === player1Id),
@@ -72,7 +72,7 @@ const addChallenge = async (
   });
 };
 
-const updateChallengeResult = async (
+const updateMatchResult = async (
   season: Season,
   pid1: string,
   pid2: string,
@@ -116,7 +116,7 @@ const updateChallengeResult = async (
   });
 };
 
-const updateChallengeStatus = async (
+const updateMatchStatus = async (
   season: Season,
   pid1: string,
   pid2: string,
@@ -138,10 +138,10 @@ const updateChallengeStatus = async (
   ).length;
   if (
     status === "approved" &&
-    approvedMatches >= (season.maxChallengesPerPeriod || 3)
+    approvedMatches >= (season.maxMatchesPerPeriod || 3)
   ) {
     throw new Error(
-      `Hai raggiunto il limite di ${season.maxChallengesPerPeriod || 3} sfide per questo periodo. Attendi la fine del periodo corrente per sfidare nuovi avversari.`,
+      `Hai raggiunto il limite di ${season.maxMatchesPerPeriod || 3} sfide per questo periodo. Attendi la fine del periodo corrente per sfidare nuovi avversari.`,
     );
   }
 
@@ -169,11 +169,7 @@ const updateChallengeStatus = async (
   });
 };
 
-const deleteChallenge = (
-  season: Season,
-  playerId1: string,
-  playerId2: string,
-) => {
+const deleteMatch = (season: Season, playerId1: string, playerId2: string) => {
   const updatedSeason = {...season};
   const currentPeriod = updatedSeason.periods.find(p => !p.end);
   if (!currentPeriod) {
@@ -195,9 +191,4 @@ const deleteChallenge = (
   });
 };
 
-export {
-  addChallenge,
-  updateChallengeResult,
-  updateChallengeStatus,
-  deleteChallenge,
-};
+export {addMatch, updateMatchResult, updateMatchStatus, deleteMatch};

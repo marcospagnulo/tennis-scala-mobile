@@ -47,11 +47,11 @@ const Form = (
       <TextField
         fullWidth
         label="Sfide per periodo"
-        name="maxChallengesPerPeriod"
+        name="maxMatchesPerPeriod"
         type="number"
-        value={formData.maxChallengesPerPeriod ?? 3}
+        value={formData.maxMatchesPerPeriod ?? 3}
         onChange={e =>
-          handleChange("maxChallengesPerPeriod", parseInt(e.target.value, 10))
+          handleChange("maxMatchesPerPeriod", parseInt(e.target.value, 10))
         }
         margin="normal"
       />
