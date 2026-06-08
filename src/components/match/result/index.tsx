@@ -43,6 +43,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
         newResult[1][index] = parseInt(p2);
       });
       setResult(newResult);
+      setEnable3Set(shouldEnable3Set(newResult));
     } else {
       setResult([
         [null, null, null],
