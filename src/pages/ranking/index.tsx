@@ -151,7 +151,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         )}
       </Stack>
       {validRanking ? (
-        <Paper sx={{display: "flex", flex: "1 1 0"}}>
+        <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
           <Stack
             sx={{
               gap: 1,
