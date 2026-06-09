@@ -10,9 +10,9 @@ import {
 import {AppProvider} from "./context";
 import {DesktopAppBar} from "./DesktopAppBar";
 import {navigationItems} from "./navigation";
-import {ReportProblem} from "@mui/icons-material";
 import {BottomNavigation} from "./BottomNavigation";
 import {MobileAppBar} from "./MobileAppBar";
+import {ErrorIcon} from "../icons";
 
 const App = () => {
   const mobile = useMediaQuery(useTheme().breakpoints.down("md"));
@@ -50,7 +50,7 @@ const App = () => {
                       alignItems: "center",
                       justifyContent: "center",
                     }}>
-                    <ReportProblem color="error" sx={{fontSize: 180}} />
+                    <ErrorIcon color="error" sx={{fontSize: 180}} />
                     <Typography variant="h4">Pagina non trovata</Typography>
                   </Stack>
                 }

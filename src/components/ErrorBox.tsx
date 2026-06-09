@@ -1,5 +1,5 @@
-import {ReportProblem} from "@mui/icons-material";
 import {Stack, Typography, useTheme} from "@mui/material";
+import {ErrorIcon} from "../icons";
 
 const ErrorBox = ({error}: {error: string | undefined}) => {
   const theme = useTheme();
@@ -17,7 +17,7 @@ const ErrorBox = ({error}: {error: string | undefined}) => {
         gap: 2,
         mb: 2,
       }}>
-      <ReportProblem
+      <ErrorIcon
         htmlColor={theme.palette.error.contrastText}
         fontSize="large"
       />

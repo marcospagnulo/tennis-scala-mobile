@@ -5,13 +5,14 @@ import {MatchIcon, SeasonIcon} from "../../../icons";
 import {SeasonsDialog} from "./season";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../../app/context";
-import {ConfirmDialog} from "../../../components";
+import {ConfirmDialog, ErrorDialog} from "../../../components";
 import {useClosePeriod} from "../../../functions/ranking/useClosePeriod";
 
 const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
   const {user, currentSeason} = useAppContext();
   const {
     success,
+    error,
     closePeriod,
     clear,
     loading: closePeriodLoading,
@@ -83,6 +84,16 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
             content="Sei sicuro di voler chiudere il periodo? Questa azione è irreversibile e non potrà essere annullata."
             onConfirm={handleConfirmClosePeriod}
             onClose={() => setPeriodDialogOpen(false)}
+          />
+
+          <ErrorDialog
+            open={!!error}
+            title="Errore"
+            content={
+              error ??
+              "Si è verificato un errore sconosciuto durante la chiusura del periodo."
+            }
+            onClose={() => clear()}
           />
         </Stack>
       }

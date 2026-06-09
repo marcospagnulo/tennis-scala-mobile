@@ -9,6 +9,7 @@ import RankingIcon from "@mui/icons-material/LeaderboardRounded";
 import ConfirmIcon from "@mui/icons-material/Done";
 import CancelIcon from "@mui/icons-material/Close";
 import WinnerIcon from "@mui/icons-material/EmojiEvents";
+import ErrorIcon from "@mui/icons-material/ReportProblem";
 
 export {
   AddIcon,
@@ -22,4 +23,5 @@ export {
   ConfirmIcon,
   CancelIcon,
   WinnerIcon,
+  ErrorIcon,
 };

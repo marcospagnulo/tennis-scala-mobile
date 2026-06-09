@@ -12,6 +12,14 @@ const closePeriod = async (season: Season) => {
     throw new Error("No active period found");
   }
 
+  Object.entries(currentPeriod.matches).forEach(([, match]) => {
+    if (match.status !== "completed") {
+      throw new Error(
+        "Ci sono partite non completate. Assicurati di approvare o rifiutare tutte le partite prima di chiudere il periodo.",
+      );
+    }
+  });
+
   // Calculate the matches in the period and update the ranking accordingly
   updatedSeason.ranking = calculateNewRanking(
     currentPeriod,

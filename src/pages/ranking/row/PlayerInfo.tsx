@@ -12,11 +12,12 @@ import type {Player, Ranking} from "../../../domain/types";
 import {collections} from "../../../lib/firebase";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
-import {Delete, Refresh, ReportProblem} from "@mui/icons-material";
+import {Delete, Refresh} from "@mui/icons-material";
 import {useRefreshRanking} from "../../../functions/ranking/useRefreshRanking";
 import {useAppContext} from "../../../app/context";
 import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
 import {useFindById} from "../../../functions/useFindById";
+import {ErrorIcon} from "../../../icons";
 
 const RowData = ({label, value}: {label: string; value?: string}) => (
   <Stack direction="row" spacing={1}>
@@ -106,7 +107,7 @@ const PlayerInfo = ({
           {!loading && !player && (
             <Stack
               sx={{alignItems: "center", justifyContent: "center", flex: 1}}>
-              <ReportProblem color="error" sx={{width: 120, height: 120}} />
+              <ErrorIcon color="error" sx={{width: 120, height: 120}} />
               <Typography color="textPrimary" variant="h6" align="center">
                 Giocatore non trovato
               </Typography>
