@@ -24,7 +24,7 @@ const ErrorDialog = ({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle align="center">{title}</DialogTitle>
       <DialogContent>
-        <Stack direction="row" sx={{alignItems: "center"}} spacing={2}>
+        <Stack direction="row" sx={{alignItems: "center"}} spacing={1}>
           <ErrorIcon color="error" sx={{fontSize: 60}} />
           <DialogContentText>{content}</DialogContentText>
         </Stack>

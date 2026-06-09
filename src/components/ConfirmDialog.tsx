@@ -1,3 +1,4 @@
+import {Info} from "@mui/icons-material";
 import {
   Button,
   Dialog,
@@ -5,6 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Stack,
 } from "@mui/material";
 
 const ConfirmDialog = ({
@@ -22,9 +24,12 @@ const ConfirmDialog = ({
 }) => {
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle align="center">{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{content}</DialogContentText>
+        <Stack direction="row" sx={{alignItems: "center"}} spacing={1}>
+          <Info color="primary" sx={{fontSize: 60}} />
+          <DialogContentText>{content}</DialogContentText>
+        </Stack>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)} variant="outlined" color="error">

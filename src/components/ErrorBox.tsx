@@ -12,14 +12,14 @@ const ErrorBox = ({error}: {error: string | undefined}) => {
       sx={{
         alignItems: "center",
         bgcolor: "error.main",
-        p: 2,
+        p: 1,
         borderRadius: 1,
-        gap: 2,
+        gap: 1,
         mb: 2,
       }}>
       <ErrorIcon
         htmlColor={theme.palette.error.contrastText}
-        fontSize="large"
+        sx={{fontSize: 60}}
       />
       <Typography sx={{color: theme.palette.error.contrastText}}>
         {error}
