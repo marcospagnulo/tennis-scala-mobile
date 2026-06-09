@@ -1,5 +1,5 @@
 import type {SvgIconComponent} from "@mui/icons-material";
-import {DashboardIcon, PlayersIcon, RankingIcon} from "../icons";
+import {DashboardIcon, MatchIcon, PlayersIcon, RankingIcon} from "../icons";
 import {DashboardPage, PlayersPage, RankingPage} from "../pages";
 import {MatchesPage} from "../pages/matches";
 
@@ -27,7 +27,7 @@ const navigationItems: NavigationItem[] = [
   {
     path: "/matches",
     label: "Partite",
-    icon: PlayersIcon,
+    icon: MatchIcon,
     element: <MatchesPage sx={{flex: 1, py: 2}} />,
   },
   {

@@ -12,7 +12,7 @@ export function DashboardPage({sx}: {sx?: SxProps<Theme>}) {
   return (
     <Stack spacing={2} sx={{...sx, ...(mobile && {px: 2})}}>
       <AdminCard direction={"column"} />
-      <PlayerCard direction={"column"} />
+      {!mobile && <PlayerCard direction={"column"} />}
       <MatchesCard direction={"column"} />
       <CurrentSeasonCard direction={"column"} />
     </Stack>

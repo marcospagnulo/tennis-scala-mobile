@@ -6,18 +6,12 @@ import {
   IconButton,
   Dialog,
 } from "@mui/material";
-import {Key, Logout, Menu, MenuOpen} from "@mui/icons-material";
+import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
 import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 
-const MobileAppBar = ({
-  onMenuClick,
-  open,
-}: {
-  onMenuClick: () => void;
-  open: boolean;
-}) => {
+const MobileAppBar = () => {
   const theme = useTheme();
   const {user, handleLogout} = useAppContext();
   const [login, setLogin] = useState<boolean>(false);
@@ -40,9 +34,7 @@ const MobileAppBar = ({
     <>
       <AppBar position="fixed" sx={{zIndex: theme.zIndex.drawer + 1}}>
         <Toolbar>
-          <IconButton onClick={onMenuClick} color="inherit">
-            {open ? <MenuOpen /> : <Menu />}
-          </IconButton>
+          <img src={`logo.png`} alt="Logo" style={{height: 40}} />
           <Typography variant="h6" noWrap component="div" sx={{ml: 2}}>
             {"Scala Mobile"}
           </Typography>
