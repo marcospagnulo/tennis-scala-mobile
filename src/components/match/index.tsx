@@ -112,7 +112,7 @@ const MatchInfo = ({
             )}
           </Stack>
           <Typography variant="body2" color="textSecondary">
-            {dayjs(match.date.toDate()).format("d MMMM YYYY HH:mm")}
+            {dayjs(match.date.toDate()).format("D MMMM YYYY HH:mm")}
           </Typography>
         </Stack>
       )}
