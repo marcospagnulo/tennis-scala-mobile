@@ -10,7 +10,8 @@ import dayjs from "dayjs";
 import {MatchIcon} from "../../icons";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
-  const {currentSeason, mobile} = useAppContext();
+  const {currentSeason, mobile, user} = useAppContext();
+  const isAdmin = user?.role === "admin";
   const [period, setPeriod] = useState<Period>();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   const matches = Object.values(period?.matches || {}).filter(
-    m => m.status === "completed",
+    m => m.status === "completed" || isAdmin,
   );
 
   return (

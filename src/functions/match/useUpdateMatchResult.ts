@@ -22,6 +22,7 @@ const useUpdateMatchResult = () => {
     result: string,
     pid1Approved: boolean,
     pid2Approved: boolean,
+    complete?: boolean,
   ) => {
     setLoading(true);
     setError(undefined);
@@ -34,6 +35,7 @@ const useUpdateMatchResult = () => {
         result,
         pid1Approved,
         pid2Approved,
+        complete,
       );
       setSuccess(true);
     } catch (error) {

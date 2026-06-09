@@ -141,9 +141,7 @@ const MatchInfo = ({
           <Player id={match.pid1} />
           <Player id={match.pid2} />
         </Stack>
-        {match.status === "approved" || match.status === "completed" ? (
-          <Result match={match} readonly={readonly} />
-        ) : null}
+        <Result match={match} readonly={readonly} />
       </Stack>
 
       <ConfirmDialog

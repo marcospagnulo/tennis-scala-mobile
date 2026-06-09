@@ -113,6 +113,7 @@ const updateMatchResult = async (
   result: string,
   p1Approved: boolean,
   p2Approved: boolean,
+  complete?: boolean,
 ) => {
   const updatedSeason = {...season};
   const currentPeriod = updatedSeason.periods.find(p => !p.end);
@@ -127,7 +128,11 @@ const updateMatchResult = async (
           key,
           {
             ...match,
-            status: p1Approved && p2Approved ? "completed" : match.status,
+            status: complete
+              ? "completed"
+              : p1Approved && p2Approved
+                ? "completed"
+                : match.status,
             result: {
               ...match.result,
               value: result,

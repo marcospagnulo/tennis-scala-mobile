@@ -9,6 +9,7 @@ import {getWinnerIndex, shouldEnable3Set} from "../../../util";
 import {Done} from "@mui/icons-material";
 import {EditIcon} from "../../../icons";
 import {ConfirmDialog} from "../../ConfirmDialog";
+import {Admin} from "../../Admin";
 
 const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
   const {currentSeason, player} = useAppContext();
@@ -152,6 +153,23 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
     );
   };
 
+  const handleAdminApprove = async () => {
+    let resultString = `${result[0][0]}-${result[1][0]} ${result[0][1] ?? 0}-${result[1][1] ?? 0}`;
+    if (result[0][2] !== null && result[1][2] !== null) {
+      resultString += ` ${result[0][2]}-${result[1][2]}`;
+    }
+
+    await updateMatchResult(
+      currentSeason!,
+      match.id,
+      resultString,
+      true,
+      true,
+      true,
+    );
+    setEditResult(false);
+  };
+
   const hasError = error.some(row => row.some(e => e));
 
   const isCurrentPlayerP1 = match.pid1 === player?.id && !readonly;
@@ -223,6 +241,28 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
           onClick={handleApprove}>
           <Done fontSize="inherit" />
         </IconButton>
+      )}
+
+      {readonly && (
+        <Admin>
+          {!editResult ? (
+            <IconButton
+              sx={{bgcolor: "primary.main"}}
+              size="small"
+              disabled={loading}
+              onClick={() => setEditResult(true)}>
+              <EditIcon fontSize="inherit" color="secondary" />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{bgcolor: "primary.main"}}
+              size="small"
+              disabled={loading || hasError}
+              onClick={handleAdminApprove}>
+              <Done fontSize="inherit" color="secondary" />
+            </IconButton>
+          )}
+        </Admin>
       )}
 
       <ConfirmDialog
