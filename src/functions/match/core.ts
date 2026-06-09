@@ -88,12 +88,13 @@ const resetMatchApproval = async (season: Season, mId: string) => {
           key,
           {
             ...match,
+            status: "approved",
             result: {
               ...match.result,
               p1Approved: false,
               p2Approved: false,
             },
-          },
+          } as Match,
         ];
       }
       return [key, match];
@@ -133,7 +134,7 @@ const updateMatchResult = async (
               p1Approved,
               p2Approved,
             },
-          },
+          } as Match,
         ];
       }
       return [key, match];
@@ -165,7 +166,7 @@ const updateMatchStatus = async (
           {
             ...match,
             status,
-          },
+          } as Match,
         ];
       }
       return [key, match];
