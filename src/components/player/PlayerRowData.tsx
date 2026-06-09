@@ -7,11 +7,12 @@ import {
 } from "@mui/material";
 import {Timestamp} from "firebase/firestore";
 import {useState} from "react";
-import {EditableTypography} from "../../../components/EditableTypography";
-import {CancelIcon, EditIcon} from "../../../icons";
+import {EditableTypography} from "../EditableTypography";
+import {CancelIcon, EditIcon} from "../../icons";
 import dayjs from "dayjs";
 import {MobileDatePicker} from "@mui/x-date-pickers";
-import {genderMap} from "../../../domain/types";
+import {genderMap} from "../../domain/types";
+import {useAppContext} from "../../app/context";
 
 const PlayerRowData = ({
   label,
@@ -28,6 +29,7 @@ const PlayerRowData = ({
 }) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
+  const {mobile} = useAppContext();
 
   const handleConfirm = (value: string | number | Timestamp) => {
     setEdit(false);
@@ -111,7 +113,7 @@ const PlayerRowData = ({
             : ""}
         </Typography>
       )}
-      {!edit && editable && hover && (
+      {!edit && editable && (hover || mobile) && (
         <IconButton size="small" onClick={() => setEdit(true)}>
           <EditIcon fontSize="inherit" />
         </IconButton>

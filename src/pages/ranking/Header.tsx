@@ -27,6 +27,7 @@ const RankingHeader = ({
           variant="h6"
           align="left"
           sx={{
+            pl: 1,
             width: 50,
           }}>
           #

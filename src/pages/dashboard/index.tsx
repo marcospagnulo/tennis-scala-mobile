@@ -1,7 +1,7 @@
 import type {Theme} from "@emotion/react";
 import {Stack, type SxProps} from "@mui/material";
 import {useAppContext} from "../../app/context";
-import {PlayerCard} from "./player";
+import {PlayerCard} from "../../components/player";
 import {MatchesCard} from "./matches";
 import {AdminCard} from "./admin";
 import {CurrentSeasonCard} from "./current-season";

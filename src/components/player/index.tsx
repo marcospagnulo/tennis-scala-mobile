@@ -1,13 +1,12 @@
-import {Avatar, Box, IconButton, Stack} from "@mui/material";
-import {useAppContext} from "../../../app/context";
-import {collections} from "../../../lib/firebase";
+import {Avatar, Box, Dialog, IconButton, Paper, Stack} from "@mui/material";
+import {useAppContext} from "../../app/context";
+import {collections} from "../../lib/firebase";
 import {doc, Timestamp, updateDoc} from "firebase/firestore";
 import {PlayerRowData} from "./PlayerRowData";
 import {useRef, useState} from "react";
-import {EditIcon} from "../../../icons";
-import {DashboardCard} from "../DashboardCard";
+import {EditIcon} from "../../icons";
 
-const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
+const PlayerCard = ({open, onClose}: {open: boolean; onClose: () => void}) => {
   const {player, setPlayer} = useAppContext();
 
   const [hover, setHover] = useState(false);
@@ -40,59 +39,72 @@ const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
   if (!player) return null;
 
   return (
-    <DashboardCard
-      direction={direction}
-      image={
-        <Stack
-          sx={{width: "100%", height: "100%", position: "relative"}}
-          onMouseOver={() => setHover(true)}
-          onMouseOut={() => setHover(false)}>
-          {player.avatar ? (
-            <Box
-              sx={{
-                backgroundImage: `url(${player.avatar})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                width: "100%",
-                height: "100%",
-              }}
-            />
-          ) : (
-            <Avatar sx={{width: "100%", height: "100%"}} />
-          )}
-
-          <input
-            ref={inputFileRef}
-            type="file"
-            onChange={handleFileLoad}
-            style={{display: "none"}}
-            accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiPaper-root:first-child": {
+          bgcolor: "transparent",
+          "--Paper-shadow": "none !important",
+        },
+      }}>
+      <Stack
+        sx={{
+          width: 160,
+          height: 160,
+          position: "relative",
+          borderRadius: "50%",
+          overflow: "hidden",
+          margin: "auto",
+          mb: -10,
+        }}
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}>
+        {player.avatar ? (
+          <Box
+            sx={{
+              backgroundImage: `url(${player.avatar})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "100%",
+              height: "100%",
+            }}
           />
+        ) : (
+          <Avatar sx={{width: "100%", height: "100%"}} />
+        )}
 
-          {hover && (
-            <Stack
-              sx={{
-                bgcolor: "background.default",
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                opacity: 0.8,
-              }}>
-              <IconButton onClick={() => inputFileRef.current?.click()}>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          )}
-        </Stack>
-      }
-      content={
-        <Stack sx={{px: 2, pb: 2, flex: 1}}>
+        <input
+          ref={inputFileRef}
+          type="file"
+          onChange={handleFileLoad}
+          style={{display: "none"}}
+          accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        />
+
+        {hover && (
+          <Stack
+            sx={{
+              bgcolor: "background.default",
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              opacity: 0.8,
+            }}>
+            <IconButton onClick={() => inputFileRef.current?.click()}>
+              <EditIcon />
+            </IconButton>
+          </Stack>
+        )}
+      </Stack>
+      <Paper>
+        <Stack sx={{mt: 10, p: 2, minWidth: 400}}>
           <PlayerRowData
             label="Nome"
             value={player.name}
@@ -129,8 +141,8 @@ const PlayerCard = ({direction}: {direction?: "row" | "column"}) => {
             onEdit={v => handleEdit("gender", v)}
           />
         </Stack>
-      }
-    />
+      </Paper>
+    </Dialog>
   );
 };
 

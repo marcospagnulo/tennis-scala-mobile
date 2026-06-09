@@ -4,13 +4,12 @@ import {
   Avatar,
   IconButton,
   Box,
-  Dialog,
 } from "@mui/material";
 import {navigationItems} from "./navigation";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAppContext} from "./context";
-import {PlayerCard} from "../pages/dashboard/player";
+import {PlayerCard} from "../components/player";
 
 const BottomNavigation = () => {
   const navigate = useNavigate();
@@ -62,19 +61,7 @@ const BottomNavigation = () => {
           />
         </IconButton>
       </Box>
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        maxWidth="xs"
-        sx={{
-          "& .MuiPaper-root:first-child": {
-            bgcolor: "transparent",
-            "--Paper-shadow": "none !important",
-          },
-        }}
-        fullWidth>
-        <PlayerCard direction="column" />
-      </Dialog>
+      <PlayerCard open={open} onClose={() => setOpen(false)} />
     </MuiBottomNavigation>
   );
 };
