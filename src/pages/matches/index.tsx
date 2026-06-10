@@ -7,6 +7,7 @@ import {MatchInfo} from "../../components/match";
 import {Paper, Tab, Tabs, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import {MatchIcon} from "../../icons";
+import {AddMatch} from "./AddMatch";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {currentSeason, mobile} = useAppContext();
@@ -86,6 +87,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           </Typography>
         </Stack>
       )}
+      <AddMatch />
     </Stack>
   );
 };

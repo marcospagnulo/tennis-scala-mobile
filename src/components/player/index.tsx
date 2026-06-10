@@ -43,7 +43,7 @@ const PlayerCard = ({open, onClose}: {open: boolean; onClose: () => void}) => {
       open={open}
       onClose={onClose}
       sx={{
-        "& .MuiPaper-root:first-child": {
+        "& .MuiPaper-root:first-of-type": {
           bgcolor: "transparent",
           "--Paper-shadow": "none !important",
         },
