@@ -13,7 +13,10 @@ const Row = ({label, value}: {label: string; value: string | number}) => (
     <Typography variant="body1" color="textSecondary">
       {label}
     </Typography>
-    <Typography variant="body1" color="textPrimary">
+    <Typography
+      variant="body1"
+      color="textPrimary"
+      sx={{textTransform: "capitalize"}}>
       {value}
     </Typography>
   </Stack>

@@ -13,9 +13,15 @@ import {navigationItems} from "./navigation";
 import {BottomNavigation} from "./BottomNavigation";
 import {MobileAppBar} from "./MobileAppBar";
 import {ErrorIcon} from "../icons";
+import dayjs from "dayjs";
+import {useEffect} from "react";
 
 const App = () => {
   const mobile = useMediaQuery(useTheme().breakpoints.down("md"));
+
+  useEffect(() => {
+    dayjs.locale("it");
+  }, []);
 
   return (
     <AppProvider>

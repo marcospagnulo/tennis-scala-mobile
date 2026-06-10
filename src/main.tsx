@@ -8,6 +8,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {yellow, blue} from "@mui/material/colors";
 import {itIT} from "@mui/x-date-pickers/locales";
+import "dayjs/locale/it";
 
 const theme = createTheme({
   palette: {
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <LocalizationProvider
       dateAdapter={AdapterDayjs}
+      adapterLocale="it"
       localeText={
         itIT.components.MuiLocalizationProvider.defaultProps.localeText
       }>
