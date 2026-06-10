@@ -42,7 +42,9 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
       {matches
         .sort((a, b) => a.date.toMillis() - b.date.toMillis())
         .map((m, index) => (
-          <Paper key={`match-paper-${index}`}>
+          <Paper
+            key={`match-paper-${index}`}
+            sx={{display: "flex", overflow: "hidden"}}>
             <MatchInfo match={m} />
           </Paper>
         ))}

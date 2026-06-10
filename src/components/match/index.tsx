@@ -98,7 +98,7 @@ const MatchInfo = ({match}: {match: Match}) => {
 
   return (
     <>
-      <Stack direction={"row"} sx={{gap: 1, alignItems: "center"}}>
+      <Stack direction={"row"} sx={{gap: 1, alignItems: "center", flex: 1}}>
         <Stack
           sx={{
             alignItems: "center",
