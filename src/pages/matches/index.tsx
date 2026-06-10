@@ -10,8 +10,7 @@ import dayjs from "dayjs";
 import {MatchIcon} from "../../icons";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
-  const {currentSeason, mobile, user} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {currentSeason, mobile} = useAppContext();
   const [period, setPeriod] = useState<Period>();
 
   useEffect(() => {
@@ -26,9 +25,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
     setPeriod(selectedPeriod);
   };
 
-  const matches = Object.values(period?.matches || {}).filter(
-    m => m.status === "completed" || isAdmin,
-  );
+  const matches = Object.values(period?.matches || {});
 
   return (
     <Stack sx={{...sx, py: 2, gap: 2, ...(mobile && {px: 2})}}>
@@ -46,7 +43,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
         .sort((a, b) => a.date.toMillis() - b.date.toMillis())
         .map((m, index) => (
           <Paper key={`match-paper-${index}`}>
-            <MatchInfo match={m} readonly />
+            <MatchInfo match={m} />
           </Paper>
         ))}
 

@@ -26,17 +26,19 @@ const MatchesCardContent = () => {
   if (!currentSeason) return null;
 
   return (
-    <Stack sx={{px: 2, gap: 2}}>
+    <Stack sx={{gap: 2}}>
       {matches.length > 0 && (
-        <Stack sx={{gap: 1}}>
+        <Stack>
           <Typography align="center" variant="h6">
             Le tue sfide
           </Typography>
           <Divider />
-          <Stack sx={{gap: 1}} divider={<Divider />}>
-            {matches.map((m, index) => (
-              <MatchInfo key={`match-info-${index}`} match={m} />
-            ))}
+          <Stack sx={{pr: 2}} divider={<Divider />}>
+            {matches
+              .sort((a, b) => a.date.toMillis() - b.date.toMillis())
+              .map((m, index) => (
+                <MatchInfo key={`match-info-${index}`} match={m} />
+              ))}
           </Stack>
           <Divider />
         </Stack>

@@ -1,17 +1,33 @@
-import {Avatar, Chip, CircularProgress, Stack, Typography} from "@mui/material";
+import {
+  Avatar,
+  Chip,
+  CircularProgress,
+  Stack,
+  Typography,
+  type SxProps,
+} from "@mui/material";
 import {matchStatusMap, type Match} from "../../domain/types";
 import {useFindById} from "../../functions/useFindById";
 import {collections} from "../../lib/firebase";
 import dayjs from "dayjs";
 import {useAppContext} from "../../app/context";
-import {Close, Delete, Done} from "@mui/icons-material";
+import {Close, Delete, Done, PanToolAlt} from "@mui/icons-material";
 import {useUpdateMatchStatus} from "../../functions";
 import {ConfirmDialog} from "..";
 import {useState} from "react";
 import {Result} from "./result";
 import {useDeleteMatch} from "../../functions/match/useDeleteMatch";
+import {useDownBreakpoint} from "../../hooks/useDownBreakpoint";
+import type {Theme} from "@emotion/react";
+
+const truncateSx: SxProps<Theme> = {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
 
 const Player = ({id}: {id: string}) => {
+  const downSm = useDownBreakpoint("sm");
   const {data: player, loading} = useFindById({
     collection: collections?.players,
     id,
@@ -23,8 +39,10 @@ const Player = ({id}: {id: string}) => {
       {!loading && player && (
         <>
           <Avatar src={player.avatar} sx={{width: 28, height: 28}} />
-          <Typography variant="body1">
-            {player.surname} {player.name}
+          <Typography variant="body1" sx={{...truncateSx}}>
+            {downSm
+              ? `${player.surname} ${player.name?.[0]}.`
+              : `${player.surname} ${player.name}`}
           </Typography>
         </>
       )}
@@ -42,14 +60,10 @@ const matchStatusColorMap: Record<
   completed: "default",
 };
 
-const MatchInfo = ({
-  match,
-  readonly = false,
-}: {
-  match: Match;
-  readonly?: boolean;
-}) => {
-  const {player, currentSeason} = useAppContext();
+const MatchInfo = ({match}: {match: Match}) => {
+  const downSm = useDownBreakpoint("sm");
+  const {user, player, currentSeason} = useAppContext();
+  const isAdmin = user?.role === "admin";
   const {loading: updateLoading, updateMatchStatus} = useUpdateMatchStatus();
   const {deleteMatch, loading: deleteLoading} = useDeleteMatch();
   const loading = updateLoading || deleteLoading;
@@ -69,79 +83,119 @@ const MatchInfo = ({
     setDialogDelete(false);
   };
 
+  const pendingOrRejected =
+    match.status === "pending" || match.status === "rejected";
+  const isUserPlayer1 = match.pid1 === player?.id;
+  const isUserPlayer2 = match.pid2 === player?.id;
+  const isUserInMatchAndApproved =
+    (isUserPlayer1 || isUserPlayer2) && match.status === "approved";
+  const hideResult =
+    (match.status === "pending" ||
+      match.status === "rejected" ||
+      match.status === "approved") &&
+    !isUserInMatchAndApproved &&
+    !isAdmin;
+
   return (
-    <Stack spacing={2}>
-      {!readonly && (
+    <>
+      <Stack direction={"row"} sx={{gap: 1, alignItems: "center"}}>
         <Stack
-          direction={"row"}
-          sx={{alignItems: "center", justifyContent: "space-between"}}>
-          <Stack direction={"row"} sx={{alignItems: "center", gap: 1}}>
-            <Chip
-              label={matchStatusMap[match.status]}
-              color={matchStatusColorMap[match.status]}
-            />
-            {match.status === "pending" && match.pid2 === player?.id && (
-              <>
-                <Chip
-                  variant="outlined"
-                  disabled={loading}
-                  label="Accetta"
-                  icon={<Done fontSize="small" />}
-                  onClick={() => setDialogApprove(true)}
-                  color="success"
-                />
-                <Chip
-                  variant="outlined"
-                  disabled={loading}
-                  label="Rifiuta"
-                  icon={<Close fontSize="small" />}
-                  onClick={() => setDialogReject(true)}
-                  color="error"
-                />
-              </>
-            )}
-            {match.status === "pending" && match.pid1 === player?.id && (
-              <Chip
-                variant="outlined"
-                disabled={loading}
-                label="Cancella"
-                icon={<Delete fontSize="small" />}
-                onClick={() => setDialogDelete(true)}
-                color="error"
-              />
-            )}
-          </Stack>
-          <Typography variant="body2" color="textSecondary">
-            {dayjs(match.date.toDate()).format("D MMMM YYYY HH:mm")}
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
+            height: "100%",
+            minWidth: 60,
+            py: 0.5,
+            gap: 0.5,
+          }}>
+          <Typography variant="h5">
+            {dayjs(match.date.toDate()).format("D")}
+          </Typography>
+          <Typography variant="body2" sx={{textTransform: "capitalize"}}>
+            {dayjs(match.date.toDate()).format("MMM")}
+          </Typography>
+          <Typography variant="body2">
+            {dayjs(match.date.toDate()).format("HH:mm")}
           </Typography>
         </Stack>
-      )}
-      <Stack direction={"row"} sx={{gap: 2, alignItems: "center"}}>
-        {readonly && (
-          <Stack
-            sx={{
-              alignItems: "center",
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
-              width: 80,
-              p: 1,
-            }}>
-            <Typography variant="h5">
-              {dayjs(match.date.toDate()).format("D")}
-            </Typography>
-            <Typography variant="body2">
-              {dayjs(match.date.toDate()).format("MMM")}
-            </Typography>
-            <Typography variant="body2">
-              {dayjs(match.date.toDate()).format("HH:mm")}
-            </Typography>
+        <Stack
+          sx={{
+            flex: 1,
+            gap: 1,
+            py: 1,
+          }}>
+          <Stack direction={"row"} spacing={1}>
+            <Stack
+              direction={hideResult ? "row" : "column"}
+              sx={{
+                gap: 1,
+                flex: 1,
+                ...(!hideResult
+                  ? {maxWidth: downSm ? 120 : 200}
+                  : {alignItems: "center", justifyContent: "center"}),
+              }}>
+              <Player id={match.pid1} />
+              {hideResult && (
+                <PanToolAlt color="action" sx={{transform: "rotate(90deg)"}} />
+              )}
+              <Player id={match.pid2} />
+            </Stack>
+            {!hideResult && <Result match={match} />}
           </Stack>
-        )}
-        <Stack sx={{gap: 1, flex: 1, maxWidth: 200}}>
-          <Player id={match.pid1} />
-          <Player id={match.pid2} />
+          {(match.status !== "completed" && !isUserInMatchAndApproved) ||
+            (isAdmin && (
+              <Stack
+                direction={"row"}
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  mr: 1,
+                  gap: 1,
+                }}>
+                <Chip
+                  label={matchStatusMap[match.status]}
+                  color={matchStatusColorMap[match.status]}
+                  size="small"
+                />
+                {pendingOrRejected && isUserPlayer2 && (
+                  <>
+                    <Chip
+                      variant="outlined"
+                      disabled={loading}
+                      label="Accetta"
+                      size="small"
+                      icon={<Done fontSize="small" />}
+                      onClick={() => setDialogApprove(true)}
+                      color="success"
+                    />
+                    <Chip
+                      variant="outlined"
+                      disabled={loading}
+                      label="Rifiuta"
+                      size="small"
+                      icon={<Close fontSize="small" />}
+                      onClick={() => setDialogReject(true)}
+                      color="error"
+                    />
+                  </>
+                )}
+                {(match.status === "pending" && isUserPlayer1) ||
+                  (isAdmin && (
+                    <Chip
+                      variant="outlined"
+                      disabled={loading}
+                      label="Cancella"
+                      size="small"
+                      icon={<Delete fontSize="small" />}
+                      onClick={() => setDialogDelete(true)}
+                      color="error"
+                    />
+                  ))}
+              </Stack>
+            ))}
         </Stack>
-        <Result match={match} readonly={readonly} />
       </Stack>
 
       <ConfirmDialog
@@ -167,7 +221,7 @@ const MatchInfo = ({
         content="Confermi di voler cancellare la sfida?"
         onConfirm={() => handleDeleteMatch()}
       />
-    </Stack>
+    </>
   );
 };
 

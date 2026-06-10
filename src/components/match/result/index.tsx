@@ -11,8 +11,9 @@ import {EditIcon} from "../../../icons";
 import {ConfirmDialog} from "../../ConfirmDialog";
 import {Admin} from "../../Admin";
 
-const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
-  const {currentSeason, player} = useAppContext();
+const Result = ({match}: {match: Match}) => {
+  const {currentSeason, player, user} = useAppContext();
+  const isAdmin = user?.role === "admin";
 
   const [enable3Set, setEnable3Set] = useState<boolean>(false);
   const [result, setResult] = useState<(number | null)[][]>([
@@ -172,8 +173,8 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
 
   const hasError = error.some(row => row.some(e => e));
 
-  const isCurrentPlayerP1 = match.pid1 === player?.id && !readonly;
-  const isCurrentPlayerP2 = match.pid2 === player?.id && !readonly;
+  const isCurrentPlayerP1 = match.pid1 === player?.id;
+  const isCurrentPlayerP2 = match.pid2 === player?.id;
   const canP1Approve = isCurrentPlayerP1 && !match.result?.p1Approved;
   const canP2Approve = isCurrentPlayerP2 && !match.result?.p2Approved;
   const canApprove = canP1Approve || canP2Approve;
@@ -186,8 +187,8 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
   const [editResult, setEditResult] = useState<boolean>(false);
 
   useEffect(() => {
-    setEditResult(!readonly && canApprove);
-  }, [readonly, canApprove]);
+    setEditResult(canApprove);
+  }, [canApprove]);
 
   const handleConfirmEdit = async () => {
     setConfirmEditDialog(false);
@@ -225,7 +226,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
         />
       </Stack>
 
-      {canEdit && (
+      {!isAdmin && canEdit && (
         <IconButton
           size="small"
           disabled={loading}
@@ -234,7 +235,7 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
         </IconButton>
       )}
 
-      {canApprove && (
+      {!isAdmin && canApprove && (
         <IconButton
           size="small"
           disabled={loading || hasError}
@@ -243,27 +244,25 @@ const Result = ({match, readonly}: {match: Match; readonly: boolean}) => {
         </IconButton>
       )}
 
-      {readonly && (
-        <Admin>
-          {!editResult ? (
-            <IconButton
-              sx={{bgcolor: "primary.main"}}
-              size="small"
-              disabled={loading}
-              onClick={() => setEditResult(true)}>
-              <EditIcon fontSize="inherit" color="secondary" />
-            </IconButton>
-          ) : (
-            <IconButton
-              sx={{bgcolor: "primary.main"}}
-              size="small"
-              disabled={loading || hasError}
-              onClick={handleAdminApprove}>
-              <Done fontSize="inherit" color="secondary" />
-            </IconButton>
-          )}
-        </Admin>
-      )}
+      <Admin>
+        {!editResult ? (
+          <IconButton
+            sx={{bgcolor: "primary.main"}}
+            size="small"
+            disabled={loading}
+            onClick={() => setEditResult(true)}>
+            <EditIcon fontSize="inherit" color="secondary" />
+          </IconButton>
+        ) : (
+          <IconButton
+            sx={{bgcolor: "primary.main"}}
+            size="small"
+            disabled={loading || hasError}
+            onClick={handleAdminApprove}>
+            <Done fontSize="inherit" color="secondary" />
+          </IconButton>
+        )}
+      </Admin>
 
       <ConfirmDialog
         open={confirmEditDialog}
