@@ -28,7 +28,7 @@ const navigationItems: NavigationItem[] = [
     path: "/matches",
     label: "Partite",
     icon: MatchIcon,
-    element: <MatchesPage sx={{flex: 1, py: 2}} />,
+    element: <MatchesPage sx={{flex: 1}} />,
   },
   {
     path: "/players",

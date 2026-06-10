@@ -60,7 +60,7 @@ const matchStatusColorMap: Record<
   completed: "default",
 };
 
-const MatchInfo = ({match}: {match: Match}) => {
+const MatchInfo = ({match, expired}: {match: Match; expired: boolean}) => {
   const downSm = useDownBreakpoint("sm");
   const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
@@ -142,59 +142,59 @@ const MatchInfo = ({match}: {match: Match}) => {
               )}
               <Player id={match.pid2} />
             </Stack>
-            {!hideResult && <Result match={match} />}
+            {!hideResult && <Result match={match} expired={expired} />}
           </Stack>
-          {(match.status !== "completed" && !isUserInMatchAndApproved) ||
-            (isAdmin && (
-              <Stack
-                direction={"row"}
-                sx={{
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  mr: 1,
-                  gap: 1,
-                }}>
-                <Chip
-                  label={matchStatusMap[match.status]}
-                  color={matchStatusColorMap[match.status]}
-                  size="small"
-                />
-                {pendingOrRejected && isUserPlayer2 && (
-                  <>
-                    <Chip
-                      variant="outlined"
-                      disabled={loading}
-                      label="Accetta"
-                      size="small"
-                      icon={<Done fontSize="small" />}
-                      onClick={() => setDialogApprove(true)}
-                      color="success"
-                    />
-                    <Chip
-                      variant="outlined"
-                      disabled={loading}
-                      label="Rifiuta"
-                      size="small"
-                      icon={<Close fontSize="small" />}
-                      onClick={() => setDialogReject(true)}
-                      color="error"
-                    />
-                  </>
-                )}
-                {(match.status === "pending" && isUserPlayer1) ||
-                  (isAdmin && (
-                    <Chip
-                      variant="outlined"
-                      disabled={loading}
-                      label="Cancella"
-                      size="small"
-                      icon={<Delete fontSize="small" />}
-                      onClick={() => setDialogDelete(true)}
-                      color="error"
-                    />
-                  ))}
-              </Stack>
-            ))}
+          {(isAdmin ||
+            (match.status !== "completed" && !isUserInMatchAndApproved)) && (
+            <Stack
+              direction={"row"}
+              sx={{
+                alignItems: "center",
+                justifyContent: "flex-end",
+                mr: 1,
+                gap: 1,
+              }}>
+              <Chip
+                label={matchStatusMap[match.status]}
+                color={matchStatusColorMap[match.status]}
+                size="small"
+              />
+              {pendingOrRejected && isUserPlayer2 && !expired && (
+                <>
+                  <Chip
+                    variant="outlined"
+                    disabled={loading}
+                    label="Accetta"
+                    size="small"
+                    icon={<Done fontSize="small" />}
+                    onClick={() => setDialogApprove(true)}
+                    color="success"
+                  />
+                  <Chip
+                    variant="outlined"
+                    disabled={loading}
+                    label="Rifiuta"
+                    size="small"
+                    icon={<Close fontSize="small" />}
+                    onClick={() => setDialogReject(true)}
+                    color="error"
+                  />
+                </>
+              )}
+              {(match.status === "pending" && isUserPlayer1) ||
+                (isAdmin && (
+                  <Chip
+                    variant="outlined"
+                    disabled={loading}
+                    label="Cancella"
+                    size="small"
+                    icon={<Delete fontSize="small" />}
+                    onClick={() => setDialogDelete(true)}
+                    color="error"
+                  />
+                ))}
+            </Stack>
+          )}
         </Stack>
       </Stack>
 

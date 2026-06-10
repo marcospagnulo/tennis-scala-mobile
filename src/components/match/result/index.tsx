@@ -11,7 +11,7 @@ import {EditIcon} from "../../../icons";
 import {ConfirmDialog} from "../../ConfirmDialog";
 import {Admin} from "../../Admin";
 
-const Result = ({match}: {match: Match}) => {
+const Result = ({match, expired}: {match: Match; expired: boolean}) => {
   const {currentSeason, player, user} = useAppContext();
   const isAdmin = user?.role === "admin";
 
@@ -226,7 +226,7 @@ const Result = ({match}: {match: Match}) => {
         />
       </Stack>
 
-      {!isAdmin && canEdit && (
+      {!isAdmin && canEdit && !expired && (
         <IconButton
           size="small"
           disabled={loading}
