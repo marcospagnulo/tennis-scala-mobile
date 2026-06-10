@@ -4,14 +4,14 @@ import type {Theme} from "@emotion/react";
 import {ResultRow} from "./Row";
 import type {Match} from "../../../domain/types";
 import {useAppContext} from "../../../app/context";
-import {useUpdateMatchResult} from "../../../functions/match/useUpdateMatchResult";
 import {getWinnerIndex, shouldEnable3Set} from "../../../util";
 import {Done} from "@mui/icons-material";
 import {EditIcon} from "../../../icons";
 import {ConfirmDialog} from "../../ConfirmDialog";
 import {Admin} from "../../Admin";
+import {useUpdateMatch} from "../../../functions/match/useUpdateMatch";
 
-const Result = ({match, expired}: {match: Match; expired: boolean}) => {
+const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
   const {currentSeason, player, user} = useAppContext();
   const isAdmin = user?.role === "admin";
 
@@ -25,8 +25,7 @@ const Result = ({match, expired}: {match: Match; expired: boolean}) => {
     [false, false, false],
   ]);
 
-  const {loading, updateMatchResult, resetMatchApproval} =
-    useUpdateMatchResult();
+  const {loading, updateMatchResult, resetMatchApproval} = useUpdateMatch();
 
   const tfSx: SxProps<Theme> = {
     width: 40,

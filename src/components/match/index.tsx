@@ -9,16 +9,16 @@ import {
 import {matchStatusMap, type Match} from "../../domain/types";
 import {useFindById} from "../../functions/useFindById";
 import {collections} from "../../lib/firebase";
-import dayjs from "dayjs";
 import {useAppContext} from "../../app/context";
 import {Close, Delete, Done, PanToolAlt} from "@mui/icons-material";
-import {useUpdateMatchStatus} from "../../functions";
 import {ConfirmDialog} from "..";
 import {useState} from "react";
 import {Result} from "./result";
 import {useDeleteMatch} from "../../functions/match/useDeleteMatch";
 import {useDownBreakpoint} from "../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
+import {MatchDate} from "./MatchDate";
+import {useUpdateMatch} from "../../functions/match/useUpdateMatch";
 
 const truncateSx: SxProps<Theme> = {
   overflow: "hidden",
@@ -60,11 +60,11 @@ const matchStatusColorMap: Record<
   completed: "default",
 };
 
-const MatchInfo = ({match, expired}: {match: Match; expired: boolean}) => {
+const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
   const downSm = useDownBreakpoint("sm");
   const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
-  const {loading: updateLoading, updateMatchStatus} = useUpdateMatchStatus();
+  const {loading: updateLoading, updateMatchStatus} = useUpdateMatch();
   const {deleteMatch, loading: deleteLoading} = useDeleteMatch();
   const loading = updateLoading || deleteLoading;
 
@@ -99,27 +99,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired: boolean}) => {
   return (
     <>
       <Stack direction={"row"} sx={{gap: 1, alignItems: "center", flex: 1}}>
-        <Stack
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "primary.main",
-            color: "primary.contrastText",
-            height: "100%",
-            minWidth: 60,
-            py: 0.5,
-            gap: 0.5,
-          }}>
-          <Typography variant="h5">
-            {dayjs(match.date.toDate()).format("D")}
-          </Typography>
-          <Typography variant="body2" sx={{textTransform: "capitalize"}}>
-            {dayjs(match.date.toDate()).format("MMM")}
-          </Typography>
-          <Typography variant="body2">
-            {dayjs(match.date.toDate()).format("HH:mm")}
-          </Typography>
-        </Stack>
+        <MatchDate season={currentSeason!} match={match} />
         <Stack
           sx={{
             flex: 1,
@@ -160,39 +140,39 @@ const MatchInfo = ({match, expired}: {match: Match; expired: boolean}) => {
                 size="small"
               />
               {pendingOrRejected && isUserPlayer2 && !expired && (
-                <>
-                  <Chip
-                    variant="outlined"
-                    disabled={loading}
-                    label="Accetta"
-                    size="small"
-                    icon={<Done fontSize="small" />}
-                    onClick={() => setDialogApprove(true)}
-                    color="success"
-                  />
-                  <Chip
-                    variant="outlined"
-                    disabled={loading}
-                    label="Rifiuta"
-                    size="small"
-                    icon={<Close fontSize="small" />}
-                    onClick={() => setDialogReject(true)}
-                    color="error"
-                  />
-                </>
+                <Chip
+                  variant="outlined"
+                  disabled={loading}
+                  label="Accetta"
+                  size="small"
+                  icon={<Done fontSize="small" />}
+                  onClick={() => setDialogApprove(true)}
+                  color="success"
+                />
               )}
-              {(match.status === "pending" && isUserPlayer1) ||
-                (isAdmin && (
-                  <Chip
-                    variant="outlined"
-                    disabled={loading}
-                    label="Cancella"
-                    size="small"
-                    icon={<Delete fontSize="small" />}
-                    onClick={() => setDialogDelete(true)}
-                    color="error"
-                  />
-                ))}
+              {match.status === "pending" && isUserPlayer2 && !expired && (
+                <Chip
+                  variant="outlined"
+                  disabled={loading}
+                  label="Rifiuta"
+                  size="small"
+                  icon={<Close fontSize="small" />}
+                  onClick={() => setDialogReject(true)}
+                  color="error"
+                />
+              )}
+              {}
+              {(isAdmin || (match.status === "pending" && isUserPlayer1)) && (
+                <Chip
+                  variant="outlined"
+                  disabled={loading}
+                  label="Cancella"
+                  size="small"
+                  icon={<Delete fontSize="small" />}
+                  onClick={() => setDialogDelete(true)}
+                  color="error"
+                />
+              )}
             </Stack>
           )}
         </Stack>

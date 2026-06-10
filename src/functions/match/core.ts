@@ -2,6 +2,32 @@ import {doc, Timestamp, updateDoc} from "firebase/firestore";
 import type {Match, Season} from "../../domain/types";
 import {collections} from "../../lib/firebase";
 
+const findMatchById = (season: Season, mId: string): Match | undefined => {
+  const periods = season.periods;
+  for (const period of periods) {
+    const matches = Object.values(period.matches);
+    const match = matches.find(m => m.id === mId);
+    if (match) {
+      return match;
+    }
+  }
+  return undefined;
+};
+
+const deleteMatchById = (season: Season, mId: string): Match | undefined => {
+  const periods = season.periods;
+  for (const period of periods) {
+    const matches = Object.values(period.matches);
+    const matchIndex = matches.findIndex(m => m.id === mId);
+    if (matchIndex !== -1) {
+      const match = matches[matchIndex];
+      delete period.matches[matchIndex + 1];
+      return match;
+    }
+  }
+  return undefined;
+};
+
 const addMatch = async (
   season: Season,
   player1Id: string,
@@ -76,30 +102,17 @@ const addMatch = async (
 
 const resetMatchApproval = async (season: Season, mId: string) => {
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
-  if (!currentPeriod) {
-    throw new Error("No active period found");
-  }
 
-  currentPeriod.matches = Object.fromEntries(
-    Object.entries(currentPeriod.matches).map(([key, match]) => {
-      if (match.id === mId) {
-        return [
-          key,
-          {
-            ...match,
-            status: "approved",
-            result: {
-              ...match.result,
-              p1Approved: false,
-              p2Approved: false,
-            },
-          } as Match,
-        ];
-      }
-      return [key, match];
-    }),
-  );
+  const match = findMatchById(season, mId);
+  if (!match) {
+    throw new Error("Match not found");
+  }
+  match.status = "approved";
+  match.result = {
+    value: match.result?.value || "",
+    p1Approved: false,
+    p2Approved: false,
+  };
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {
@@ -116,35 +129,23 @@ const updateMatchResult = async (
   complete?: boolean,
 ) => {
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
-  if (!currentPeriod) {
-    throw new Error("No active period found");
+
+  const match = findMatchById(season, mId);
+  if (!match) {
+    throw new Error("Match not found");
   }
 
-  currentPeriod.matches = Object.fromEntries(
-    Object.entries(currentPeriod.matches).map(([key, match]) => {
-      if (match.id === mId) {
-        return [
-          key,
-          {
-            ...match,
-            status: complete
-              ? "completed"
-              : p1Approved && p2Approved
-                ? "completed"
-                : match.status,
-            result: {
-              ...match.result,
-              value: result,
-              p1Approved,
-              p2Approved,
-            },
-          } as Match,
-        ];
-      }
-      return [key, match];
-    }),
-  );
+  match.status = complete
+    ? "completed"
+    : p1Approved && p2Approved
+      ? "completed"
+      : match.status;
+
+  match.result = {
+    value: result,
+    p1Approved,
+    p2Approved,
+  };
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {
@@ -158,25 +159,31 @@ const updateMatchStatus = async (
   status: "approved" | "rejected",
 ) => {
   const updatedSeason = {...season};
+
+  const match = findMatchById(season, mId);
+  if (!match) {
+    throw new Error("Match not found");
+  }
+
+  match.status = status;
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
+const updateMatchDate = async (season: Season, mId: string, date: Date) => {
+  const updatedSeason = {...season};
   const currentPeriod = updatedSeason.periods.find(p => !p.end);
   if (!currentPeriod) {
     throw new Error("No active period found");
   }
 
-  currentPeriod.matches = Object.fromEntries(
-    Object.entries(currentPeriod.matches).map(([key, match]) => {
-      if (match.id === mId) {
-        return [
-          key,
-          {
-            ...match,
-            status,
-          } as Match,
-        ];
-      }
-      return [key, match];
-    }),
-  );
+  const match = findMatchById(season, mId);
+  if (match) {
+    match.date = new Timestamp(date.getTime() / 1000, 0);
+  }
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {
@@ -186,16 +193,11 @@ const updateMatchStatus = async (
 
 const deleteMatch = (season: Season, mId: string) => {
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
-  if (!currentPeriod) {
-    throw new Error("No active period found");
-  }
 
-  currentPeriod.matches = Object.fromEntries(
-    Object.entries(currentPeriod.matches).filter(([, match]) => {
-      return !(match.id === mId);
-    }),
-  );
+  const match = deleteMatchById(season, mId);
+  if (!match) {
+    throw new Error("Match not found");
+  }
 
   const seasonDoc = doc(collections!.seasons, season.id);
   return updateDoc(seasonDoc, {
@@ -209,4 +211,5 @@ export {
   updateMatchStatus,
   deleteMatch,
   resetMatchApproval,
+  updateMatchDate,
 };

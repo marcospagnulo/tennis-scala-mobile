@@ -3,5 +3,5 @@ export {useEditRanking} from "./ranking/useEditRanking";
 export {useQueryCollection} from "./useQueryCollection";
 export {useLiveCollection} from "./useLiveCollection";
 export {useRanking} from "./useRanking";
-export {useUpdateMatchStatus} from "./match/useUpdateMatchStatus";
+export {useUpdateMatch} from "./match/useUpdateMatch";
 export {useAddMatch} from "./match/useAddMatch";

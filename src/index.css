@@ -47,3 +47,7 @@ a {
   scrollbar-width: thin; /* Larghezza sottile */
   scrollbar-color: #888 transparent; /* Colore del pollice e dello sfondo */
 }
+
+.firebase-emulator-warning {
+  display: none;
+}
