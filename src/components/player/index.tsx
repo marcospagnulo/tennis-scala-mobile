@@ -6,7 +6,13 @@ import {PlayerRowData} from "./PlayerRowData";
 import {useRef, useState} from "react";
 import {EditIcon} from "../../icons";
 
-const PlayerCard = ({open, onClose}: {open: boolean; onClose: () => void}) => {
+const PlayerDialog = ({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) => {
   const {player, setPlayer} = useAppContext();
 
   const [hover, setHover] = useState(false);
@@ -146,4 +152,4 @@ const PlayerCard = ({open, onClose}: {open: boolean; onClose: () => void}) => {
   );
 };
 
-export {PlayerCard};
+export {PlayerDialog};

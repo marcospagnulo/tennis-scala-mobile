@@ -9,7 +9,7 @@ import {navigationItems} from "./navigation";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAppContext} from "./context";
-import {PlayerCard} from "../components/player";
+import {PlayerDialog} from "../components/player";
 
 const BottomNavigation = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const BottomNavigation = () => {
           />
         </IconButton>
       </Box>
-      <PlayerCard open={open} onClose={() => setOpen(false)} />
+      <PlayerDialog open={open} onClose={() => setOpen(false)} />
     </MuiBottomNavigation>
   );
 };

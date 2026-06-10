@@ -11,6 +11,7 @@ import {
   Tooltip,
   Stack,
   Avatar,
+  ButtonBase,
 } from "@mui/material";
 import {Key, Logout} from "@mui/icons-material";
 import {Auth} from "../components/auth";
@@ -18,6 +19,7 @@ import {useEffect, useState} from "react";
 import {useAppContext} from "./context";
 import {navigationItems} from "./navigation";
 import {Link, useLocation, useNavigate} from "react-router-dom";
+import {PlayerDialog} from "../components/player";
 
 const DesktopAppBar = () => {
   const theme = useTheme();
@@ -27,6 +29,7 @@ const DesktopAppBar = () => {
 
   const [tabValue, setTabValue] = useState<string | boolean>(false);
   const [login, setLogin] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
 
   const handleTabChange = (_e: React.SyntheticEvent, newValue: string) => {
     navigate(newValue);
@@ -96,16 +99,17 @@ const DesktopAppBar = () => {
                   sx={{alignItems: "center", ml: "auto"}}
                   spacing={2}>
                   {player && (
-                    <>
+                    <ButtonBase onClick={() => setOpen(true)} sx={{gap: 1}}>
                       <Avatar src={player.avatar ?? undefined} />
-                      <Stack>
+                      <Stack sx={{alignItems: "start"}}>
                         <Typography variant="body2">{player.name}</Typography>
                         <Typography variant="body2">
                           {player.surname}
                         </Typography>
                       </Stack>
-                    </>
+                    </ButtonBase>
                   )}
+                  <PlayerDialog open={open} onClose={() => setOpen(false)} />
                   <IconButton onClick={handleAuthClick} color="inherit">
                     <Tooltip
                       title={user ? "Logout" : "Login"}
