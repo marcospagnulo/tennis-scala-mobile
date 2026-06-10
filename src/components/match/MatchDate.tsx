@@ -13,17 +13,22 @@ const MatchDate = ({season, match}: {season: Season; match: Match}) => {
 
   const {success, clear, updateMatchDate} = useUpdateMatch();
 
+  useEffect(() => {
+    if (success) {
+      clear();
+    }
+  }, [success, clear]);
+
   const handleChangeDate = async (date: dayjs.Dayjs | null) => {
     if (!date) return;
     setDialog(false);
     updateMatchDate(season, match.id, date.toDate());
   };
 
-  useEffect(() => {
-    if (success) {
-      clear();
-    }
-  }, [success, clear]);
+  const handleEditClick = () => {
+    setDialog(true);
+    setHover(false);
+  };
 
   return (
     <Stack
@@ -60,9 +65,7 @@ const MatchDate = ({season, match}: {season: Season; match: Match}) => {
             bgcolor: "primary.main",
             visibility: hover ? "visible" : "hidden",
           }}
-          onClick={() => {
-            setDialog(true);
-          }}>
+          onClick={handleEditClick}>
           <EditIcon color="secondary" fontSize="medium" />
         </ButtonBase>
         <Dialog open={dialog} onClose={() => setDialog(false)}>

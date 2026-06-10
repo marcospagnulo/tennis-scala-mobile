@@ -10,18 +10,27 @@ import {MatchIcon} from "../../icons";
 
 const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const {currentSeason, mobile} = useAppContext();
-  const [period, setPeriod] = useState<Period>();
+  const [selectedPeriodStart, setSelectedPeriodStart] = useState<number>();
 
   useEffect(() => {
-    const activePeriod = currentSeason?.periods.find(p => !p.end);
-    setPeriod(activePeriod);
-  }, [currentSeason]);
+    if (!currentSeason?.periods.length) {
+      setSelectedPeriodStart(undefined);
+      return;
+    }
+
+    const hasSelectedPeriod = currentSeason.periods.some(
+      p => p.start.toMillis() === selectedPeriodStart,
+    );
+    if (hasSelectedPeriod) {
+      return;
+    }
+
+    const activePeriod = currentSeason.periods.find(p => !p.end);
+    setSelectedPeriodStart(activePeriod?.start.toMillis());
+  }, [currentSeason, selectedPeriodStart]);
 
   const handleChange = (value: number) => {
-    const selectedPeriod = currentSeason?.periods.find(
-      p => p.start.toMillis() === value,
-    );
-    setPeriod(selectedPeriod);
+    setSelectedPeriodStart(value);
   };
 
   const formatPeriodLabel = (p: Period) => {
@@ -30,14 +39,16 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
     return `${start} - ${end}`;
   };
 
+  const periods = [...(currentSeason?.periods ?? [])]
+    .sort((a, b) => b.start.toMillis() - a.start.toMillis())
+    .map(p => ({
+      label: formatPeriodLabel(p),
+      value: p.start.toMillis(),
+    }));
+  const period = currentSeason?.periods.find(
+    p => p.start.toMillis() === selectedPeriodStart,
+  );
   const matches = Object.values(period?.matches || {});
-  const periods =
-    currentSeason?.periods
-      .sort((a, b) => b.start.toMillis() - a.start.toMillis())
-      .map(p => ({
-        label: formatPeriodLabel(p),
-        value: p.start.toMillis(),
-      })) || [];
 
   return (
     <Stack sx={{...sx, gap: 2, ...(mobile && {px: 2})}}>
@@ -49,15 +60,17 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <Tab key={`period-tab-${p.value}`} label={p.label} value={p.value} />
         ))}
       </Tabs>
-      {matches
-        .sort((a, b) => a.date.toMillis() - b.date.toMillis())
-        .map((m, index) => (
-          <Paper
-            key={`match-paper-${index}`}
-            sx={{display: "flex", overflow: "hidden"}}>
-            <MatchInfo match={m} expired={!!period?.end} />
-          </Paper>
-        ))}
+      {[
+        ...matches
+          .sort((a, b) => a.date.toMillis() - b.date.toMillis())
+          .map((m, index) => (
+            <Paper
+              key={`match-paper-${index}`}
+              sx={{display: "flex", overflow: "hidden"}}>
+              <MatchInfo match={m} expired={!!period?.end} />
+            </Paper>
+          )),
+      ]}
 
       {matches.length === 0 && (
         <Stack

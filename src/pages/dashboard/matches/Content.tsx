@@ -34,11 +34,13 @@ const MatchesCardContent = () => {
           </Typography>
           <Divider />
           <Stack sx={{pr: 2}} divider={<Divider />}>
-            {matches
-              .sort((a, b) => a.date.toMillis() - b.date.toMillis())
-              .map((m, index) => (
-                <MatchInfo key={`match-info-${index}`} match={m} />
-              ))}
+            {[
+              ...matches
+                .sort((a, b) => a.date.toMillis() - b.date.toMillis())
+                .map((m, index) => (
+                  <MatchInfo key={`match-info-${index}`} match={m} />
+                )),
+            ]}
           </Stack>
           <Divider />
         </Stack>
