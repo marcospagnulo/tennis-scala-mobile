@@ -91,8 +91,11 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
         {matches.length === 0 && (
           <>
-            <MatchIcon color="primary" sx={{fontSize: 180}} />
-            <Typography variant="h5" color="text.secondary" align="center">
+            <MatchIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
+            <Typography
+              variant={mobile ? "h6" : "h5"}
+              color="text.secondary"
+              align="center">
               Non ci sono partite in questo periodo
             </Typography>
           </>

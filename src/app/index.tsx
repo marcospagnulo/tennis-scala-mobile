@@ -57,8 +57,13 @@ const App = () => {
                       alignItems: "center",
                       justifyContent: "center",
                     }}>
-                    <ErrorIcon color="error" sx={{fontSize: 180}} />
-                    <Typography variant="h4">Pagina non trovata</Typography>
+                    <ErrorIcon
+                      color="error"
+                      sx={{fontSize: mobile ? 120 : 180}}
+                    />
+                    <Typography variant={mobile ? "h6" : "h5"}>
+                      Pagina non trovata
+                    </Typography>
                   </Stack>
                 }
               />
@@ -66,7 +71,7 @@ const App = () => {
           </Container>
           {mobile && (
             <>
-              <Box sx={{height: 64}} />
+              <Box sx={{height: "calc(64px + env(safe-area-inset-bottom))"}} />
               <BottomNavigation />
             </>
           )}

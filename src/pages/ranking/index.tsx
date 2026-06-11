@@ -199,8 +199,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
             justifyContent: "center",
             gap: 2,
           }}>
-          <RankingIcon color="primary" sx={{fontSize: 180}} />
-          <Typography variant="h5">Classifica non disponibile</Typography>
+          <RankingIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
+          <Typography variant={mobile ? "h6" : "h5"}>
+            Classifica non disponibile
+          </Typography>
         </Stack>
       )}
       <Dialog

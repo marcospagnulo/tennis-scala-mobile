@@ -103,9 +103,9 @@ const AddMatch = () => {
       <Fab
         color="primary"
         sx={{
-          position: "absolute",
+          position: "fixed",
           right: 32,
-          bottom: mobile ? 80 : 32,
+          bottom: mobile ? "calc(80px + env(safe-area-inset-bottom))" : 32,
           zIndex: 1,
         }}
         onClick={() => setOpen(true)}>

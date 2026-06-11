@@ -29,7 +29,7 @@ const BottomNavigation = () => {
       value={value}
       onChange={(_e, v) => setValue(v)}
       sx={{
-        height: 64,
+        height: "calc(64px + env(safe-area-inset-bottom))",
         bgcolor: "primary.main",
         position: "fixed",
         bottom: 0,
@@ -42,7 +42,7 @@ const BottomNavigation = () => {
           sx={{
             py: 1,
             px: 0,
-            justifyContent: "space-around",
+            gap: 1,
             color: "#fff",
             "&.Mui-selected": {
               color: "secondary.main",
@@ -65,7 +65,7 @@ const BottomNavigation = () => {
             left: 0,
             right: 0,
             margin: "auto",
-            bottom: 32,
+            bottom: "calc((64px + env(safe-area-inset-bottom)) / 2)",
             width: 72,
             height: 72,
           }}>
