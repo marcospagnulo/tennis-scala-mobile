@@ -54,7 +54,7 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
 
   return (
     <>
-      {edit ? (
+      {edit && (
         <Stack direction="row" sx={{...sx, gap: 1, alignItems: "center"}}>
           <TextField
             sx={{minWidth: textFieldWidth}}
@@ -70,16 +70,30 @@ const EditableTypography: React.FC<EditableTypographyProps> = ({
             size="small"
           />
           <IconButton size="small" onClick={() => onConfirm(currentText)}>
-            <ConfirmIcon fontSize="inherit" />
+            <ConfirmIcon fontSize="inherit" color="primary" />
           </IconButton>
           <IconButton size="small" onClick={onCancel}>
-            <CancelIcon fontSize="inherit" />
+            <CancelIcon fontSize="inherit" color="error" />
           </IconButton>
         </Stack>
-      ) : (
+      )}
+      {!edit && !label && (
         <Typography color={color} variant={variant} sx={{...sx}}>
           {value}
         </Typography>
+      )}
+      {!edit && label && (
+        <Stack sx={{...sx}}>
+          <Typography
+            color="textSecondary"
+            variant="subtitle1"
+            sx={{lineHeight: 1.2}}>
+            {label}
+          </Typography>
+          <Typography color={color} variant={variant}>
+            {value}
+          </Typography>
+        </Stack>
       )}
     </>
   );

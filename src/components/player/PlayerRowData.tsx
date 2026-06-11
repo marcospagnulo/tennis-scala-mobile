@@ -6,13 +6,14 @@ import {
   Typography,
 } from "@mui/material";
 import {Timestamp} from "firebase/firestore";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {EditableTypography} from "../EditableTypography";
 import {CancelIcon, EditIcon} from "../../icons";
 import dayjs from "dayjs";
 import {MobileDatePicker} from "@mui/x-date-pickers";
 import {genderMap} from "../../domain/types";
 import {useAppContext} from "../../app/context";
+import {Done} from "@mui/icons-material";
 
 const PlayerRowData = ({
   label,
@@ -27,9 +28,17 @@ const PlayerRowData = ({
   type: "tel" | "string" | "date" | "gender";
   onEdit: (value: string | number | Timestamp) => void;
 }) => {
+  const {mobile} = useAppContext();
+
+  const [date, setDate] = useState<dayjs.Dayjs | null>();
   const [edit, setEdit] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
-  const {mobile} = useAppContext();
+
+  useEffect(() => {
+    if (type === "date" && value) {
+      setDate(dayjs((value as Timestamp).toDate()));
+    }
+  }, [type, value]);
 
   const handleConfirm = (value: string | number | Timestamp) => {
     setEdit(false);
@@ -40,24 +49,27 @@ const PlayerRowData = ({
     setEdit(false);
   };
 
-  const handleEditBirthDate = (date: dayjs.Dayjs | null) => {
+  const handleEditBirthDate = () => {
     if (!date) return;
     handleConfirm(new Timestamp(date.toDate().getTime() / 1000, 0));
   };
 
   return (
     <Stack
-      direction="row"
+      direction={"row"}
       spacing={2}
-      sx={{alignItems: "center", height: 40}}
+      sx={{alignItems: "center", height: mobile ? 52 : 40}}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
-      <Typography color="textSecondary" variant="subtitle1">
-        {label}
-      </Typography>
+      {!mobile && (
+        <Typography color="textSecondary" variant="subtitle1">
+          {label}
+        </Typography>
+      )}
       {(type === "string" || type === "tel") && (
         <EditableTypography
           variant="body1"
+          label={mobile ? label : undefined}
           edit={edit}
           value={(value as string) ?? ""}
           onConfirm={handleConfirm}
@@ -71,6 +83,7 @@ const PlayerRowData = ({
         <Stack direction={"row"} spacing={1} sx={{alignItems: "center"}}>
           <TextField
             select
+            label={mobile ? label : undefined}
             name="gender"
             value={(value as string) ?? "male"}
             onChange={e => handleConfirm(e.target.value)}
@@ -81,12 +94,20 @@ const PlayerRowData = ({
             <MenuItem value="female">Donna</MenuItem>
           </TextField>
           <IconButton size="small" onClick={() => setEdit(false)}>
-            <CancelIcon fontSize="inherit" />
+            <CancelIcon fontSize="inherit" color="error" />
           </IconButton>
         </Stack>
       )}
       {type === "gender" && !edit && (
-        <Stack direction={"row"} spacing={1} sx={{alignItems: "center"}}>
+        <Stack direction={mobile ? "column" : "row"} spacing={mobile ? 0 : 1}>
+          {mobile && (
+            <Typography
+              color="textSecondary"
+              variant="subtitle1"
+              sx={{lineHeight: 1.2}}>
+              {label}
+            </Typography>
+          )}
           <Typography color="textPrimary" variant="body1">
             {genderMap[value as string] ?? "Uomo"}
           </Typography>
@@ -95,27 +116,39 @@ const PlayerRowData = ({
       {type === "date" && edit && (
         <Stack direction={"row"} spacing={1} sx={{alignItems: "center"}}>
           <MobileDatePicker
-            sx={{"& .MuiPickersInputBase-sectionsContainer": {py: 1}}}
+            sx={{"& .MuiPickersInputBase-sectionsContainer": {py: 0}}}
             format="DD/MM/YYYY"
+            label={mobile ? label : undefined}
             slotProps={{textField: {variant: "standard", size: "small"}}}
-            value={value ? dayjs((value as Timestamp).toDate()) : null}
-            onAccept={handleEditBirthDate}
+            defaultValue={date}
+            onAccept={setDate}
           />
+          <IconButton size="small" onClick={handleEditBirthDate}>
+            <Done fontSize="inherit" color="primary" />
+          </IconButton>
           <IconButton size="small" onClick={() => setEdit(false)}>
-            <CancelIcon fontSize="inherit" />
+            <CancelIcon fontSize="inherit" color="error" />
           </IconButton>
         </Stack>
       )}
-      {!edit && type === "date" && (
-        <Typography color="textPrimary" variant="body1">
-          {value
-            ? dayjs((value as Timestamp).toDate()).format("DD/MM/YYYY")
-            : ""}
-        </Typography>
+      {type === "date" && !edit && (
+        <Stack direction={mobile ? "column" : "row"} spacing={mobile ? 0 : 1}>
+          <Typography
+            color="textSecondary"
+            variant="subtitle1"
+            sx={{lineHeight: 1.2}}>
+            {label}
+          </Typography>
+          <Typography color="textPrimary" variant="body1">
+            {value
+              ? dayjs((value as Timestamp).toDate()).format("DD/MM/YYYY")
+              : ""}
+          </Typography>
+        </Stack>
       )}
       {!edit && editable && (hover || mobile) && (
         <IconButton size="small" onClick={() => setEdit(true)}>
-          <EditIcon fontSize="inherit" />
+          <EditIcon fontSize="inherit" color="secondary" />
         </IconButton>
       )}
     </Stack>

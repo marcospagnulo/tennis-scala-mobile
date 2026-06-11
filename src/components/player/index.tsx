@@ -48,6 +48,8 @@ const PlayerDialog = ({
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
+      maxWidth="sm"
       sx={{
         "& .MuiPaper-root:first-of-type": {
           bgcolor: "transparent",
@@ -110,7 +112,7 @@ const PlayerDialog = ({
         )}
       </Stack>
       <Paper>
-        <Stack sx={{mt: 10, p: 2, minWidth: 400}}>
+        <Stack sx={{mt: 10, p: 2}}>
           <PlayerRowData
             label="Nome"
             value={player.name}
@@ -129,7 +131,7 @@ const PlayerDialog = ({
             label="Telefono"
             value={player.phone}
             editable
-            type="tel"
+            type="string"
             onEdit={v => handleEdit("phone", v)}
           />
           <PlayerRowData
