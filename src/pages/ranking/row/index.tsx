@@ -20,6 +20,7 @@ import {SwapPosition} from "./SwapPosition";
 import {ChallengeDialog} from "./ChallengeDialog";
 import {green} from "@mui/material/colors";
 import {DiffPosition} from "./DiffPosition";
+import {ToggleLock} from "./ToggleLock";
 
 const RankingRow = ({
   ranking,
@@ -49,7 +50,7 @@ const RankingRow = ({
   const [playerOpen, setPlayerOpen] = useState<boolean>(false);
   const [challengePlayerId, setChallengePlayerId] = useState<string>();
 
-  const handleEdit = (field: string, value: string | number) => {
+  const handleEdit = (field: keyof Ranking, value: string | number) => {
     editRanking(currentSeason!, ranking, field, value);
     setHover(false);
   };
@@ -149,16 +150,31 @@ const RankingRow = ({
             display: hover && !loading ? "flex" : "none",
           }}>
           <SwapPosition
-            season={currentSeason}
-            ranking={ranking}
-            onSwap={swapPositions}
+            player={ranking}
+            lastPosition={currentSeason.ranking.length}
+            onSwap={(from, to) => swapPositions(currentSeason, from, to)}
+          />
+          <ToggleLock
+            lock={ranking.status !== "active"}
+            onToggleLock={lock => {
+              editRanking(
+                currentSeason,
+                ranking,
+                "status",
+                lock ? "unactive" : "active",
+              );
+            }}
           />
         </Stack>
         {challengeable && (
           <IconButton
+            disabled={ranking.status !== "active"}
             size="small"
             onClick={() => setChallengePlayerId(ranking.player.id)}>
-            <MatchIcon color="primary" fontSize="inherit" />
+            <MatchIcon
+              color={ranking.status === "active" ? "primary" : "disabled"}
+              fontSize="inherit"
+            />
           </IconButton>
         )}
       </Stack>
@@ -170,7 +186,7 @@ const RankingRow = ({
         liveColor={green[500]}
         isAdmin={isAdmin}
         hover={hover}
-        onEdit={handleEdit}
+        onEdit={(_f, v) => handleEdit("points", v)}
       />
       <Typography
         sx={{width: mobile ? 25 : 70}}
@@ -187,7 +203,7 @@ const RankingRow = ({
             value={ranking.wins}
             isAdmin={isAdmin}
             hover={hover}
-            onEdit={handleEdit}
+            onEdit={(_f, v) => handleEdit("wins", v)}
           />
           <EditableField
             width={mobile ? 25 : 70}
@@ -195,7 +211,7 @@ const RankingRow = ({
             value={ranking.draws}
             isAdmin={isAdmin}
             hover={hover}
-            onEdit={handleEdit}
+            onEdit={(_f, v) => handleEdit("draws", v)}
           />
           <EditableField
             width={mobile ? 25 : 70}
@@ -203,7 +219,7 @@ const RankingRow = ({
             value={ranking.losses}
             isAdmin={isAdmin}
             hover={hover}
-            onEdit={handleEdit}
+            onEdit={(_f, v) => handleEdit("losses", v)}
           />
         </>
       )}

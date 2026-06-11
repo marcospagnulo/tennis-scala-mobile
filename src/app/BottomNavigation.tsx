@@ -56,38 +56,40 @@ const BottomNavigation = () => {
           icon={<item.icon />}
         />
       ))}
-      <Stack
-        sx={{
-          justifyContent: "center",
-          alignItems: "center",
-          position: "absolute",
-          left: 0,
-          right: 0,
-          margin: "auto",
-          bottom: 32,
-          width: 72,
-          height: 72,
-        }}>
-        <Box
+      {player && (
+        <Stack
           sx={{
+            justifyContent: "center",
+            alignItems: "center",
             position: "absolute",
+            left: 0,
+            right: 0,
+            margin: "auto",
+            bottom: 32,
             width: 72,
             height: 72,
-            borderRadius: "50%",
-            bgcolor: "primary.main",
-            zIndex: -1,
-          }}
-        />
-        <IconButton sx={{p: 0}} onClick={() => setOpen(true)}>
-          <Avatar
-            src={player?.avatar}
+          }}>
+          <Box
             sx={{
-              width: 64,
-              height: 64,
+              position: "absolute",
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              bgcolor: "primary.main",
+              zIndex: -1,
             }}
           />
-        </IconButton>
-      </Stack>
+          <IconButton sx={{p: 0}} onClick={() => setOpen(true)}>
+            <Avatar
+              src={player.avatar}
+              sx={{
+                width: 64,
+                height: 64,
+              }}
+            />
+          </IconButton>
+        </Stack>
+      )}
       <PlayerDialog open={open} onClose={() => setOpen(false)} />
     </MuiBottomNavigation>
   );

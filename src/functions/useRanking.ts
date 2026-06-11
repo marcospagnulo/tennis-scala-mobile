@@ -14,7 +14,7 @@ const useRanking = (live?: boolean) => {
   const {currentSeason, player} = useAppContext();
 
   const [liveRanking, setLiveRanking] = useState<Ranking[]>([]);
-  const [validRanking, setValidRanking] = useState<boolean>(false);
+  const [validRanking, setValidRanking] = useState<boolean>(true);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
   const [challengeableRange, setChallengeableRange] = useState<
     [number, number]

@@ -10,7 +10,7 @@ const useEditRanking = () => {
   const editRanking = async (
     season: Season,
     ranking: Ranking,
-    field: string,
+    field: keyof Ranking,
     value: string | number,
   ) => {
     setLoading(true);

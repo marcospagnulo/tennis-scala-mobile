@@ -64,7 +64,7 @@ const swapPositions = (season: Season, pos1: number, pos2: number) => {
 const editRanking = async (
   season: Season,
   ranking: Ranking,
-  field: string,
+  field: keyof Ranking,
   value: string | number,
 ) => {
   if (!collections) return;

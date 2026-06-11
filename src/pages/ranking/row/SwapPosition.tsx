@@ -1,16 +1,16 @@
 import {IconButton} from "@mui/material";
-import type {Ranking, Season} from "../../../domain/types";
+import type {Ranking} from "../../../domain/types";
 import {ExpandLess, ExpandMore} from "@mui/icons-material";
 import {useAppContext} from "../../../app/context";
 
 const SwapPosition = ({
-  season,
-  ranking,
+  player,
+  lastPosition,
   onSwap,
 }: {
-  season: Season;
-  ranking: Ranking;
-  onSwap: (season: Season, from: number, to: number) => void;
+  player: Ranking;
+  lastPosition: number;
+  onSwap: (from: number, to: number) => void;
 }) => {
   const {user, mobile} = useAppContext();
   const isAdmin = user?.role === "admin";
@@ -19,21 +19,17 @@ const SwapPosition = ({
 
   return (
     <>
-      {ranking.position > 1 && (
+      {player.position > 1 && (
         <IconButton
           size="small"
-          onClick={() =>
-            onSwap(season, ranking.position, ranking.position - 1)
-          }>
+          onClick={() => onSwap(player.position, player.position - 1)}>
           <ExpandLess color="primary" fontSize="inherit" />
         </IconButton>
       )}
-      {ranking.position < season.ranking!.length && (
+      {player.position < lastPosition && (
         <IconButton
           size="small"
-          onClick={() =>
-            onSwap(season, ranking.position, ranking.position + 1)
-          }>
+          onClick={() => onSwap(player.position, player.position + 1)}>
           <ExpandMore color="primary" fontSize="inherit" />
         </IconButton>
       )}

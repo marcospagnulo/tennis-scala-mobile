@@ -66,7 +66,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           flex: "1 1 0",
           overflow: "auto",
           pb: 2,
-          ...(mobile && {px: 2, pb: 10}),
+          ...(mobile && {px: 2, pb: matches.length > 0 ? 10 : 2}),
           ...(matches.length === 0 && {
             gap: 2,
             alignItems: "center",
@@ -91,8 +91,8 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
         {matches.length === 0 && (
           <>
-            <MatchIcon sx={{fontSize: 180, color: "text.secondary"}} />
-            <Typography variant="h6" color="text.secondary">
+            <MatchIcon color="primary" sx={{fontSize: 180}} />
+            <Typography variant="h5" color="text.secondary" align="center">
               Non ci sono partite in questo periodo
             </Typography>
           </>

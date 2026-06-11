@@ -19,7 +19,7 @@ export const playerStatusMap: Record<string, string> = {
   unactive: "Non disponibile",
 };
 
-export type PlayerStatus = "active" | "excluded" | "unactive";
+export type PlayerStatus = "active" | "unactive";
 export interface Player {
   id: string | undefined;
   userId?: string;
