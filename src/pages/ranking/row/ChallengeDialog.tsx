@@ -106,7 +106,9 @@ const ChallengeDialog = ({
           sx={{mt: 2, "& .MuiPickersInputBase-sectionsContainer": {py: 1}}}
           format="DD/MM/YYYY HH:mm"
           slotProps={{textField: {variant: "standard", size: "small"}}}
-          value={date}
+          defaultValue={date}
+          minDate={dayjs()}
+          maxDate={dayjs().endOf("week")}
           onAccept={setDate}
         />
       </DialogContent>

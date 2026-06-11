@@ -98,7 +98,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               <RankingRow
                 key={`ranking-${r.position}`}
                 ranking={r}
-                challengeable={!samePlayer && challengablePosition}
+                enableChallenge={!samePlayer && challengablePosition}
                 divider={(index + 1) % group.length === 0 && gindex !== 4}
                 liveRanking={
                   live

@@ -21,12 +21,13 @@ import {ChallengeDialog} from "./ChallengeDialog";
 import {green} from "@mui/material/colors";
 import {DiffPosition} from "./DiffPosition";
 import {ToggleLock} from "./ToggleLock";
+import dayjs from "dayjs";
 
 const RankingRow = ({
   ranking,
   bgColor,
   divider,
-  challengeable,
+  enableChallenge,
   liveRanking,
   mode,
 }: {
@@ -35,12 +36,16 @@ const RankingRow = ({
   mode: "compact" | "expanded";
   divider?: boolean;
   bgColor?: string;
-  challengeable?: boolean;
+  enableChallenge?: boolean;
 }) => {
   const player = ranking.player as Player;
   const {user, mobile, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
   const isSmallScreen = useDownBreakpoint("sm");
+
+  const seasonExpired = currentSeason
+    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
+    : false;
 
   const {loading: swapLoading, swapPositions} = useSwapPositions();
   const {loading: editRankingLoading, editRanking} = useEditRanking();
@@ -166,13 +171,17 @@ const RankingRow = ({
             }}
           />
         </Stack>
-        {challengeable && (
+        {enableChallenge && (
           <IconButton
-            disabled={ranking.status !== "active"}
+            disabled={ranking.status === "unactive" || seasonExpired}
             size="small"
             onClick={() => setChallengePlayerId(ranking.player.id)}>
             <MatchIcon
-              color={ranking.status === "active" ? "primary" : "disabled"}
+              color={
+                ranking.status === "unactive" || seasonExpired
+                  ? "disabled"
+                  : "primary"
+              }
               fontSize="inherit"
             />
           </IconButton>

@@ -94,7 +94,7 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
               )}
               <Box sx={{mt: 2, ml: "auto"}}>
                 <Chip
-                  label={expired ? "Scaduta" : "In corso"}
+                  label={expired ? "Terminata" : "In corso"}
                   color={expired ? "error" : "success"}
                 />
                 {isMember && (

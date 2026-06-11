@@ -1,6 +1,6 @@
-import {Engineering} from "@mui/icons-material";
+import {DoneAll, Engineering, Settings} from "@mui/icons-material";
 import {DashboardCard} from "../DashboardCard";
-import {Button, Stack} from "@mui/material";
+import {Box, Button, Stack} from "@mui/material";
 import {MatchIcon, SeasonIcon} from "../../../icons";
 import {SeasonsDialog} from "./season";
 import {useEffect, useState} from "react";
@@ -52,24 +52,42 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
         </Stack>
       }
       content={
-        <Stack
-          direction={"row"}
-          spacing={2}
-          sx={{justifyContent: "space-around", alignItems: "center", p: 2}}>
+        <Stack direction={"row"} spacing={2} sx={{alignItems: "center", p: 2}}>
           <Button
             variant="contained"
-            sx={{flexDirection: "column", gap: 2, p: 2}}
+            sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setSeasonsDialogOpen(true)}>
-            <SeasonIcon sx={{fontSize: 50}} />
+            <Box sx={{position: "relative", width: 50, height: 50}}>
+              <Settings
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  border: "2px solid",
+                  borderColor: "primary.main",
+                  borderRadius: "50%",
+                  bgcolor: "primary.main",
+                }}
+              />
+              <SeasonIcon
+                sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
+              />
+            </Box>
             Stagioni
           </Button>
           <Button
             variant="contained"
             color="secondary"
             disabled={!currentSeason || closePeriodLoading}
-            sx={{flexDirection: "column", gap: 2, p: 2}}
+            sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setPeriodDialogOpen(true)}>
-            <MatchIcon sx={{fontSize: 50}} />
+            <Box sx={{position: "relative", width: 50, height: 50}}>
+              <DoneAll sx={{position: "absolute", top: 0, left: 0}} />
+              <MatchIcon
+                sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
+              />
+            </Box>
             Chiudi periodo
           </Button>
 

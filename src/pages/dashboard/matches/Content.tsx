@@ -62,7 +62,7 @@ const MatchesCardContent = () => {
               mode="compact"
               key={`challenge-${r.position}`}
               ranking={r}
-              challengeable={r.player.id !== player?.id}
+              enableChallenge={r.player.id !== player?.id}
               bgColor={
                 r.player.id === player?.id ? "secondary.light" : "transparent"
               }

@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Fab,
   Stack,
   TextField,
@@ -25,7 +26,7 @@ const PlayerSelect = ({
   pid?: string;
   onSelect: (pid: string | undefined) => void;
 }) => {
-  const {currentSeason} = useAppContext();
+  const {currentSeason, mobile} = useAppContext();
 
   const players = [
     ...(currentSeason?.ranking.map(r => r.player) ?? []).sort((a, b) => {
@@ -50,7 +51,7 @@ const PlayerSelect = ({
       )}
       <Autocomplete
         onChange={(_event, value) => onSelect(value?.value)}
-        sx={{width: 250}}
+        sx={{width: mobile ? "100%" : 250}}
         options={players.map(p => ({
           label: `${p.surname} ${p.name}`,
           value: p.id,
@@ -112,13 +113,17 @@ const AddMatch = () => {
         <Add />
       </Fab>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>Nuova partita</DialogTitle>
         <DialogContent
           sx={{
+            height: "60vh",
             display: "flex",
             flexDirection: "column",
             gap: 2,
           }}>
-          <Stack direction="row" sx={{gap: 2, justifyContent: "center", mb: 2}}>
+          <Stack
+            direction={mobile ? "column" : "row"}
+            sx={{gap: 2, justifyContent: "center", mb: 2}}>
             <PlayerSelect pid={player1} onSelect={setPlayer1} />
             <Typography variant="h6" sx={{alignSelf: "center"}}>
               vs
@@ -127,7 +132,10 @@ const AddMatch = () => {
           </Stack>
           <MobileDateTimePicker
             defaultValue={date}
+            label="Data della sfida"
             onAccept={handleChangeDate}
+            minDate={dayjs()}
+            maxDate={dayjs().endOf("week")}
           />
         </DialogContent>
         <DialogActions>
@@ -137,7 +145,7 @@ const AddMatch = () => {
             loading={loading}
             onClick={handleSave}
             variant="contained">
-            Salva
+            Crea
           </Button>
         </DialogActions>
       </Dialog>

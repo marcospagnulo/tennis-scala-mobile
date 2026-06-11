@@ -13,7 +13,7 @@ const DashboardCard = ({
   const column = direction === "column";
   const {mobile} = useAppContext();
 
-  const circleSize = mobile ? 12 : 18;
+  const circleSize = mobile ? 10 : 12;
 
   return (
     <Stack
