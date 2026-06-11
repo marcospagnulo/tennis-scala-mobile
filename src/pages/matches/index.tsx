@@ -66,7 +66,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           flex: "1 1 0",
           overflow: "auto",
           pb: 2,
-          ...(mobile && {px: 2, pb: 4}),
+          ...(mobile && {px: 2, pb: 10}),
           ...(matches.length === 0 && {
             gap: 2,
             alignItems: "center",

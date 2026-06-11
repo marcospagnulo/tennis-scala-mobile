@@ -121,10 +121,15 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   return (
-    <Stack sx={{...sx, ...(mobile && {pb: 4})}}>
+    <Stack sx={{...sx, ...(!mobile && {pb: 2}), pt: 2}}>
       <Stack
         direction={"row"}
-        sx={{alignItems: "center", mb: 2, gap: 2, ...(mobile && {px: 2})}}>
+        sx={{
+          alignItems: "center",
+          mb: 2,
+          gap: 2,
+          ...(mobile && {px: 2}),
+        }}>
         <FormControlLabel
           control={
             <Switch checked={live} onChange={() => setLive(prev => !prev)} />
@@ -168,6 +173,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               sx={{
                 overflow: "auto",
                 flex: "1 1 0",
+                ...(mobile && {pb: 6}),
               }}>
               <RankingHeader
                 mode={mode}

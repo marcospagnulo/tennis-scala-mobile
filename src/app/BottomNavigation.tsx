@@ -4,6 +4,7 @@ import {
   Avatar,
   IconButton,
   Box,
+  Stack,
 } from "@mui/material";
 import {navigationItems} from "./navigation";
 import {useEffect, useState} from "react";
@@ -28,6 +29,8 @@ const BottomNavigation = () => {
       value={value}
       onChange={(_e, v) => setValue(v)}
       sx={{
+        height: 64,
+        bgcolor: "primary.main",
         position: "fixed",
         bottom: 0,
         left: 0,
@@ -36,21 +39,45 @@ const BottomNavigation = () => {
       }}>
       {navigationItems.map(item => (
         <BottomNavigationAction
+          sx={{
+            py: 1,
+            px: 0,
+            justifyContent: "space-around",
+            color: "#fff",
+            "&.Mui-selected": {
+              color: "secondary.main",
+            },
+            "& .MuiBottomNavigationAction-label": {
+              fontSize: 12,
+            },
+          }}
           key={item.path}
           label={item.label}
           icon={<item.icon />}
         />
       ))}
-      <Box
+      <Stack
         sx={{
+          justifyContent: "center",
+          alignItems: "center",
           position: "absolute",
           left: 0,
           right: 0,
           margin: "auto",
-          bottom: 24,
-          width: 64,
-          height: 64,
+          bottom: 32,
+          width: 72,
+          height: 72,
         }}>
+        <Box
+          sx={{
+            position: "absolute",
+            width: 72,
+            height: 72,
+            borderRadius: "50%",
+            bgcolor: "primary.main",
+            zIndex: -1,
+          }}
+        />
         <IconButton sx={{p: 0}} onClick={() => setOpen(true)}>
           <Avatar
             src={player?.avatar}
@@ -60,7 +87,7 @@ const BottomNavigation = () => {
             }}
           />
         </IconButton>
-      </Box>
+      </Stack>
       <PlayerDialog open={open} onClose={() => setOpen(false)} />
     </MuiBottomNavigation>
   );

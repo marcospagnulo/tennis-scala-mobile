@@ -1,5 +1,6 @@
 import {Route, Routes} from "react-router-dom";
 import {
+  Box,
   Container,
   Stack,
   Toolbar,
@@ -36,7 +37,7 @@ const App = () => {
               display: "flex",
               flexDirection: "column",
               overflow: "auto",
-              ...(mobile && {pl: "0 !important", pr: "0 !important", pb: 7}),
+              ...(mobile && {pl: "0 !important", pr: "0 !important"}),
             }}>
             <Routes>
               {navigationItems.map(item => (
@@ -62,8 +63,13 @@ const App = () => {
                 }
               />
             </Routes>
-            {mobile && <BottomNavigation />}
           </Container>
+          {mobile && (
+            <>
+              <Box sx={{height: 64}} />
+              <BottomNavigation />
+            </>
+          )}
         </Stack>
       </Stack>
     </AppProvider>

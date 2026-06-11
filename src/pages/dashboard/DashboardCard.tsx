@@ -1,4 +1,5 @@
 import {Box, Card, Stack} from "@mui/material";
+import {useAppContext} from "../../app/context";
 
 const DashboardCard = ({
   image,
@@ -10,6 +11,9 @@ const DashboardCard = ({
   direction?: "row" | "column";
 }) => {
   const column = direction === "column";
+  const {mobile} = useAppContext();
+
+  const circleSize = mobile ? 12 : 18;
 
   return (
     <Stack
@@ -36,10 +40,10 @@ const DashboardCard = ({
         }}>
         <Box
           sx={{
-            width: 8 * 18,
+            width: 8 * circleSize,
             height: "100%",
             ...(column && {
-              height: 8 * 18,
+              height: 8 * circleSize,
               top: 0,
               bottom: 0,
               borderRadius: "50%",
@@ -54,8 +58,8 @@ const DashboardCard = ({
         sx={{
           display: "flex",
           flex: 1,
-          ...(!column && {pl: 18}),
-          ...(column && {mt: 9, pt: 10}),
+          ...(!column && {pl: circleSize}),
+          ...(column && {mt: circleSize / 2, pt: circleSize / 2 + 1}),
           flexDirection: column ? "column" : "row",
         }}>
         {content}

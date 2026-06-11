@@ -22,7 +22,7 @@ const navigationItems: NavigationItem[] = [
     path: "/ranking",
     label: "Classifica",
     icon: RankingIcon,
-    element: <RankingPage sx={{flex: 1, py: 2}} />,
+    element: <RankingPage sx={{flex: 1}} />,
   },
   {
     path: "/matches",

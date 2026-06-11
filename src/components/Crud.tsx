@@ -70,7 +70,7 @@ export function Crud<T extends Entity>({
   initialFormData,
   actions,
 }: CrudProps<T>) {
-  const {user} = useAppContext();
+  const {user, mobile} = useAppContext();
 
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
   const [formData, setFormData] = useState<Partial<T>>(initialFormData);
@@ -239,7 +239,17 @@ export function Crud<T extends Entity>({
           </Admin>
         </Stack>
         <DataGrid
-          sx={{border: "none", height: "100%"}}
+          sx={{
+            border: "none",
+            height: "100%",
+            translate: {},
+            ...(mobile && {
+              "& .MuiTablePagination-toolbar": {
+                justifyContent: "space-between",
+              },
+              "& .MuiTablePagination-spacer": {display: "none"},
+            }),
+          }}
           loading={loading}
           disableColumnMenu={true}
           rows={items}
@@ -250,6 +260,12 @@ export function Crud<T extends Entity>({
           pageSizeOptions={pageSizeOptions}
           paginationModel={pagination}
           onPaginationModelChange={newModel => setPagination(newModel)}
+          localeText={{
+            noResultsOverlayLabel: "Nessun risultato",
+            noRowsLabel: "Nessun dato",
+            paginationDisplayedRows: parmas =>
+              `${parmas.from}-${parmas.to} di ${parmas.count}`,
+          }}
         />
       </Paper>
       <Dialog open={openFormDialog} onClose={handleCloseFormDialog}>
