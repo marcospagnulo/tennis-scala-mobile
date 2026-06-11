@@ -1,18 +1,12 @@
 import {useState} from "react";
-import {signInWithEmailAndPassword} from "firebase/auth";
+import {sendPasswordResetEmail} from "firebase/auth";
 import {Button, Stack, TextField, Typography} from "@mui/material";
 import {auth} from "../../lib/firebase";
 
-const Login = ({
-  onRegisterClick,
-  onForgotPasswordClick,
-}: {
-  onRegisterClick: () => void;
-  onForgotPasswordClick: () => void;
-}) => {
+export function ForgotPassword({onLoginClick}: {onLoginClick: () => void}) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const trimmedEmail = email.trim();
@@ -20,9 +14,11 @@ const Login = ({
 
   const handleSubmit = async () => {
     setError(null);
+    setSuccess(null);
+    setEmailTouched(true);
 
-    if (!trimmedEmail || !password) {
-      setError("Inserisci email e password.");
+    if (!trimmedEmail) {
+      setError("Inserisci il tuo indirizzo email.");
       return;
     }
 
@@ -40,28 +36,27 @@ const Login = ({
     }
 
     try {
-      await signInWithEmailAndPassword(auth, trimmedEmail, password);
-      // Il cambio di stato verra gestito da onAuthStateChanged in App.tsx
+      await sendPasswordResetEmail(auth, trimmedEmail);
+      setSuccess(
+        "Ti abbiamo inviato un'email con le istruzioni per recuperare la password.",
+      );
     } catch (err) {
-      setError("Credenziali non valide. Riprova.");
+      setError(
+        "Non è stato possibile inviare l'email di recupero. Controlla l'indirizzo email e riprova.",
+      );
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRegisterOpen = () => {
-    setError(null);
-    setPassword("");
-    onRegisterClick();
-  };
-
   return (
     <>
       <Typography variant="h5" align="center">
-        Login
+        Recupera Password
       </Typography>
       {error && <Typography color="error">{error}</Typography>}
+      {success && <Typography color="success">{success}</Typography>}
       <Stack>
         <TextField
           type="email"
@@ -77,30 +72,18 @@ const Login = ({
               : " "
           }
         />
-        <TextField
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          label="Password"
-        />
       </Stack>
       <Button
         onClick={handleSubmit}
-        disabled={loading}
+        disabled={loading || !isEmailValid}
         loading={loading}
         variant="contained"
         color="primary">
-        {loading ? "Accesso in corso..." : "Accedi"}
+        {loading ? "Invio in corso..." : "Invia email di recupero"}
       </Button>
-      <Button onClick={handleRegisterOpen} disabled={loading} variant="text">
-        Non hai un account? Registrati
-      </Button>
-      <Button onClick={onForgotPasswordClick} disabled={loading} variant="text">
-        Password dimenticata?
+      <Button onClick={onLoginClick} disabled={loading} variant="text">
+        Torna al Login
       </Button>
     </>
   );
-};
-
-export {Login};
+}

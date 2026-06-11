@@ -1,12 +1,20 @@
 import {CardMedia, Stack} from "@mui/material";
 import {useState} from "react";
-import {Register} from "./Register";
 import {Login} from "./Login";
+import {Register} from "./Register";
+import {ForgotPassword} from "./ForgotPassword";
 
-const Auth = () => {
-  const [view, setView] = useState<"login" | "register">("login");
+type View = "login" | "register" | "forgotPassword";
+
+export function Auth() {
+  const [view, setView] = useState<View>("login");
+
   return (
-    <Stack spacing={2} sx={{p: 4}}>
+    <Stack
+      sx={{
+        p: 4,
+        gap: 2,
+      }}>
       <CardMedia
         component="img"
         image={`logo.png`}
@@ -14,13 +22,17 @@ const Auth = () => {
         sx={{height: 100, objectFit: "contain"}}
       />
       {view === "login" && (
-        <Login onRegisterClick={() => setView("register")} />
+        <Login
+          onRegisterClick={() => setView("register")}
+          onForgotPasswordClick={() => setView("forgotPassword")}
+        />
       )}
       {view === "register" && (
         <Register onLoginClick={() => setView("login")} />
       )}
+      {view === "forgotPassword" && (
+        <ForgotPassword onLoginClick={() => setView("login")} />
+      )}
     </Stack>
   );
-};
-
-export {Auth};
+}
