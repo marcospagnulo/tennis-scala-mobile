@@ -52,7 +52,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const matches = Object.values(period?.matches || {});
 
   return (
-    <Stack sx={{...sx, gap: 2, ...(mobile && {px: 2})}}>
+    <Stack sx={{...sx, gap: 2}}>
       <Tabs
         variant="scrollable"
         value={period?.start.toMillis() ?? periods[0]?.value}
@@ -61,32 +61,43 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <Tab key={`period-tab-${p.value}`} label={p.label} value={p.value} />
         ))}
       </Tabs>
-      {[
-        ...matches
-          .sort((a, b) => a.date.toMillis() - b.date.toMillis())
-          .map((m, index) => (
-            <Paper
-              key={`match-paper-${index}`}
-              sx={{display: "flex", overflow: "hidden"}}>
-              <MatchInfo match={m} expired={!!period?.end} />
-            </Paper>
-          )),
-      ]}
-
-      {matches.length === 0 && (
-        <Stack
-          sx={{
-            flex: 1,
+      <Stack
+        sx={{
+          flex: "1 1 0",
+          overflow: "auto",
+          pb: 2,
+          ...(mobile && {px: 2, pb: 4}),
+          ...(matches.length === 0 && {
+            gap: 2,
             alignItems: "center",
             justifyContent: "center",
-            gap: 2,
-          }}>
-          <MatchIcon sx={{fontSize: 180, color: "text.secondary"}} />
-          <Typography variant="h6" color="text.secondary">
-            Non ci sono partite in questo periodo
-          </Typography>
-        </Stack>
-      )}
+          }),
+        }}>
+        {matches.length > 0 && (
+          <Stack spacing={2}>
+            {[
+              ...matches
+                .sort((a, b) => a.date.toMillis() - b.date.toMillis())
+                .map((m, index) => (
+                  <Paper
+                    key={`match-paper-${index}`}
+                    sx={{display: "flex", overflow: "hidden"}}>
+                    <MatchInfo match={m} expired={!!period?.end} />
+                  </Paper>
+                )),
+            ]}
+          </Stack>
+        )}
+
+        {matches.length === 0 && (
+          <>
+            <MatchIcon sx={{fontSize: 180, color: "text.secondary"}} />
+            <Typography variant="h6" color="text.secondary">
+              Non ci sono partite in questo periodo
+            </Typography>
+          </>
+        )}
+      </Stack>
       <AddMatch />
     </Stack>
   );

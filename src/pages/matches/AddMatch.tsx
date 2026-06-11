@@ -62,7 +62,7 @@ const PlayerSelect = ({
 };
 
 const AddMatch = () => {
-  const {currentSeason} = useAppContext();
+  const {currentSeason, mobile} = useAppContext();
   const {loading, success, clear, addMatch} = useAddMatch();
 
   const [open, setOpen] = useState(false);
@@ -102,7 +102,12 @@ const AddMatch = () => {
     <Admin>
       <Fab
         color="primary"
-        sx={{position: "absolute", right: 32, bottom: 32, zIndex: 1}}
+        sx={{
+          position: "absolute",
+          right: 32,
+          bottom: mobile ? 80 : 32,
+          zIndex: 1,
+        }}
         onClick={() => setOpen(true)}>
         <Add />
       </Fab>

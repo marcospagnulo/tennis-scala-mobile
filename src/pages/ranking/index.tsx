@@ -15,7 +15,6 @@ import {
   type SxProps,
 } from "@mui/material";
 import type {Player} from "../../domain/types";
-import {Add} from "@mui/icons-material";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
 import {RankingRow} from "./row";
@@ -23,9 +22,10 @@ import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
-import {RankingIcon} from "../../icons";
+import {AddIcon, RankingIcon} from "../../icons";
 import {useRanking} from "../../functions";
 import type {rankingGroupsType} from "../../functions/useRanking";
+import {Admin} from "../../components";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [dialog, setDialog] = useState<boolean>(false);
@@ -33,8 +33,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [live, setLive] = useState<boolean>(false);
 
   const theme = useTheme();
-  const {user, player, currentSeason, mobile} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {player, currentSeason, mobile} = useAppContext();
   const {loading, addPlayers} = useAddPlayers();
   const {
     challengeableRange,
@@ -122,7 +121,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   return (
-    <Stack sx={{...sx}}>
+    <Stack sx={{...sx, ...(mobile && {pb: 4})}}>
       <Stack
         direction={"row"}
         sx={{alignItems: "center", mb: 2, gap: 2, ...(mobile && {px: 2})}}>
@@ -144,11 +143,18 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           label="Compatta"
         />
 
-        {isAdmin && (
-          <IconButton onClick={() => setDialog(true)} sx={{ml: "auto"}}>
-            <Add />
+        <Admin>
+          <IconButton
+            onClick={() => setDialog(true)}
+            sx={{
+              ml: "auto",
+              "&, &:hover": {
+                backgroundColor: theme => theme.palette.primary.main,
+              },
+            }}>
+            <AddIcon fontSize="inherit" sx={{color: "white"}} />
           </IconButton>
-        )}
+        </Admin>
       </Stack>
       {validRanking ? (
         <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>

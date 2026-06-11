@@ -4,6 +4,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Paper,
   Stack,
   TextField,
@@ -34,6 +35,7 @@ import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../functions/useQueryCollection";
 import {ConfirmDialog} from "./ConfirmDialog";
+import {Admin} from "./Admin";
 
 export interface Entity {
   id: string | undefined;
@@ -210,6 +212,7 @@ export function Crud<T extends Entity>({
         }}>
         <Stack
           direction={"row"}
+          spacing={2}
           sx={{
             alignItems: "center",
             justifyContent: "space-between",
@@ -222,15 +225,18 @@ export function Crud<T extends Entity>({
             onChange={handleSearch}
             slotProps={{input: {startAdornment: <Search />}}}
           />
-          {user?.role === "admin" && (
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              aria-label="add"
-              onClick={handleAddClick}>
-              Nuovo
-            </Button>
-          )}
+          <Admin>
+            <IconButton
+              onClick={handleAddClick}
+              size="medium"
+              sx={{
+                "&, &:hover": {
+                  backgroundColor: theme => theme.palette.primary.main,
+                },
+              }}>
+              <AddIcon fontSize="inherit" sx={{color: "white"}} />
+            </IconButton>
+          </Admin>
         </Stack>
         <DataGrid
           sx={{border: "none", height: "100%"}}
