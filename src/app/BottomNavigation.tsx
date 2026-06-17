@@ -65,7 +65,7 @@ const BottomNavigation = () => {
             left: 0,
             right: 0,
             margin: "auto",
-            bottom: "calc((64px + env(safe-area-inset-bottom)) / 2)",
+            bottom: "calc((48px + env(safe-area-inset-bottom)) / 2)",
             width: 72,
             height: 72,
           }}>
