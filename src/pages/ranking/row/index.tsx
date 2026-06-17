@@ -171,17 +171,13 @@ const RankingRow = ({
             }}
           />
         </Stack>
-        {enableChallenge && (
+        {enableChallenge && !seasonExpired && (
           <IconButton
-            disabled={ranking.status === "unactive" || seasonExpired}
+            disabled={ranking.status === "unactive"}
             size="small"
             onClick={() => setChallengePlayerId(ranking.player.id)}>
             <MatchIcon
-              color={
-                ranking.status === "unactive" || seasonExpired
-                  ? "disabled"
-                  : "primary"
-              }
+              color={ranking.status === "unactive" ? "disabled" : "primary"}
               fontSize="inherit"
             />
           </IconButton>
