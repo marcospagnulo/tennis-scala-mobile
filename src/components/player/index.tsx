@@ -5,6 +5,7 @@ import {doc, Timestamp, updateDoc} from "firebase/firestore";
 import {PlayerRowData} from "./PlayerRowData";
 import {useRef, useState} from "react";
 import {EditIcon} from "../../icons";
+import {CropDialog} from "../upload/CropDialog";
 
 const PlayerDialog = ({
   open,
@@ -16,6 +17,7 @@ const PlayerDialog = ({
   const {player, setPlayer} = useAppContext();
 
   const [hover, setHover] = useState(false);
+  const [cropDialogFile, setCropDialogFile] = useState<string>();
 
   const handleEdit = async (
     field: string,
@@ -35,7 +37,8 @@ const PlayerDialog = ({
       reader.readAsDataURL(fileUpload);
       reader.onload = () => {
         const base64 = reader.result;
-        handleEdit("avatar", base64 as string);
+        setCropDialogFile(base64 as string);
+        inputFileRef.current!.value = "";
       };
     }
   };
@@ -89,6 +92,16 @@ const PlayerDialog = ({
           onChange={handleFileLoad}
           style={{display: "none"}}
           accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        />
+
+        <CropDialog
+          open={cropDialogFile !== undefined}
+          onClose={() => setCropDialogFile(undefined)}
+          onConfirm={file => {
+            handleEdit("avatar", file);
+            setCropDialogFile(undefined);
+          }}
+          file={cropDialogFile}
         />
 
         {hover && (
