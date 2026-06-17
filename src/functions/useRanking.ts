@@ -14,7 +14,7 @@ const useRanking = (live?: boolean) => {
   const {currentSeason, player} = useAppContext();
 
   const [liveRanking, setLiveRanking] = useState<Ranking[]>([]);
-  const [validRanking, setValidRanking] = useState<boolean>(true);
+  const [empty, setEmpty] = useState<boolean>(false);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
   const [challengeableRange, setChallengeableRange] = useState<
     [number, number]
@@ -111,14 +111,14 @@ const useRanking = (live?: boolean) => {
   }, [rankingGroups, player?.id]);
 
   useEffect(() => {
-    setValidRanking((currentSeason?.ranking.length ?? 0) > 12);
+    setEmpty((currentSeason?.ranking.length ?? 0) === 0);
   }, [currentSeason?.ranking]);
 
   return {
     challengeableRange,
     rankingPlayer,
     rankingGroups,
-    validRanking,
+    empty,
     liveRanking,
   };
 };
