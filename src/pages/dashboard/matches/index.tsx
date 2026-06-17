@@ -11,9 +11,9 @@ const MatchesCard = ({direction}: {direction?: "row" | "column"}) => {
   const isMember =
     currentSeason?.ranking.find(r => r.player.id === player?.id) !== undefined;
 
-  const {validRanking} = useRanking();
+  const {empty} = useRanking();
 
-  if (!isMember || !validRanking) return <></>;
+  if (!isMember || empty) return <></>;
   return (
     <DashboardCard
       direction={direction}
