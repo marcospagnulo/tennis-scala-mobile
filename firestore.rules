@@ -1,18 +1,28 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 6, 21);
+    
+    // Stagioni
+    match /seasons/{document=**} {
+      allow read: if true;  // Chiunque può leggere
+      allow create: if request.auth != null && 
+                       request.auth.token.role == "admin";  // Solo admin creano
+      allow update: if request.auth != null;  // Player autenticati possono modificare
+      allow delete: if request.auth != null && 
+                       request.auth.token.role == "admin";  // Solo admin eliminano
+    }
+    
+    // Giocatori
+    match /players/{playerId} {
+      allow read: if true;  // Chiunque può leggere
+      allow create: if request.auth != null && 
+                       request.resource.data.userId == request.auth.uid &&
+                       resource == null;  // Utenti autenticati creano il loro primo player
+      allow update: if request.auth != null && 
+                       resource.data.userId == request.auth.uid;  // Solo il proprietario aggiorna
+      allow delete: if request.auth != null && 
+                       request.auth.token.role == "admin";  // Solo admin eliminano
     }
   }
 }
