@@ -87,19 +87,18 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 value={dayjs(currentSeason.end.toDate()).format("D MMMM YYYY")}
               />
               {!isMember && !expired && user && (
-                <>
-                  {!invalidPlayerInfo && (
+                <Stack sx={{mt: 1}}>
+                  {invalidPlayerInfo && (
                     <InfoBox message="Completa il tuo profilo per partecipare al torneo" />
                   )}
                   <Button
                     loading={loading}
                     disabled={invalidPlayerInfo}
                     variant="contained"
-                    sx={{mt: 2}}
                     onClick={() => setOpen(true)}>
                     Partecipa
                   </Button>
-                </>
+                </Stack>
               )}
               <Box sx={{mt: 2, ml: "auto"}}>
                 <Chip
