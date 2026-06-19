@@ -18,13 +18,14 @@ const useAddMatch = () => {
     player1Id: string,
     player2Id: string,
     date: Date,
+    admin?: boolean,
   ) => {
     setLoading(true);
     setError(undefined);
     setSuccess(false);
 
     try {
-      await coreaddMatch(season, player1Id, player2Id, date);
+      await coreaddMatch(season, player1Id, player2Id, date, admin);
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);

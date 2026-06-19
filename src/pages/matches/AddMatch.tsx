@@ -63,7 +63,7 @@ const PlayerSelect = ({
 };
 
 const AddMatch = () => {
-  const {currentSeason, mobile} = useAppContext();
+  const {currentSeason, mobile, user} = useAppContext();
   const {loading, success, clear, addMatch} = useAddMatch();
 
   const [open, setOpen] = useState(false);
@@ -96,7 +96,13 @@ const AddMatch = () => {
   };
 
   const handleSave = async () => {
-    addMatch(currentSeason!, player1!, player2!, date.toDate());
+    addMatch(
+      currentSeason!,
+      player1!,
+      player2!,
+      date.toDate(),
+      user?.role === "admin",
+    );
   };
 
   return (

@@ -33,6 +33,7 @@ const addMatch = async (
   player1Id: string,
   player2Id: string,
   date: Date,
+  admin?: boolean,
 ) => {
   const updatedSeason = {...season};
   const currentPeriod = updatedSeason.periods.find(p => !p.end);
@@ -46,10 +47,10 @@ const addMatch = async (
     pid2: player2Id!,
     result: {
       value: "",
-      p1Approved: false,
-      p2Approved: false,
+      p1Approved: admin ?? false,
+      p2Approved: admin ?? false,
     },
-    status: "pending",
+    status: admin ? "approved" : "pending",
     date: new Timestamp(date.getTime() / 1000, 0),
   };
 
