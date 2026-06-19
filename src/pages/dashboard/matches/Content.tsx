@@ -28,7 +28,7 @@ const MatchesCardContent = () => {
   if (!minPlayers) {
     return (
       <Box sx={{my: 2}}>
-        <Typography align="center" sx={{mb: 1}}>
+        <Typography sx={{mx: 2}}>
           Non è stato raggiunto il numero minimo di 16 iscritti
         </Typography>
       </Box>

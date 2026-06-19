@@ -200,7 +200,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
             gap: 2,
           }}>
           <RankingIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
-          <Typography variant={mobile ? "h6" : "h5"}>
+          <Typography variant={mobile ? "h6" : "h5"} align="center">
             Non è stato raggiunto il numero minimo iscritti
           </Typography>
         </Stack>
