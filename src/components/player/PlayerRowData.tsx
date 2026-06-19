@@ -133,12 +133,6 @@ const PlayerRowData = ({
       )}
       {type === "date" && !edit && (
         <Stack direction={mobile ? "column" : "row"} spacing={mobile ? 0 : 1}>
-          <Typography
-            color="textSecondary"
-            variant="subtitle1"
-            sx={{lineHeight: 1.2}}>
-            {label}
-          </Typography>
           <Typography color="textPrimary" variant="body1">
             {value
               ? dayjs((value as Timestamp).toDate()).format("DD/MM/YYYY")

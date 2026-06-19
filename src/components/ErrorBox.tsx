@@ -19,7 +19,7 @@ const ErrorBox = ({error}: {error: string | undefined}) => {
       }}>
       <ErrorIcon
         htmlColor={theme.palette.error.contrastText}
-        sx={{fontSize: 60}}
+        sx={{fontSize: 40}}
       />
       <Typography sx={{color: theme.palette.error.contrastText}}>
         {error}

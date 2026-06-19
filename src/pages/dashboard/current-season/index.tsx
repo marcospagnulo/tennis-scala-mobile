@@ -3,7 +3,7 @@ import {useAppContext} from "../../../app/context";
 import {SeasonIcon} from "../../../icons";
 import {DashboardCard} from "../DashboardCard";
 import dayjs from "dayjs";
-import {ConfirmDialog} from "../../../components";
+import {ConfirmDialog, InfoBox} from "../../../components";
 import {useState} from "react";
 import {useAddPlayers} from "../../../functions/ranking/useAddPlayers";
 import {Select} from "../../../components/Select";
@@ -23,7 +23,10 @@ const Row = ({label, value}: {label: string; value: string | number}) => (
 );
 
 const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {currentSeason, player, seasons, setCurrentSeasonId} = useAppContext();
+  const {currentSeason, user, player, seasons, setCurrentSeasonId} =
+    useAppContext();
+  const invalidPlayerInfo =
+    (player && (!player.name || !player.surname)) ?? false;
 
   const [open, setOpen] = useState<boolean>(false);
   const {loading, addPlayers} = useAddPlayers();
@@ -83,14 +86,20 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 label="Fine"
                 value={dayjs(currentSeason.end.toDate()).format("D MMMM YYYY")}
               />
-              {!isMember && !expired && player && (
-                <Button
-                  loading={loading}
-                  variant="contained"
-                  sx={{mt: 2}}
-                  onClick={() => setOpen(true)}>
-                  Partecipa
-                </Button>
+              {!isMember && !expired && user && (
+                <>
+                  {!invalidPlayerInfo && (
+                    <InfoBox message="Completa il tuo profilo per partecipare al torneo" />
+                  )}
+                  <Button
+                    loading={loading}
+                    disabled={invalidPlayerInfo}
+                    variant="contained"
+                    sx={{mt: 2}}
+                    onClick={() => setOpen(true)}>
+                    Partecipa
+                  </Button>
+                </>
               )}
               <Box sx={{mt: 2, ml: "auto"}}>
                 <Chip
