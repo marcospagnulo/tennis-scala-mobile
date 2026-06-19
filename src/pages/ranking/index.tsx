@@ -35,8 +35,13 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const theme = useTheme();
   const {player, currentSeason, mobile} = useAppContext();
   const {loading, addPlayers} = useAddPlayers();
-  const {challengeableRange, rankingPlayer, rankingGroups, liveRanking, empty} =
-    useRanking(live);
+  const {
+    challengeableRange,
+    rankingPlayer,
+    rankingGroups,
+    liveRanking,
+    minPlayers,
+  } = useRanking(live);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
@@ -156,7 +161,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           </IconButton>
         </Admin>
       </Stack>
-      {!empty ? (
+      {minPlayers ? (
         <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
           <Stack
             sx={{
@@ -196,7 +201,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           }}>
           <RankingIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
           <Typography variant={mobile ? "h6" : "h5"}>
-            Non ci sono iscritti per questa stagione
+            Non è stato raggiunto il numero minimo iscritti
           </Typography>
         </Stack>
       )}

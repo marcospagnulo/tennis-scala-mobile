@@ -1,4 +1,4 @@
-import {Divider, Stack, Typography} from "@mui/material";
+import {Box, Divider, Stack, Typography} from "@mui/material";
 import {useRanking} from "../../../functions";
 import {useAppContext} from "../../../app/context";
 import {RankingRow} from "../../ranking/row";
@@ -9,7 +9,7 @@ import {MatchInfo} from "../../../components/match";
 
 const MatchesCardContent = () => {
   const {currentSeason, player} = useAppContext();
-  const {challengeableRange} = useRanking();
+  const {challengeableRange, minPlayers} = useRanking();
 
   const [matches, setMatches] = useState<Match[]>([]);
 
@@ -24,6 +24,16 @@ const MatchesCardContent = () => {
   }, [currentSeason, player]);
 
   if (!currentSeason) return null;
+
+  if (!minPlayers) {
+    return (
+      <Box sx={{my: 2}}>
+        <Typography align="center" sx={{mb: 1}}>
+          Non è stato raggiunto il numero minimo di 16 iscritti
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Stack sx={{gap: 2}}>
