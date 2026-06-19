@@ -1,4 +1,4 @@
-import {Box, Button, Chip, Stack, Typography} from "@mui/material";
+import {Box, Button, Chip, Skeleton, Stack, Typography} from "@mui/material";
 import {useAppContext} from "../../../app/context";
 import {SeasonIcon} from "../../../icons";
 import {DashboardCard} from "../DashboardCard";
@@ -23,7 +23,7 @@ const Row = ({label, value}: {label: string; value: string | number}) => (
 );
 
 const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {currentSeason, user, player, seasons, setCurrentSeasonId} =
+  const {appLoading, currentSeason, user, player, seasons, setCurrentSeasonId} =
     useAppContext();
   const invalidPlayerInfo =
     (player && (!player.name || !player.surname)) ?? false;
@@ -60,7 +60,13 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
       }
       content={
         <Stack sx={{px: 2, pb: 2, position: "relative"}}>
-          {currentSeason ? (
+          {appLoading && (
+            <>
+              <Skeleton variant="text" width={120} height={40} />
+              <Skeleton variant="text" width={80} height={30} />
+            </>
+          )}
+          {!appLoading && currentSeason && (
             <>
               <Select<string>
                 sx={{
@@ -110,7 +116,8 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 )}
               </Box>
             </>
-          ) : (
+          )}
+          {!appLoading && !currentSeason && (
             <Typography
               variant="h5"
               sx={{alignSelf: "center", justifySelf: "center", my: 4}}>
