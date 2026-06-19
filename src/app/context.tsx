@@ -7,6 +7,7 @@ import {
   onSnapshot,
   query,
   serverTimestamp,
+  updateDoc,
   where,
   type WithFieldValue,
 } from "firebase/firestore";
@@ -68,22 +69,52 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   const ensurePlayer = async (user: User | null) => {
     if (!user || !collections) return;
 
-    const playerQuery = query(
-      collections.players,
-      where("userId", "==", user.id),
-    );
-    const snapshot = await getDocs(playerQuery);
-    if (snapshot.empty) {
-      const player: WithFieldValue<Partial<Player>> = {
+    try {
+      // First, try to find player by userId (already associated)
+      let playerQuery = query(
+        collections.players,
+        where("userId", "==", user.id),
+      );
+      let snapshot = await getDocs(playerQuery);
+
+      if (!snapshot.empty) {
+        // Player already associated
+        const playerData = snapshot.docs[0].data() as Player;
+        setPlayer({...playerData, id: snapshot.docs[0].id});
+        return;
+      }
+
+      // Second, try to find player by email without userId (created by admin)
+      playerQuery = query(
+        collections.players,
+        where("email", "==", user.email),
+      );
+      snapshot = await getDocs(playerQuery);
+
+      if (!snapshot.empty) {
+        // Found player created by admin, associate with current user
+        const playerDoc = snapshot.docs[0];
+        const playerData = playerDoc.data() as Player;
+
+        // Update with userId
+        await updateDoc(doc(collections.players, playerDoc.id), {
+          userId: user.id,
+        });
+
+        setPlayer({...playerData, id: playerDoc.id, userId: user.id});
+        return;
+      }
+
+      // No player found, create new one
+      const newPlayer: WithFieldValue<Partial<Player>> = {
         userId: user.id,
         email: user.email,
         createdAt: serverTimestamp(),
       };
-      const playerDoc = await addDoc(collections.players, player);
-      setPlayer({...(player as Player), id: playerDoc.id});
-    } else {
-      const playerData = snapshot.docs[0].data() as Player;
-      setPlayer({...playerData, id: snapshot.docs[0].id});
+      const newPlayerDoc = await addDoc(collections.players, newPlayer);
+      setPlayer({...(newPlayer as Player), id: newPlayerDoc.id});
+    } catch (error) {
+      console.error("Error in ensurePlayer:", error);
     }
   };
 

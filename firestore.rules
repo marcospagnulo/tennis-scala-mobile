@@ -16,11 +16,8 @@ service cloud.firestore {
     // Giocatori
     match /players/{playerId} {
       allow read: if true;  // Chiunque può leggere
-      allow create: if request.auth != null && 
-                       request.resource.data.userId == request.auth.uid &&
-                       resource == null;  // Utenti autenticati creano il loro primo player
-      allow update: if request.auth != null && 
-                       resource.data.userId == request.auth.uid;  // Solo il proprietario aggiorna
+      allow create: if request.auth != null;  // Utenti autenticati creano
+      allow update: if request.auth != null;  // Utenti autenticati aggiornano
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }

@@ -91,7 +91,7 @@ const PlayerDialog = ({
           type="file"
           onChange={handleFileLoad}
           style={{display: "none"}}
-          accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+          accept="image/*"
         />
 
         <CropDialog
