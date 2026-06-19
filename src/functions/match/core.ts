@@ -17,11 +17,12 @@ const findMatchById = (season: Season, mId: string): Match | undefined => {
 const deleteMatchById = (season: Season, mId: string): Match | undefined => {
   const periods = season.periods;
   for (const period of periods) {
-    const matches = Object.values(period.matches);
-    const matchIndex = matches.findIndex(m => m.id === mId);
-    if (matchIndex !== -1) {
-      const match = matches[matchIndex];
-      delete period.matches[matchIndex + 1];
+    const matchKey: number | undefined = Object.keys(period.matches).find(
+      key => period.matches[key as unknown as number].id === mId,
+    ) as unknown as number | undefined;
+    if (matchKey !== undefined) {
+      const match = period.matches[matchKey];
+      delete period.matches[matchKey];
       return match;
     }
   }
