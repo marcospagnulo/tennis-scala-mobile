@@ -1,4 +1,4 @@
-import {Box, Divider, Stack, Typography} from "@mui/material";
+import {Divider, Stack, Typography} from "@mui/material";
 import {useRanking} from "../../../functions";
 import {useAppContext} from "../../../app/context";
 import {RankingRow} from "../../ranking/row";
@@ -6,10 +6,14 @@ import {RankingHeader} from "../../ranking/Header";
 import {useEffect, useState} from "react";
 import type {Match} from "../../../domain/types";
 import {MatchInfo} from "../../../components/match";
+import dayjs from "dayjs";
 
 const MatchesCardContent = () => {
   const {currentSeason, player} = useAppContext();
   const {challengeableRange, minPlayers} = useRanking();
+  const seasonExpired = currentSeason
+    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
+    : false;
 
   const [matches, setMatches] = useState<Match[]>([]);
 
@@ -24,16 +28,6 @@ const MatchesCardContent = () => {
   }, [currentSeason, player]);
 
   if (!currentSeason) return null;
-
-  if (!minPlayers) {
-    return (
-      <Box sx={{my: 2}}>
-        <Typography sx={{mx: 2}}>
-          Non è stato raggiunto il numero minimo di 16 iscritti
-        </Typography>
-      </Box>
-    );
-  }
 
   return (
     <Stack sx={{gap: 2}}>
@@ -72,7 +66,9 @@ const MatchesCardContent = () => {
               mode="compact"
               key={`challenge-${r.position}`}
               ranking={r}
-              enableChallenge={r.player.id !== player?.id}
+              enableChallenge={
+                r.player.id !== player?.id && !seasonExpired && minPlayers
+              }
               bgColor={
                 r.player.id === player?.id ? "secondary.light" : "transparent"
               }

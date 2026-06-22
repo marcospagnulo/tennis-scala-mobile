@@ -21,7 +21,6 @@ import {ChallengeDialog} from "./ChallengeDialog";
 import {green} from "@mui/material/colors";
 import {DiffPosition} from "./DiffPosition";
 import {ToggleLock} from "./ToggleLock";
-import dayjs from "dayjs";
 
 const RankingRow = ({
   ranking,
@@ -42,10 +41,6 @@ const RankingRow = ({
   const {user, mobile, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
   const isSmallScreen = useDownBreakpoint("sm");
-
-  const seasonExpired = currentSeason
-    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
-    : false;
 
   const {loading: swapLoading, swapPositions} = useSwapPositions();
   const {loading: editRankingLoading, editRanking} = useEditRanking();
@@ -171,7 +166,7 @@ const RankingRow = ({
             }}
           />
         </Stack>
-        {enableChallenge && !seasonExpired && (
+        {enableChallenge && (
           <IconButton
             disabled={ranking.status === "unactive"}
             size="small"

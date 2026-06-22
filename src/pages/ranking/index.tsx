@@ -22,10 +22,11 @@ import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
-import {AddIcon, RankingIcon} from "../../icons";
+import {AddIcon} from "../../icons";
 import {useRanking} from "../../functions";
 import type {rankingGroupsType} from "../../functions/useRanking";
-import {Admin} from "../../components";
+import {Admin, InfoBox} from "../../components";
+import dayjs from "dayjs";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [dialog, setDialog] = useState<boolean>(false);
@@ -67,6 +68,10 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
     return compare(index, length / 2) ? color + "10" : color + "20";
   };
 
+  const seasonExpired = currentSeason
+    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
+    : false;
+
   const renderGroup = (
     rankingGroupsType: rankingGroupsType,
     gindex: 1 | 2 | 3 | 4,
@@ -98,7 +103,12 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               <RankingRow
                 key={`ranking-${r.position}`}
                 ranking={r}
-                enableChallenge={!samePlayer && challengablePosition}
+                enableChallenge={
+                  !samePlayer &&
+                  challengablePosition &&
+                  !seasonExpired &&
+                  minPlayers
+                }
                 divider={(index + 1) % group.length === 0 && gindex !== 4}
                 liveRanking={
                   live
@@ -161,50 +171,44 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           </IconButton>
         </Admin>
       </Stack>
-      {minPlayers ? (
-        <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
-          <Stack
-            sx={{
-              gap: 1,
-              flex: "1 1 0",
-              overflow: "hidden",
-            }}>
-            <Stack
-              sx={{
-                overflow: "auto",
-                flex: "1 1 0",
-                ...(mobile && {pb: 6}),
-              }}>
-              <RankingHeader
-                mode={mode}
-                sx={{
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                  bgcolor: "background.paper",
-                }}
-              />
-              <Stack>{renderGroup(rankingGroups, 1, mode)}</Stack>
-              <Stack>{renderGroup(rankingGroups, 2, mode)}</Stack>
-              <Stack>{renderGroup(rankingGroups, 3, mode)}</Stack>
-              <Stack>{renderGroup(rankingGroups, 4, mode)}</Stack>
-            </Stack>
-          </Stack>
-        </Paper>
-      ) : (
+
+      {!minPlayers && (
+        <InfoBox
+          invert
+          message="Non è stato raggiunto il numero minimo di 16 iscritti"
+        />
+      )}
+
+      <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
         <Stack
           sx={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
+            gap: 1,
+            flex: "1 1 0",
+            overflow: "hidden",
           }}>
-          <RankingIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
-          <Typography variant={mobile ? "h6" : "h5"} align="center">
-            Non è stato raggiunto il numero minimo iscritti
-          </Typography>
+          <Stack
+            sx={{
+              overflow: "auto",
+              flex: "1 1 0",
+              ...(mobile && {pb: 6}),
+            }}>
+            <RankingHeader
+              mode={mode}
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                bgcolor: "background.paper",
+              }}
+            />
+            <Stack>{renderGroup(rankingGroups, 1, mode)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 2, mode)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 3, mode)}</Stack>
+            <Stack>{renderGroup(rankingGroups, 4, mode)}</Stack>
+          </Stack>
         </Stack>
-      )}
+      </Paper>
+
       <Dialog
         open={dialog}
         onClose={() => setDialog(false)}

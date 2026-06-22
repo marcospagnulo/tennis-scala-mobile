@@ -7,6 +7,7 @@ import {ConfirmDialog, InfoBox} from "../../../components";
 import {useState} from "react";
 import {useAddPlayers} from "../../../functions/ranking/useAddPlayers";
 import {Select} from "../../../components/Select";
+import {useRanking} from "../../../functions";
 
 const Row = ({label, value}: {label: string; value: string | number}) => (
   <Stack direction={"row"} spacing={2} sx={{height: 40, alignItems: "center"}}>
@@ -25,6 +26,7 @@ const Row = ({label, value}: {label: string; value: string | number}) => (
 const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
   const {appLoading, currentSeason, user, player, seasons, setCurrentSeasonId} =
     useAppContext();
+  const {minPlayers} = useRanking();
   const invalidPlayerInfo =
     (player && (!player.name || !player.surname)) ?? false;
 
@@ -80,6 +82,9 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 value={currentSeason.id}
                 onChange={setCurrentSeasonId}
               />
+              {!minPlayers && (
+                <InfoBox message="Non è stato raggiunto il numero minimo di 16 iscritti" />
+              )}
               <Row label="Partecipanti" value={currentSeason.ranking.length} />
               <Row label="Periodi" value={currentSeason.periods.length} />
               <Row
