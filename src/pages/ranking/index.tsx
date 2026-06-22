@@ -1,5 +1,6 @@
 import {
   Backdrop,
+  Box,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -31,7 +32,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   const {currentSeason, mobile} = useAppContext();
   const {loading, addPlayers} = useAddPlayers();
-  const {rankingGroups, minPlayers} = useRanking(live);
+  const {rankingGroups, minPlayers, loading: rankingLoading} = useRanking(live);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
@@ -80,8 +81,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           </IconButton>
         </Admin>
       </Stack>
-
-      {!minPlayers && (
+      {!minPlayers && !rankingLoading && (
         <InfoBox
           invert
           message="Non è stato raggiunto il numero minimo di 16 iscritti"
@@ -89,57 +89,77 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
       )}
 
       <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
-        <Stack
-          sx={{
-            gap: 1,
-            flex: "1 1 0",
-            overflow: "hidden",
-          }}>
+        {rankingLoading ? (
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <CircularProgress />
+          </Box>
+        ) : (
           <Stack
             sx={{
-              overflow: "auto",
+              gap: 1,
               flex: "1 1 0",
-              ...(mobile && {pb: 6}),
+              overflow: "hidden",
             }}>
-            <RankingHeader
-              mode={mode}
+            <Stack
               sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-                bgcolor: "background.paper",
-              }}
-            />
-            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
-            <RankingGroup
-              group={rankingGroups[1]}
-              gindex={1}
-              mode={mode}
-              live={live}
-            />
-            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
-            <RankingGroup
-              group={rankingGroups[2]}
-              gindex={2}
-              mode={mode}
-              live={live}
-            />
-            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
-            <RankingGroup
-              group={rankingGroups[3]}
-              gindex={3}
-              mode={mode}
-              live={live}
-            />
-            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
-            <RankingGroup
-              group={rankingGroups[4]}
-              gindex={4}
-              mode={mode}
-              live={live}
-            />
+                overflow: "auto",
+                flex: "1 1 0",
+                ...(mobile && {pb: 6}),
+              }}>
+              <RankingHeader
+                mode={mode}
+                sx={{
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                  bgcolor: "background.paper",
+                }}
+              />
+              <Divider
+                sx={{borderColor: theme => theme.palette.primary.main}}
+              />
+              <RankingGroup
+                group={rankingGroups[1]}
+                gindex={1}
+                mode={mode}
+                live={live}
+              />
+              <Divider
+                sx={{borderColor: theme => theme.palette.primary.main}}
+              />
+              <RankingGroup
+                group={rankingGroups[2]}
+                gindex={2}
+                mode={mode}
+                live={live}
+              />
+              <Divider
+                sx={{borderColor: theme => theme.palette.primary.main}}
+              />
+              <RankingGroup
+                group={rankingGroups[3]}
+                gindex={3}
+                mode={mode}
+                live={live}
+              />
+              <Divider
+                sx={{borderColor: theme => theme.palette.primary.main}}
+              />
+              <RankingGroup
+                group={rankingGroups[4]}
+                gindex={4}
+                mode={mode}
+                live={live}
+              />
+            </Stack>
           </Stack>
-        </Stack>
+        )}
       </Paper>
 
       <Dialog
@@ -152,6 +172,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
           <PlayerList onSelect={handleAddPlayers} sx={{height: "70vh"}} />
         </DialogContent>
       </Dialog>
+
       <Backdrop open={loading} sx={{zIndex: theme => theme.zIndex.drawer + 1}}>
         <CircularProgress />
       </Backdrop>
