@@ -25,7 +25,6 @@ import {ToggleLock} from "./ToggleLock";
 const RankingRow = ({
   ranking,
   bgColor,
-  divider,
   enableChallenge,
   liveRanking,
   mode,
@@ -33,7 +32,6 @@ const RankingRow = ({
   ranking: Ranking;
   liveRanking?: Ranking;
   mode: "compact" | "expanded";
-  divider?: boolean;
   bgColor?: string;
   enableChallenge?: boolean;
 }) => {
@@ -73,10 +71,6 @@ const RankingRow = ({
         py: 1,
         px: mobile ? 0 : 2,
         opacity: loading ? 0.5 : 1,
-        ...(divider && {
-          borderBottom: "2px solid",
-          borderColor: "primary.main",
-        }),
       }}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}>

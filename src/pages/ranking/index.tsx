@@ -10,124 +10,33 @@ import {
   Paper,
   Stack,
   Switch,
-  Typography,
-  useTheme,
   type SxProps,
 } from "@mui/material";
 import type {Player} from "../../domain/types";
 import {useAppContext} from "../../app/context";
 import type {Theme} from "@emotion/react";
-import {RankingRow} from "./row";
 import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 import {AddIcon} from "../../icons";
 import {useRanking} from "../../functions";
-import type {rankingGroupsType} from "../../functions/useRanking";
 import {Admin, InfoBox} from "../../components";
-import dayjs from "dayjs";
+import {RankingGroup} from "./Group";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [dialog, setDialog] = useState<boolean>(false);
   const [mode, setMode] = useState<"compact" | "expanded">("compact");
   const [live, setLive] = useState<boolean>(false);
 
-  const theme = useTheme();
-  const {player, currentSeason, mobile} = useAppContext();
+  const {currentSeason, mobile} = useAppContext();
   const {loading, addPlayers} = useAddPlayers();
-  const {
-    challengeableRange,
-    rankingPlayer,
-    rankingGroups,
-    liveRanking,
-    minPlayers,
-  } = useRanking(live);
+  const {rankingGroups, minPlayers} = useRanking(live);
 
   const handleAddPlayers = async (players: Player[]) => {
     setDialog(false);
     if (!currentSeason) return;
     await addPlayers(currentSeason, players);
-  };
-
-  const getRankingBgColor = (
-    index: number,
-    playerId: string,
-    length: number,
-    groupIndex: number,
-  ) => {
-    const color =
-      player?.id === playerId
-        ? theme.palette.secondary.main
-        : theme.palette.primary.main;
-
-    const alternate = groupIndex % 2 === 0;
-    const compare = alternate
-      ? (a: number, b: number) => a < b
-      : (a: number, b: number) => a >= b;
-    return compare(index, length / 2) ? color + "10" : color + "20";
-  };
-
-  const seasonExpired = currentSeason
-    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
-    : false;
-
-  const renderGroup = (
-    rankingGroupsType: rankingGroupsType,
-    gindex: 1 | 2 | 3 | 4,
-    mode: "compact" | "expanded",
-  ) => {
-    const group = rankingGroupsType[gindex];
-    if (group.length === 0) return null;
-
-    return (
-      <Stack direction={"row"}>
-        <Stack
-          sx={{minWidth: 30, justifyContent: "center", alignItems: "center"}}>
-          <Typography variant="h5">{gindex}</Typography>
-        </Stack>
-        <Stack sx={{flex: 1}} divider={<Divider />}>
-          {group.map((r, index) => {
-            let challengablePosition = false;
-            const samePlayer = r.player.id === player?.id;
-            if (
-              challengeableRange &&
-              challengeableRange.length === 2 &&
-              rankingPlayer
-            ) {
-              challengablePosition =
-                r.position >= challengeableRange[0] &&
-                r.position <= challengeableRange[1];
-            }
-            return (
-              <RankingRow
-                key={`ranking-${r.position}`}
-                ranking={r}
-                enableChallenge={
-                  !samePlayer &&
-                  challengablePosition &&
-                  !seasonExpired &&
-                  minPlayers
-                }
-                divider={(index + 1) % group.length === 0 && gindex !== 4}
-                liveRanking={
-                  live
-                    ? undefined
-                    : liveRanking.find(lr => lr.player.id === r.player.id)
-                }
-                mode={mode}
-                bgColor={getRankingBgColor(
-                  index,
-                  r.player.id!,
-                  group.length,
-                  gindex,
-                )}
-              />
-            );
-          })}
-        </Stack>
-      </Stack>
-    );
   };
 
   return (
@@ -201,10 +110,34 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 bgcolor: "background.paper",
               }}
             />
-            <Stack>{renderGroup(rankingGroups, 1, mode)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 2, mode)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 3, mode)}</Stack>
-            <Stack>{renderGroup(rankingGroups, 4, mode)}</Stack>
+            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
+            <RankingGroup
+              group={rankingGroups[1]}
+              gindex={1}
+              mode={mode}
+              live={live}
+            />
+            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
+            <RankingGroup
+              group={rankingGroups[2]}
+              gindex={2}
+              mode={mode}
+              live={live}
+            />
+            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
+            <RankingGroup
+              group={rankingGroups[3]}
+              gindex={3}
+              mode={mode}
+              live={live}
+            />
+            <Divider sx={{borderColor: theme => theme.palette.primary.main}} />
+            <RankingGroup
+              group={rankingGroups[4]}
+              gindex={4}
+              mode={mode}
+              live={live}
+            />
           </Stack>
         </Stack>
       </Paper>
