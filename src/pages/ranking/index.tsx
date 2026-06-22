@@ -83,6 +83,9 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
       </Stack>
       {!minPlayers && !rankingLoading && (
         <InfoBox
+          sx={{
+            ...(mobile && {mx: 2}),
+          }}
           invert
           message="Non è stato raggiunto il numero minimo di 16 iscritti"
         />

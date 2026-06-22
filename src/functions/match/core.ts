@@ -3,7 +3,7 @@ import type {Match, Season} from "../../domain/types";
 import {collections} from "../../lib/firebase";
 
 const findMatchById = (season: Season, mId: string): Match | undefined => {
-  const periods = season.periods;
+  const periods = season.periods ?? [];
   for (const period of periods) {
     const matches = Object.values(period.matches);
     const match = matches.find(m => m.id === mId);
@@ -15,7 +15,7 @@ const findMatchById = (season: Season, mId: string): Match | undefined => {
 };
 
 const deleteMatchById = (season: Season, mId: string): Match | undefined => {
-  const periods = season.periods;
+  const periods = season.periods ?? [];
   for (const period of periods) {
     const matchKey: number | undefined = Object.keys(period.matches).find(
       key => period.matches[key as unknown as number].id === mId,
@@ -37,9 +37,9 @@ const addMatch = async (
   admin?: boolean,
 ) => {
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  const currentPeriod = updatedSeason.periods?.find(p => !p.end);
   if (!currentPeriod) {
-    throw new Error("No active period found");
+    throw new Error("Attendi l'inizio di un nuovo periodo");
   }
 
   const newMatch: Match = {
@@ -177,9 +177,9 @@ const updateMatchStatus = async (
 
 const updateMatchDate = async (season: Season, mId: string, date: Date) => {
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  const currentPeriod = updatedSeason.periods?.find(p => !p.end);
   if (!currentPeriod) {
-    throw new Error("No active period found");
+    throw new Error("Attendi l'inizio di un nuovo periodo");
   }
 
   const match = findMatchById(season, mId);

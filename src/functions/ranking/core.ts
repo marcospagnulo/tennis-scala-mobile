@@ -3,13 +3,38 @@ import {collections} from "../../lib/firebase";
 import type {Player, Ranking, Season} from "../../domain/types";
 import {calculateNewRanking, recalculatePositions} from "../../util";
 
+const openPeriod = async (season: Season) => {
+  if (!collections) return;
+
+  const updatedSeason = {...season};
+
+  const currentPeriod = updatedSeason.periods?.find(p => !p.end);
+  if (currentPeriod) {
+    currentPeriod.end = new Timestamp(Date.now() / 1000, 0);
+  }
+
+  if (!updatedSeason.periods) {
+    updatedSeason.periods = [];
+  }
+
+  updatedSeason.periods?.push({
+    start: new Timestamp(Date.now() / 1000, 0),
+    matches: {},
+  });
+
+  const seasonDoc = doc(collections!.seasons, season.id);
+  await updateDoc(seasonDoc, {
+    ...updatedSeason,
+  });
+};
+
 const closePeriod = async (season: Season) => {
   if (!collections) return;
 
   const updatedSeason = {...season};
-  const currentPeriod = updatedSeason.periods.find(p => !p.end);
+  const currentPeriod = updatedSeason.periods?.find(p => !p.end);
   if (!currentPeriod) {
-    throw new Error("No active period found");
+    throw new Error("Attendi l'inizio di un nuovo periodo");
   }
 
   Object.entries(currentPeriod.matches).forEach(([, match]) => {
@@ -29,12 +54,6 @@ const closePeriod = async (season: Season) => {
   // Close the period and recalculate positions
   currentPeriod.end = new Timestamp(Date.now() / 1000, 0);
   updatedSeason.ranking = recalculatePositions(updatedSeason.ranking);
-
-  // Start a new period
-  updatedSeason.periods.push({
-    start: new Timestamp(Date.now() / 1000, 0),
-    matches: {},
-  });
 
   const seasonDoc = doc(collections!.seasons, season.id);
   await updateDoc(seasonDoc, {
@@ -164,6 +183,7 @@ const refreshRanking = async (season: Season, ranking: Ranking) => {
 
 export {
   closePeriod,
+  openPeriod,
   swapPositions,
   editRanking,
   addPlayers,

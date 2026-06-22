@@ -14,7 +14,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [selectedPeriodStart, setSelectedPeriodStart] = useState<number>();
 
   useEffect(() => {
-    if (!currentSeason?.periods.length) {
+    if (!currentSeason?.periods?.length) {
       setSelectedPeriodStart(undefined);
       return;
     }
@@ -26,7 +26,10 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
       return;
     }
 
-    const activePeriod = currentSeason.periods.find(p => !p.end);
+    let activePeriod = currentSeason.periods.find(p => !p.end);
+    if (!activePeriod) {
+      activePeriod = currentSeason.periods[0];
+    }
     setSelectedPeriodStart(activePeriod?.start.toMillis());
   }, [currentSeason, selectedPeriodStart]);
 
@@ -46,7 +49,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
       label: formatPeriodLabel(p),
       value: p.start.toMillis(),
     }));
-  const period = currentSeason?.periods.find(
+  const period = currentSeason?.periods?.find(
     p => p.start.toMillis() === selectedPeriodStart,
   );
   const matches = Object.values(period?.matches || {});
@@ -96,12 +99,14 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
               variant={mobile ? "h6" : "h5"}
               color="text.secondary"
               align="center">
-              Non ci sono partite in questo periodo
+              {currentSeason?.periods
+                ? "Non ci sono partite in questo periodo"
+                : "Nessun periodo disponibile"}
             </Typography>
           </>
         )}
       </Stack>
-      <AddMatch />
+      {currentSeason?.periods && <AddMatch />}
     </Stack>
   );
 };

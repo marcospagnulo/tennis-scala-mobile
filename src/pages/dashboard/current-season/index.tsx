@@ -86,7 +86,7 @@ const CurrentSeasonCard = ({direction}: {direction?: "row" | "column"}) => {
                 <InfoBox message="Non è stato raggiunto il numero minimo di 16 iscritti" />
               )}
               <Row label="Partecipanti" value={currentSeason.ranking.length} />
-              <Row label="Periodi" value={currentSeason.periods.length} />
+              <Row label="Periodi" value={currentSeason.periods?.length ?? 0} />
               <Row
                 label="Inizio"
                 value={dayjs(currentSeason.start.toDate()).format(

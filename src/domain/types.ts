@@ -39,7 +39,7 @@ export interface Season {
   start: Timestamp;
   end: Timestamp;
   ranking: Ranking[];
-  periods: Period[];
+  periods: Period[] | undefined;
   maxMatchesPerPeriod?: number;
   createdAt: Timestamp;
 }

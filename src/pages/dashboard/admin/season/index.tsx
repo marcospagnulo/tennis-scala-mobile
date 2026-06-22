@@ -15,12 +15,6 @@ const initialFormData: Partial<Season> = {
   start: new Timestamp(now / 1000, 0),
   end: new Timestamp(dayjs(now).add(1, "year").unix(), 0),
   maxMatchesPerPeriod: 3,
-  periods: [
-    {
-      start: new Timestamp(now / 1000, 0),
-      matches: {},
-    },
-  ],
   ranking: [],
 };
 

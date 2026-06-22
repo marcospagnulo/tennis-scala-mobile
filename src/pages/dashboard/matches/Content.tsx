@@ -14,7 +14,7 @@ const MatchesCardContent = () => {
   const [matches, setMatches] = useState<Match[]>([]);
 
   useEffect(() => {
-    const period = currentSeason?.periods.find(p => !p.end);
+    const period = currentSeason?.periods?.find(p => !p.end);
     if (period) {
       const matchesArray = Object.values(period.matches).filter(
         m => m.pid1 === player?.id || m.pid2 === player?.id,

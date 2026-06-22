@@ -1,25 +1,30 @@
-import {DoneAll, Engineering, Settings} from "@mui/icons-material";
+import {Engineering, Lock, Settings} from "@mui/icons-material";
 import {DashboardCard} from "../DashboardCard";
-import {Box, Button, Stack} from "@mui/material";
-import {MatchIcon, SeasonIcon} from "../../../icons";
+import {Box, Button, Stack, Typography, type SxProps} from "@mui/material";
+import {AddIcon, MatchIcon, SeasonIcon} from "../../../icons";
 import {SeasonsDialog} from "./season";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../../app/context";
 import {ConfirmDialog, ErrorDialog} from "../../../components";
-import {useClosePeriod} from "../../../functions/ranking/useClosePeriod";
+import {usePeriod} from "../../../functions/ranking/usePeriod";
+import type {Theme} from "@emotion/react";
 
 const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {user, currentSeason, currentSeasonExpired} = useAppContext();
+  const {user, currentSeason, currentSeasonExpired, mobile} = useAppContext();
   const {
     success,
     error,
     closePeriod,
+    openPeriod,
     clear,
-    loading: closePeriodLoading,
-  } = useClosePeriod();
+    loading: periodLoading,
+  } = usePeriod();
 
   const [seasonsDialogOpen, setSeasonsDialogOpen] = useState<boolean>(false);
-  const [periodDialogOpen, setPeriodDialogOpen] = useState<boolean>(false);
+  const [closePeriodDialogOpen, setClosePeriodDialogOpen] =
+    useState<boolean>(false);
+  const [openPeriodDialogOpen, setOpenPeriodDialogOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (success) {
@@ -31,10 +36,26 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
     if (currentSeason) {
       closePeriod(currentSeason);
     }
-    setPeriodDialogOpen(false);
+    setClosePeriodDialogOpen(false);
+  };
+
+  const handleConfirmNewPeriod = () => {
+    if (currentSeason) {
+      openPeriod(currentSeason);
+    }
+    setOpenPeriodDialogOpen(false);
+  };
+
+  const truncateSx: SxProps<Theme> = {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    maxWidth: "100%",
   };
 
   if (!user || user.role !== "admin") return null;
+
+  const currentPeriod = currentSeason?.periods?.find(p => !p.end);
 
   return (
     <DashboardCard
@@ -52,7 +73,10 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
         </Stack>
       }
       content={
-        <Stack direction={"row"} spacing={2} sx={{alignItems: "center", p: 2}}>
+        <Stack
+          direction={mobile ? "column" : "row"}
+          spacing={2}
+          sx={{alignItems: mobile ? "" : "center", p: 2}}>
           <Button
             variant="contained"
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
@@ -74,23 +98,48 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
                 sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
               />
             </Box>
-            Stagioni
+
+            <Typography sx={{...truncateSx}} variant="body2">
+              Stagioni
+            </Typography>
           </Button>
           <Button
             variant="contained"
             color="secondary"
             disabled={
-              !currentSeason || closePeriodLoading || currentSeasonExpired
+              !currentSeason ||
+              periodLoading ||
+              currentSeasonExpired ||
+              !currentSeason.periods?.length ||
+              !currentPeriod
             }
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
-            onClick={() => setPeriodDialogOpen(true)}>
+            onClick={() => setClosePeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>
-              <DoneAll sx={{position: "absolute", top: 0, left: 0}} />
+              <Lock sx={{position: "absolute", top: 0, left: 0}} />
               <MatchIcon
                 sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
               />
             </Box>
-            Chiudi periodo
+            <Typography sx={{...truncateSx}} variant="body2">
+              Chiudi periodo
+            </Typography>
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={!currentSeason || periodLoading || currentSeasonExpired}
+            sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
+            onClick={() => setOpenPeriodDialogOpen(true)}>
+            <Box sx={{position: "relative", width: 50, height: 50}}>
+              <AddIcon sx={{position: "absolute", top: 0, left: 0}} />
+              <MatchIcon
+                sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
+              />
+            </Box>
+            <Typography sx={{...truncateSx}} variant="body2">
+              Nuovo periodo
+            </Typography>
           </Button>
 
           <SeasonsDialog
@@ -99,11 +148,19 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           />
 
           <ConfirmDialog
-            open={periodDialogOpen}
+            open={closePeriodDialogOpen}
             title="Chiudi periodo"
             content="Sei sicuro di voler chiudere il periodo? Questa azione è irreversibile e non potrà essere annullata."
             onConfirm={handleConfirmClosePeriod}
-            onClose={() => setPeriodDialogOpen(false)}
+            onClose={() => setClosePeriodDialogOpen(false)}
+          />
+
+          <ConfirmDialog
+            open={openPeriodDialogOpen}
+            title="Apri nuovo periodo"
+            content="Sei sicuro di voler aprire un nuovo periodo? Questa azione chiuderà il periodo attuale e ne aprirà uno nuovo."
+            onConfirm={handleConfirmNewPeriod}
+            onClose={() => setOpenPeriodDialogOpen(false)}
           />
 
           <ErrorDialog

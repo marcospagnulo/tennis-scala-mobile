@@ -1,8 +1,11 @@
 import {useState} from "react";
-import {closePeriod as coreClosePeriod} from "./core";
+import {
+  closePeriod as coreClosePeriod,
+  openPeriod as coreOpenPeriod,
+} from "./core";
 import type {Season} from "../../domain/types";
 
-const useClosePeriod = () => {
+const usePeriod = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -12,6 +15,22 @@ const useClosePeriod = () => {
     setError(null);
     setSuccess(false);
   };
+
+  const openPeriod = async (season: Season) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      await coreOpenPeriod(season);
+      setSuccess(true);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const closePeriod = async (season: Season) => {
     setLoading(true);
     setError(null);
@@ -27,7 +46,7 @@ const useClosePeriod = () => {
     }
   };
 
-  return {loading, error, success, closePeriod, clear};
+  return {loading, error, success, closePeriod, openPeriod, clear};
 };
 
-export {useClosePeriod};
+export {usePeriod};
