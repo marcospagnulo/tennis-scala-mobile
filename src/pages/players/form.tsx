@@ -13,13 +13,29 @@ import {Timestamp} from "firebase/firestore";
 import type {Player} from "../../domain/types";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import {DeleteIcon} from "../../icons";
+import {DeleteIcon, EditIcon} from "../../icons";
+import {CropDialog} from "../../components/upload/CropDialog";
+import {useRef, useState} from "react";
 
 const Form = (
   formData: Partial<Player>,
   handleChange: (key: keyof Partial<Player>, value: any) => void,
-  handleFileLoad: (evt: React.ChangeEvent<HTMLInputElement>) => void,
 ) => {
+  const [cropDialogFile, setCropDialogFile] = useState<string>();
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const hanldeUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const fileUpload = evt.target.files?.item(0);
+    if (fileUpload) {
+      const reader = new FileReader();
+      reader.readAsDataURL(fileUpload);
+      reader.onload = () => {
+        const base64 = reader.result;
+        setCropDialogFile(base64 as string);
+      };
+    }
+  };
+
   const handleBirthDateChange = (date: dayjs.Dayjs | null) => {
     if (!date) return;
     handleChange("birthDate", new Timestamp(date.toDate().getTime() / 1000, 0));
@@ -28,32 +44,35 @@ const Form = (
   return (
     <>
       <Stack direction="row" sx={{mb: 2, gap: 2, alignItems: "center"}}>
-        <Box sx={{position: "relative"}}>
-          <Avatar
-            src={formData.avatar}
-            alt="Avatar"
-            sx={{width: 50, height: 50}}
-          />
-          {formData.avatar && formData.avatar !== "" && (
-            <IconButton
-              size="small"
-              sx={{position: "absolute", zIndex: 1, top: -10, right: -10}}
-              onClick={() => handleChange("avatar", "")}>
-              <DeleteIcon color="error" fontSize="small" />
-            </IconButton>
-          )}
-        </Box>
-        <TextField
+        <Avatar
+          src={formData.avatar}
+          alt="Avatar"
+          sx={{width: 50, height: 50}}
+        />
+        <IconButton size="small" onClick={() => inputFileRef.current?.click()}>
+          <EditIcon color="primary" fontSize="small" />
+        </IconButton>
+        {formData.avatar && formData.avatar !== "" && (
+          <IconButton size="small" onClick={() => handleChange("avatar", "")}>
+            <DeleteIcon color="error" fontSize="small" />
+          </IconButton>
+        )}
+        <input
+          ref={inputFileRef}
           type="file"
-          onChange={handleFileLoad}
-          slotProps={{
-            input: {
-              inputProps: {
-                accept:
-                  "image/png, image/jpeg, image/jpg, image/gif, image/webp",
-              },
-            },
+          onChange={hanldeUpload}
+          style={{display: "none"}}
+          accept="image/*"
+        />
+
+        <CropDialog
+          open={cropDialogFile !== undefined}
+          onClose={() => setCropDialogFile(undefined)}
+          onConfirm={file => {
+            handleChange("avatar", file);
+            setCropDialogFile(undefined);
           }}
+          file={cropDialogFile}
         />
       </Stack>
       <TextField
