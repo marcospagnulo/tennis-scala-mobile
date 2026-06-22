@@ -6,14 +6,10 @@ import {RankingHeader} from "../../ranking/Header";
 import {useEffect, useState} from "react";
 import type {Match} from "../../../domain/types";
 import {MatchInfo} from "../../../components/match";
-import dayjs from "dayjs";
 
 const MatchesCardContent = () => {
-  const {currentSeason, player} = useAppContext();
+  const {currentSeason, currentSeasonExpired, player} = useAppContext();
   const {challengeableRange, minPlayers} = useRanking();
-  const seasonExpired = currentSeason
-    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
-    : false;
 
   const [matches, setMatches] = useState<Match[]>([]);
 
@@ -67,7 +63,9 @@ const MatchesCardContent = () => {
               key={`challenge-${r.position}`}
               ranking={r}
               enableChallenge={
-                r.player.id !== player?.id && !seasonExpired && minPlayers
+                r.player.id !== player?.id &&
+                !currentSeasonExpired &&
+                minPlayers
               }
               bgColor={
                 r.player.id === player?.id ? "secondary.light" : "transparent"

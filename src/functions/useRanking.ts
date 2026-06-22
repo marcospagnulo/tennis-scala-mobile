@@ -13,6 +13,7 @@ type rankingGroupsType = {
 const useRanking = (live?: boolean) => {
   const {currentSeason, player} = useAppContext();
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [liveRanking, setLiveRanking] = useState<Ranking[]>([]);
   const [minPlayers, setMinPlayers] = useState<boolean>(false);
   const [rankingPlayer, setRankingPlayer] = useState<Ranking>();
@@ -74,6 +75,7 @@ const useRanking = (live?: boolean) => {
       newrankingGroups[group as 1 | 2 | 3 | 4].push(player);
     });
     setRankingGroups(newrankingGroups);
+    setLoading(false);
   }, [currentSeason, player?.id, live, liveRanking]);
 
   // è possibile sfidare la seconda metà del gruppo precedente se si è nella prima metà del gruppo attuale, altrimenti si possono sfidare tutti quelli del gruppo precedente
@@ -120,6 +122,7 @@ const useRanking = (live?: boolean) => {
     rankingGroups,
     minPlayers,
     liveRanking,
+    loading,
   };
 };
 

@@ -21,6 +21,7 @@ import {auth} from "../lib/firebase";
 import {useDownBreakpoint} from "../hooks/useDownBreakpoint";
 import {Backdrop, CircularProgress} from "@mui/material";
 import {useQueryCollection} from "../functions";
+import dayjs from "dayjs";
 
 export type AppContextType = {
   user?: User | null;
@@ -33,6 +34,7 @@ export type AppContextType = {
   handleLogout: () => Promise<void>;
   mobile: boolean;
   seasons: Season[];
+  currentSeasonExpired: boolean;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -203,6 +205,9 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
         appLoading,
         setAppLoading,
         seasons,
+        currentSeasonExpired: currentSeason
+          ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
+          : false,
       }}>
       <Backdrop
         open={appLoading}

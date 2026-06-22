@@ -9,7 +9,7 @@ import {ConfirmDialog, ErrorDialog} from "../../../components";
 import {useClosePeriod} from "../../../functions/ranking/useClosePeriod";
 
 const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {user, currentSeason} = useAppContext();
+  const {user, currentSeason, currentSeasonExpired} = useAppContext();
   const {
     success,
     error,
@@ -79,7 +79,9 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={!currentSeason || closePeriodLoading}
+            disabled={
+              !currentSeason || closePeriodLoading || currentSeasonExpired
+            }
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setPeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>

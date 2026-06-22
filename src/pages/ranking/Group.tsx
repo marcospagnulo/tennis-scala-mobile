@@ -3,7 +3,6 @@ import {useRanking} from "../../functions/useRanking";
 import {useAppContext} from "../../app/context";
 import {RankingRow} from "./row";
 import type {Ranking} from "../../domain/types";
-import dayjs from "dayjs";
 
 const RankingGroup = ({
   group,
@@ -16,14 +15,10 @@ const RankingGroup = ({
   mode: "compact" | "expanded";
   live: boolean;
 }) => {
-  const {player, currentSeason} = useAppContext();
+  const {player, currentSeasonExpired} = useAppContext();
   const {challengeableRange, minPlayers, liveRanking, rankingPlayer} =
     useRanking();
   const theme = useTheme();
-
-  const seasonExpired = currentSeason
-    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
-    : false;
 
   const getRankingBgColor = (
     index: number,
@@ -79,7 +74,7 @@ const RankingGroup = ({
               enableChallenge={
                 !samePlayer &&
                 challengablePosition &&
-                !seasonExpired &&
+                !currentSeasonExpired &&
                 minPlayers
               }
               liveRanking={

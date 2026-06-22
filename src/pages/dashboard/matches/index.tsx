@@ -3,20 +3,16 @@ import {DashboardCard} from "../DashboardCard";
 import {MatchIcon} from "../../../icons";
 import {MatchesCardContent} from "./Content";
 import {useAppContext} from "../../../app/context";
-import dayjs from "dayjs";
 import {useRanking} from "../../../functions";
 
 const MatchesCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {player, currentSeason} = useAppContext();
+  const {player, currentSeason, currentSeasonExpired} = useAppContext();
   const {minPlayers} = useRanking();
-  const seasonExpired = currentSeason
-    ? dayjs(currentSeason.end.toDate()).isBefore(dayjs())
-    : false;
 
   const isMember =
     currentSeason?.ranking.find(r => r.player.id === player?.id) !== undefined;
 
-  if (!isMember || seasonExpired || !minPlayers) return <></>;
+  if (!isMember || currentSeasonExpired || !minPlayers) return <></>;
 
   return (
     <DashboardCard
