@@ -7,8 +7,9 @@ service cloud.firestore {
     match /seasons/{document=**} {
       allow read: if true;  // Chiunque può leggere
       allow create: if request.auth != null && 
-                       request.auth.token.role == "admin";  // Solo admin creano
-      allow update: if request.auth != null;  // Player autenticati possono modificare
+                       (request.auth.token.role == "admin" || request.auth.token.role == "manager");  // Solo admin/manager creano
+      allow update: if request.auth != null && 
+                       (request.auth.token.role == "admin" || request.auth.uid == resource.data.createdBy);  // Admin o creatore
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }
@@ -17,7 +18,8 @@ service cloud.firestore {
     match /players/{playerId} {
       allow read: if true;  // Chiunque può leggere
       allow create: if request.auth != null;  // Utenti autenticati creano
-      allow update: if request.auth != null;  // Utenti autenticati aggiornano
+      allow update: if request.auth != null && 
+                       (request.auth.token.role == "admin" || request.auth.uid == resource.data.createdBy);  // Admin o creatore
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }

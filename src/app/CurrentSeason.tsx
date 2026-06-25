@@ -134,7 +134,7 @@ const CurrentSeason = () => {
                 />
               </Stack>
               {!isMember && !expired && user && (
-                <Stack>
+                <Stack sx={{mt: 1}}>
                   {invalidPlayerInfo && (
                     <InfoBox message="Completa il tuo profilo per partecipare al torneo" />
                   )}

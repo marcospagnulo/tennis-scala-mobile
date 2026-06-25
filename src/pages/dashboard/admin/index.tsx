@@ -8,9 +8,10 @@ import {useAppContext} from "../../../app/context";
 import {ConfirmDialog, ErrorDialog} from "../../../components";
 import {usePeriod} from "../../../functions/ranking/usePeriod";
 import type {Theme} from "@emotion/react";
+import {useAuthorization} from "../../../hooks/useAuthorization";
 
 const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
-  const {user, currentSeason, currentSeasonExpired, mobile} = useAppContext();
+  const {currentSeason, currentSeasonExpired, mobile} = useAppContext();
   const {
     success,
     error,
@@ -19,6 +20,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
     clear,
     loading: periodLoading,
   } = usePeriod();
+  const {isAdmin, isManager, canManageSeason} = useAuthorization();
 
   const [seasonsDialogOpen, setSeasonsDialogOpen] = useState<boolean>(false);
   const [closePeriodDialogOpen, setClosePeriodDialogOpen] =
@@ -53,7 +55,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
     maxWidth: "100%",
   };
 
-  if (!user || user.role !== "admin") return null;
+  if (!isAdmin && !isManager) return null;
 
   const currentPeriod = currentSeason?.periods?.find(p => !p.end);
 
@@ -106,7 +108,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={periodLoading || !currentPeriod}
+            disabled={periodLoading || !currentPeriod || !canManageSeason}
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setClosePeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>
@@ -122,7 +124,12 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={!currentSeason || periodLoading || currentSeasonExpired}
+            disabled={
+              !currentSeason ||
+              periodLoading ||
+              currentSeasonExpired ||
+              !canManageSeason
+            }
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setOpenPeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>

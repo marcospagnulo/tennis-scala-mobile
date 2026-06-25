@@ -35,7 +35,6 @@ import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../functions/useQueryCollection";
 import {ConfirmDialog} from "./ConfirmDialog";
-import {Admin} from "./Admin";
 
 export interface Entity {
   id: string | undefined;
@@ -43,10 +42,15 @@ export interface Entity {
 }
 
 interface CrudProps<T extends Entity> {
-  sx?: SxProps<Theme>;
+  title: string;
   collection: CollectionReference<T, T>;
   columns: GridColDef<T>[];
-  title: string;
+  rules: {
+    canAdd: boolean;
+    canEdit: (row: T) => boolean;
+    canDelete: (row: T) => boolean;
+  };
+  sx?: SxProps<Theme>;
   actions?: {
     icon: React.ElementType<SvgIconProps>;
     label: string;
@@ -69,8 +73,9 @@ export function Crud<T extends Entity>({
   form: Form,
   initialFormData,
   actions,
+  rules,
 }: CrudProps<T>) {
-  const {user, mobile} = useAppContext();
+  const {mobile} = useAppContext();
 
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
   const [formData, setFormData] = useState<Partial<T>>(initialFormData);
@@ -150,44 +155,46 @@ export function Crud<T extends Entity>({
   };
 
   const columns = [...initialColumns];
-  if (user?.role === "admin") {
-    const actionsCount = 2 + (actions ? actions.length : 0);
-    const actionswidth = 48 * actionsCount;
-    columns.push({
-      field: "actions",
-      headerName: "",
-      type: "actions",
-      sortable: false,
-      width: actionswidth,
-      renderCell: params => {
-        return (
-          <GridActionsCell {...params}>
-            {actions?.map(action => {
-              const Icon = action.icon;
-              return (
-                <GridActionsCellItem
-                  key={action.label}
-                  icon={<Icon fontSize="small" />}
-                  label={action.label}
-                  onClick={() => action.onClick(params.row as T)}
-                />
-              );
-            })}
+  const actionsCount = 2 + (actions ? actions.length : 0);
+  const actionswidth = 48 * actionsCount;
+  columns.push({
+    field: "actions",
+    headerName: "",
+    type: "actions",
+    sortable: false,
+    width: actionswidth,
+    renderCell: params => {
+      return (
+        <GridActionsCell {...params}>
+          {actions?.map(action => {
+            const Icon = action.icon;
+            return (
+              <GridActionsCellItem
+                key={action.label}
+                icon={<Icon fontSize="small" />}
+                label={action.label}
+                onClick={() => action.onClick(params.row as T)}
+              />
+            );
+          })}
+          {rules.canEdit(params.row as T) && (
             <GridActionsCellItem
               icon={<EditIcon fontSize="small" color="primary" />}
               label="Edit"
               onClick={() => handleEditItem(params.row as T)}
             />
+          )}
+          {rules.canDelete(params.row as T) && (
             <GridActionsCellItem
               icon={<DeleteIcon fontSize="small" color="error" />}
               label="Delete"
               onClick={() => handleDeleteClick(params.row as T)}
             />
-          </GridActionsCell>
-        );
-      },
-    });
-  }
+          )}
+        </GridActionsCell>
+      );
+    },
+  });
 
   const handleFileLoad = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const fileUpload = evt.target.files?.item(0);
@@ -225,7 +232,7 @@ export function Crud<T extends Entity>({
             onChange={handleSearch}
             slotProps={{input: {startAdornment: <Search />}}}
           />
-          <Admin>
+          {rules.canAdd && (
             <IconButton
               onClick={handleAddClick}
               size="medium"
@@ -236,7 +243,7 @@ export function Crud<T extends Entity>({
               }}>
               <AddIcon fontSize="inherit" sx={{color: "white"}} />
             </IconButton>
-          </Admin>
+          )}
         </Stack>
         <DataGrid
           sx={{

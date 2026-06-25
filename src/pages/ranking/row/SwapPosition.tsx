@@ -2,6 +2,7 @@ import {IconButton} from "@mui/material";
 import type {Ranking} from "../../../domain/types";
 import {ExpandLess, ExpandMore} from "@mui/icons-material";
 import {useAppContext} from "../../../app/context";
+import {useAuthorization} from "../../../hooks/useAuthorization";
 
 const SwapPosition = ({
   player,
@@ -12,10 +13,10 @@ const SwapPosition = ({
   lastPosition: number;
   onSwap: (from: number, to: number) => void;
 }) => {
-  const {user, mobile} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {mobile} = useAppContext();
+  const {canManageSeason} = useAuthorization();
 
-  if (!isAdmin || mobile) return null;
+  if (!canManageSeason || mobile) return null;
 
   return (
     <>

@@ -22,8 +22,9 @@ import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
 import {AddIcon} from "../../icons";
 import {useRanking} from "../../functions";
-import {Admin, InfoBox} from "../../components";
+import {InfoBox} from "../../components";
 import {RankingGroup} from "./Group";
+import {CanManageSeason} from "../../components/CanManageSeason";
 
 const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const [dialog, setDialog] = useState<boolean>(false);
@@ -97,7 +98,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 />
               </Stack>
 
-              <Admin>
+              <CanManageSeason>
                 <IconButton
                   size="small"
                   onClick={() => setDialog(true)}
@@ -109,7 +110,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                   }}>
                   <AddIcon fontSize="inherit" sx={{color: "white"}} />
                 </IconButton>
-              </Admin>
+              </CanManageSeason>
             </Stack>
             <Stack
               sx={{

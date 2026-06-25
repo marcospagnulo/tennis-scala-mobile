@@ -1,11 +1,11 @@
 import {ButtonBase, Dialog, Stack, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import type {Match, Season} from "../../domain/types";
-import {Admin} from "../Admin";
 import {EditIcon} from "../../icons";
 import {useEffect, useState} from "react";
 import {StaticDateTimePicker} from "@mui/x-date-pickers";
 import {useUpdateMatch} from "../../functions";
+import {CanManageSeason} from "../CanManageSeason";
 
 const MatchDate = ({season, match}: {season: Season; match: Match}) => {
   const [hover, setHover] = useState(false);
@@ -54,7 +54,7 @@ const MatchDate = ({season, match}: {season: Season; match: Match}) => {
       <Typography variant="body2">
         {dayjs(match.date.toDate()).format("HH:mm")}
       </Typography>
-      <Admin>
+      <CanManageSeason>
         <ButtonBase
           sx={{
             left: 0,
@@ -74,7 +74,7 @@ const MatchDate = ({season, match}: {season: Season; match: Match}) => {
             onAccept={handleChangeDate}
           />
         </Dialog>
-      </Admin>
+      </CanManageSeason>
     </Stack>
   );
 };

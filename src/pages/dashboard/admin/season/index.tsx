@@ -7,16 +7,10 @@ import {Crud} from "../../../../components/Crud";
 import {columns} from "./columns";
 import {Form} from "./form";
 import dayjs from "dayjs";
+import {useAuthorization} from "../../../../hooks/useAuthorization";
+import {useAppContext} from "../../../../app/context";
 
 const now = new Date().getTime();
-
-const initialFormData: Partial<Season> = {
-  name: `Stagione ${dayjs().year()}/${dayjs().add(1, "year").year()}`,
-  start: new Timestamp(now / 1000, 0),
-  end: new Timestamp(dayjs(now).add(1, "year").unix(), 0),
-  maxMatchesPerPeriod: 3,
-  ranking: [],
-};
 
 const SeasonsDialog = ({
   open,
@@ -26,6 +20,18 @@ const SeasonsDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
+  const {user} = useAppContext();
+  const {isAdmin, isManager} = useAuthorization();
+
+  const initialFormData: Partial<Season> = {
+    name: `Stagione ${dayjs().year()}/${dayjs().add(1, "year").year()}`,
+    start: new Timestamp(now / 1000, 0),
+    end: new Timestamp(dayjs(now).add(1, "year").unix(), 0),
+    maxMatchesPerPeriod: 3,
+    ranking: [],
+    createdBy: user?.id,
+  };
+
   if (!collections) return null;
 
   return (
@@ -38,6 +44,11 @@ const SeasonsDialog = ({
         title="Stagioni"
         form={Form}
         initialFormData={initialFormData}
+        rules={{
+          canAdd: isAdmin || isManager,
+          canEdit: row => isAdmin || row.createdBy === user?.id,
+          canDelete: row => isAdmin || row.createdBy === user?.id,
+        }}
       />
     </Dialog>
   );

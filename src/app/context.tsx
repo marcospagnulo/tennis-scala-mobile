@@ -138,7 +138,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
               id: firebaseUser.uid,
               displayName: firebaseUser.displayName || "",
               email: firebaseUser.email || "",
-              role: claims.role ? (claims.role as role) : "user",
+              role: claims.role ? (claims.role as role) : "player",
             };
           }
           setUser(user);

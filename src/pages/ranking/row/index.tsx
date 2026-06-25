@@ -21,6 +21,7 @@ import {ChallengeDialog} from "./ChallengeDialog";
 import {green} from "@mui/material/colors";
 import {DiffPosition} from "./DiffPosition";
 import {ToggleLock} from "./ToggleLock";
+import {useAuthorization} from "../../../hooks/useAuthorization";
 
 const RankingRow = ({
   ranking,
@@ -36,8 +37,8 @@ const RankingRow = ({
   enableChallenge?: boolean;
 }) => {
   const player = ranking.player as Player;
-  const {user, mobile, currentSeason} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {mobile, currentSeason} = useAppContext();
+  const {canManageSeason} = useAuthorization();
   const isSmallScreen = useDownBreakpoint("sm");
 
   const {loading: swapLoading, swapPositions} = useSwapPositions();
@@ -178,7 +179,7 @@ const RankingRow = ({
         value={ranking.points}
         liveValue={liveRanking?.points}
         liveColor={green[500]}
-        isAdmin={isAdmin}
+        isAdmin={canManageSeason}
         hover={hover}
         onEdit={(_f, v) => handleEdit("points", v)}
       />
@@ -195,7 +196,7 @@ const RankingRow = ({
             width={mobile ? 25 : 70}
             field="wins"
             value={ranking.wins}
-            isAdmin={isAdmin}
+            isAdmin={canManageSeason}
             hover={hover}
             onEdit={(_f, v) => handleEdit("wins", v)}
           />
@@ -203,7 +204,7 @@ const RankingRow = ({
             width={mobile ? 25 : 70}
             field="draws"
             value={ranking.draws}
-            isAdmin={isAdmin}
+            isAdmin={canManageSeason}
             hover={hover}
             onEdit={(_f, v) => handleEdit("draws", v)}
           />
@@ -211,7 +212,7 @@ const RankingRow = ({
             width={mobile ? 25 : 70}
             field="losses"
             value={ranking.losses}
-            isAdmin={isAdmin}
+            isAdmin={canManageSeason}
             hover={hover}
             onEdit={(_f, v) => handleEdit("losses", v)}
           />

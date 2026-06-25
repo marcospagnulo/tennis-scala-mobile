@@ -8,12 +8,13 @@ import {getWinnerIndex, shouldEnable3Set} from "../../../util";
 import {Done} from "@mui/icons-material";
 import {EditIcon} from "../../../icons";
 import {ConfirmDialog} from "../../ConfirmDialog";
-import {Admin} from "../../Admin";
 import {useUpdateMatch} from "../../../functions/match/useUpdateMatch";
+import {useAuthorization} from "../../../hooks/useAuthorization";
+import {CanManageSeason} from "../../CanManageSeason";
 
 const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
-  const {currentSeason, player, user} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {currentSeason, player} = useAppContext();
+  const {canManageSeason} = useAuthorization();
 
   const [enable3Set, setEnable3Set] = useState<boolean>(false);
   const [result, setResult] = useState<(number | null)[][]>([
@@ -227,7 +228,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
         />
       </Stack>
 
-      {!isAdmin && canEdit && !expired && (
+      {!canManageSeason && canEdit && !expired && (
         <IconButton
           size="small"
           disabled={loading}
@@ -236,7 +237,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
         </IconButton>
       )}
 
-      {!isAdmin && canApprove && (
+      {!canManageSeason && canApprove && (
         <IconButton
           size="small"
           disabled={loading || hasError}
@@ -245,7 +246,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
         </IconButton>
       )}
 
-      <Admin>
+      <CanManageSeason>
         {!editResult ? (
           <IconButton
             sx={{bgcolor: "primary.main"}}
@@ -263,7 +264,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
             <Done fontSize="inherit" color="secondary" />
           </IconButton>
         )}
-      </Admin>
+      </CanManageSeason>
 
       <ConfirmDialog
         open={confirmEditDialog}

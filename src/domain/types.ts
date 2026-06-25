@@ -1,6 +1,6 @@
 import type {FieldPath, Timestamp, WhereFilterOp} from "firebase/firestore";
 
-export type role = "admin" | "user";
+export type role = "admin" | "manager" | "player";
 export type User = {
   id: string;
   displayName: string;
@@ -31,6 +31,7 @@ export interface Player {
   phone?: string;
   email?: string;
   createdAt?: Timestamp;
+  createdBy?: string;
 }
 
 export interface Season {
@@ -42,6 +43,7 @@ export interface Season {
   periods: Period[] | undefined;
   maxMatchesPerPeriod?: number;
   createdAt: Timestamp;
+  createdBy?: string;
 }
 
 export interface Ranking {

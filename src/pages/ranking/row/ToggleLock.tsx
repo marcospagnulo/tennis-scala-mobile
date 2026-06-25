@@ -1,6 +1,7 @@
 import {IconButton} from "@mui/material";
 import {Lock, LockOpen} from "@mui/icons-material";
 import {useAppContext} from "../../../app/context";
+import {useAuthorization} from "../../../hooks/useAuthorization";
 
 const ToggleLock = ({
   lock,
@@ -9,10 +10,10 @@ const ToggleLock = ({
   lock: boolean;
   onToggleLock: (lock: boolean) => void;
 }) => {
-  const {user, mobile} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {mobile} = useAppContext();
+  const {canManageSeason} = useAuthorization();
 
-  if (!isAdmin || mobile) return null;
+  if (!canManageSeason || mobile) return null;
 
   return (
     <>

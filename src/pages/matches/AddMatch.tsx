@@ -11,13 +11,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {Admin, PlayerAvatar} from "../../components";
+import {PlayerAvatar} from "../../components";
 import {Add} from "@mui/icons-material";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../app/context";
 import {MobileDateTimePicker} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import {useAddMatch} from "../../functions";
+import {CanManageSeason} from "../../components/CanManageSeason";
 
 const PlayerSelect = ({
   pid,
@@ -106,7 +107,7 @@ const AddMatch = () => {
   };
 
   return (
-    <Admin>
+    <CanManageSeason>
       <Fab
         color="primary"
         sx={{
@@ -155,7 +156,7 @@ const AddMatch = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Admin>
+    </CanManageSeason>
   );
 };
 

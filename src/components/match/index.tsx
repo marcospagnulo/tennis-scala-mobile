@@ -19,6 +19,7 @@ import {useDownBreakpoint} from "../../hooks/useDownBreakpoint";
 import type {Theme} from "@emotion/react";
 import {MatchDate} from "./MatchDate";
 import {useUpdateMatch} from "../../functions/match/useUpdateMatch";
+import {useAuthorization} from "../../hooks/useAuthorization";
 
 const truncateSx: SxProps<Theme> = {
   overflow: "hidden",
@@ -61,8 +62,8 @@ const matchStatusColorMap: Record<
 };
 
 const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
-  const {user, player, currentSeason} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {player, currentSeason} = useAppContext();
+  const {canManageSeason} = useAuthorization();
   const {loading: updateLoading, updateMatchStatus} = useUpdateMatch();
   const {deleteMatch, loading: deleteLoading} = useDeleteMatch();
   const loading = updateLoading || deleteLoading;
@@ -93,7 +94,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
       match.status === "rejected" ||
       match.status === "approved") &&
     !isUserInMatchAndApproved &&
-    !isAdmin;
+    !canManageSeason;
 
   return (
     <>
@@ -123,7 +124,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
             </Stack>
             {!hideResult && <Result match={match} expired={expired} />}
           </Stack>
-          {(isAdmin ||
+          {(canManageSeason ||
             (match.status !== "completed" && !isUserInMatchAndApproved)) && (
             <Stack
               direction={"row"}
@@ -161,7 +162,8 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
                 />
               )}
               {}
-              {(isAdmin || (match.status === "pending" && isUserPlayer1)) && (
+              {(canManageSeason ||
+                (match.status === "pending" && isUserPlayer1)) && (
                 <Chip
                   variant="outlined"
                   disabled={loading}

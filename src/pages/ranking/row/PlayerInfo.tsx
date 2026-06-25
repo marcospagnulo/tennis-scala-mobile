@@ -18,6 +18,7 @@ import {useAppContext} from "../../../app/context";
 import {useDeleteRanking} from "../../../functions/ranking/useDeleteRanking";
 import {useFindById} from "../../../functions/useFindById";
 import {ErrorIcon} from "../../../icons";
+import {useAuthorization} from "../../../hooks/useAuthorization";
 
 const RowData = ({label, value}: {label: string; value?: string}) => (
   <Stack direction="row" spacing={1}>
@@ -38,8 +39,8 @@ const PlayerInfo = ({
   const [player, setPlayer] = useState<Player>();
   const [deleting, setDeleting] = useState<boolean>(false);
 
-  const {currentSeason, user} = useAppContext();
-  const isAdmin = user?.role === "admin";
+  const {currentSeason} = useAppContext();
+  const {canManageSeason} = useAuthorization();
   const {loading: refreshLoading, refreshRanking} = useRefreshRanking();
   const {loading: deleteLoading, deleteRanking} = useDeleteRanking();
   const {data, loading} = useFindById({
@@ -114,7 +115,7 @@ const PlayerInfo = ({
             </Stack>
           )}
         </DialogContent>
-        {isAdmin && (
+        {canManageSeason && (
           <DialogActions>
             <Button
               variant="text"
