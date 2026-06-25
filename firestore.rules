@@ -9,7 +9,10 @@ service cloud.firestore {
       allow create: if request.auth != null && 
                        (request.auth.token.role == "admin" || request.auth.token.role == "manager");  // Solo admin/manager creano
       allow update: if request.auth != null && 
-                       (request.auth.token.role == "admin" || request.auth.uid == resource.data.createdBy);  // Admin o creatore
+                       (
+                        request.auth.token.role == "admin" || 
+                        request.auth.uid == resource.data.createdBy
+                        );  // Admin o creatore
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }
@@ -19,7 +22,11 @@ service cloud.firestore {
       allow read: if true;  // Chiunque può leggere
       allow create: if request.auth != null;  // Utenti autenticati creano
       allow update: if request.auth != null && 
-                       (request.auth.token.role == "admin" || request.auth.uid == resource.data.createdBy);  // Admin o creatore
+                       (
+                        request.auth.token.role == "admin" || 
+                        request.auth.uid == resource.data.createdBy || 
+                        request.auth.uid == resource.data.userId
+                        );  // Admin o creatore
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }
