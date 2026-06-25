@@ -36,8 +36,10 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
       initialFormData={initialFormData}
       rules={{
         canAdd: isAdmin || isManager,
-        canEdit: row => isAdmin || row.createdBy === user?.id,
-        canDelete: row => isAdmin || row.createdBy === user?.id,
+        canEdit: row =>
+          isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
+        canDelete: row =>
+          isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
       }}
     />
   );
