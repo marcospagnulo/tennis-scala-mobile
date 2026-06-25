@@ -6,11 +6,11 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
   IconButton,
   Paper,
   Stack,
   Switch,
+  Typography,
   type SxProps,
 } from "@mui/material";
 import type {Player} from "../../domain/types";
@@ -42,45 +42,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
 
   return (
     <Stack sx={{...sx, ...(!mobile && {pb: 2}), pt: 2}}>
-      <Stack
-        direction={"row"}
-        sx={{
-          alignItems: "center",
-          mb: 2,
-          gap: 2,
-          ...(mobile && {px: 2}),
-        }}>
-        <FormControlLabel
-          control={
-            <Switch checked={live} onChange={() => setLive(prev => !prev)} />
-          }
-          label="Live"
-        />
-        <FormControlLabel
-          control={
-            <Switch
-              checked={mode === "compact"}
-              onChange={() =>
-                setMode(prev => (prev === "compact" ? "expanded" : "compact"))
-              }
-            />
-          }
-          label="Compatta"
-        />
-
-        <Admin>
-          <IconButton
-            onClick={() => setDialog(true)}
-            sx={{
-              ml: "auto",
-              "&, &:hover": {
-                backgroundColor: theme => theme.palette.primary.main,
-              },
-            }}>
-            <AddIcon fontSize="inherit" sx={{color: "white"}} />
-          </IconButton>
-        </Admin>
-      </Stack>
       {!minPlayers && !rankingLoading && (
         <InfoBox
           sx={{
@@ -109,6 +70,47 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               flex: "1 1 0",
               overflow: "hidden",
             }}>
+            <Stack
+              direction={"row"}
+              sx={{
+                alignItems: "center",
+                gap: 2,
+                ...(mobile && {px: 2}),
+              }}>
+              <Stack direction={"row"} sx={{alignItems: "center"}}>
+                <Typography>Live</Typography>
+                <Switch
+                  disabled={!currentSeason?.periods?.find(p => !p.end)}
+                  checked={live}
+                  onChange={() => setLive(prev => !prev)}
+                />
+              </Stack>
+              <Stack direction={"row"} sx={{alignItems: "center"}}>
+                <Typography>Compatta</Typography>
+                <Switch
+                  checked={mode === "compact"}
+                  onChange={() =>
+                    setMode(prev =>
+                      prev === "compact" ? "expanded" : "compact",
+                    )
+                  }
+                />
+              </Stack>
+
+              <Admin>
+                <IconButton
+                  size="small"
+                  onClick={() => setDialog(true)}
+                  sx={{
+                    ml: "auto",
+                    "&, &:hover": {
+                      backgroundColor: theme => theme.palette.primary.main,
+                    },
+                  }}>
+                  <AddIcon fontSize="inherit" sx={{color: "white"}} />
+                </IconButton>
+              </Admin>
+            </Stack>
             <Stack
               sx={{
                 overflow: "auto",

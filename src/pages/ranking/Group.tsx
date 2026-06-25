@@ -80,7 +80,7 @@ const RankingGroup = ({
               liveRanking={
                 live
                   ? undefined
-                  : liveRanking.find(lr => lr.player.id === r.player.id)
+                  : liveRanking?.find(lr => lr.player.id === r.player.id)
               }
               mode={mode}
               bgColor={getRankingBgColor(

@@ -16,6 +16,7 @@ import {MobileAppBar} from "./MobileAppBar";
 import {ErrorIcon} from "../icons";
 import dayjs from "dayjs";
 import {useEffect} from "react";
+import {CurrentSeason} from "./CurrentSeason";
 
 const App = () => {
   const mobile = useMediaQuery(useTheme().breakpoints.down("md"));
@@ -39,6 +40,9 @@ const App = () => {
               overflow: "auto",
               ...(mobile && {pl: "0 !important", pr: "0 !important"}),
             }}>
+            <Box sx={{mt: 1}}>
+              <CurrentSeason />
+            </Box>
             <Routes>
               {navigationItems.map(item => (
                 <Route

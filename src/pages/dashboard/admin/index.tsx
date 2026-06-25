@@ -106,13 +106,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={
-              !currentSeason ||
-              periodLoading ||
-              currentSeasonExpired ||
-              !currentSeason.periods?.length ||
-              !currentPeriod
-            }
+            disabled={periodLoading || !currentPeriod}
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setClosePeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>
