@@ -112,7 +112,7 @@ const AddMatch = () => {
         sx={{
           position: "fixed",
           right: 32,
-          bottom: mobile ? "calc(80px + env(safe-area-inset-bottom))" : 32,
+          bottom: mobile ? "calc(96px + env(safe-area-inset-bottom))" : 32,
           zIndex: 1,
         }}
         onClick={() => setOpen(true)}>

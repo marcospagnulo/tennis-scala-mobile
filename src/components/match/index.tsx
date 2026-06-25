@@ -61,7 +61,6 @@ const matchStatusColorMap: Record<
 };
 
 const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
-  const downSm = useDownBreakpoint("sm");
   const {user, player, currentSeason} = useAppContext();
   const isAdmin = user?.role === "admin";
   const {loading: updateLoading, updateMatchStatus} = useUpdateMatch();
@@ -106,14 +105,14 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
             gap: 1,
             py: 1,
           }}>
-          <Stack direction={"row"} spacing={1}>
+          <Stack direction={"row"} spacing={1} sx={{flex: 1}}>
             <Stack
               direction={hideResult ? "row" : "column"}
               sx={{
                 gap: 1,
                 flex: 1,
                 ...(!hideResult
-                  ? {maxWidth: downSm ? 120 : 200}
+                  ? {}
                   : {alignItems: "center", justifyContent: "center"}),
               }}>
               <Player id={match.pid1} />

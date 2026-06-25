@@ -197,7 +197,9 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
 
   const winnerIndex = getWinnerIndex(result);
   return (
-    <Stack direction={"row"} sx={{gap: 1, flex: 1, alignItems: "center"}}>
+    <Stack
+      direction={"row"}
+      sx={{gap: 1, alignItems: "center", pr: 2, minWidth: 120}}>
       <Stack sx={{gap: 1}}>
         <ResultRow
           loading={loading}

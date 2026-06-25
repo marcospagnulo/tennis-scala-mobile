@@ -4,7 +4,7 @@ import type {Period} from "../../domain/types";
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../app/context";
 import {MatchInfo} from "../../components/match";
-import {Paper, Tab, Tabs, Typography} from "@mui/material";
+import {Divider, Paper, Tab, Tabs, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import {MatchIcon} from "../../icons";
 import {AddMatch} from "./AddMatch";
@@ -55,7 +55,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const matches = Object.values(period?.matches || {});
 
   return (
-    <Stack sx={{...sx, gap: 2}}>
+    <Paper sx={{...sx, display: "flex", flexDirection: "column", m: 2, gap: 2}}>
       <Tabs
         variant="scrollable"
         value={period?.start.toMillis() ?? periods[0]?.value}
@@ -69,7 +69,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           flex: "1 1 0",
           overflow: "auto",
           pb: 2,
-          ...(mobile && {px: 2, pb: matches.length > 0 ? 10 : 2}),
+          ...(mobile && {pb: matches.length > 0 ? 10 : 2}),
           ...(matches.length === 0 && {
             gap: 2,
             alignItems: "center",
@@ -77,16 +77,16 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
           }),
         }}>
         {matches.length > 0 && (
-          <Stack spacing={2}>
+          <Stack divider={<Divider />}>
             {[
               ...matches
                 .sort((a, b) => a.date.toMillis() - b.date.toMillis())
                 .map((m, index) => (
-                  <Paper
+                  <Stack
                     key={`match-paper-${index}`}
                     sx={{display: "flex", overflow: "hidden"}}>
                     <MatchInfo match={m} expired={!!period?.end} />
-                  </Paper>
+                  </Stack>
                 )),
             ]}
           </Stack>
@@ -107,7 +107,7 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
         )}
       </Stack>
       {currentSeason?.periods && <AddMatch />}
-    </Stack>
+    </Paper>
   );
 };
 
