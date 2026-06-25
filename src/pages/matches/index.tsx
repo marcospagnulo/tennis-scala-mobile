@@ -64,14 +64,20 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
         gap: 2,
         my: mobile ? 0 : 2,
       }}>
-      <Tabs
-        variant="scrollable"
-        value={period?.start.toMillis() ?? periods[0]?.value}
-        onChange={(_e, value) => handleChange(value)}>
-        {periods.map(p => (
-          <Tab key={`period-tab-${p.value}`} label={p.label} value={p.value} />
-        ))}
-      </Tabs>
+      {periods.length > 0 && (
+        <Tabs
+          variant="scrollable"
+          value={period?.start.toMillis() ?? periods[0]?.value}
+          onChange={(_e, value) => handleChange(value)}>
+          {periods.map(p => (
+            <Tab
+              key={`period-tab-${p.value}`}
+              label={p.label}
+              value={p.value}
+            />
+          ))}
+        </Tabs>
+      )}
       <Stack
         sx={{
           flex: "1 1 0",

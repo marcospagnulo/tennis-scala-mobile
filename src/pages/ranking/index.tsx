@@ -20,9 +20,8 @@ import {useState} from "react";
 import {PlayerList} from "./player-list";
 import {RankingHeader} from "./Header";
 import {useAddPlayers} from "../../functions/ranking/useAddPlayers";
-import {AddIcon} from "../../icons";
+import {AddIcon, RankingIcon} from "../../icons";
 import {useRanking} from "../../functions";
-import {InfoBox} from "../../components";
 import {RankingGroup} from "./Group";
 import {CanManageSeason} from "../../components/CanManageSeason";
 
@@ -47,15 +46,20 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         sx={{display: "flex", flexDirection: "column", flex: "1 1 0"}}
         elevation={mobile ? 0 : 1}>
         {!minPlayers && !rankingLoading && (
-          <InfoBox
+          <Stack
+            spacing={2}
             sx={{
-              ...(mobile && {mx: 2}),
-            }}
-            invert
-            message="Non è stato raggiunto il numero minimo di 16 iscritti"
-          />
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+            <RankingIcon color="primary" sx={{fontSize: mobile ? 120 : 180}} />
+            <Typography variant={mobile ? "h6" : "h5"}>
+              Classifica non disponibile
+            </Typography>
+          </Stack>
         )}
-        {rankingLoading ? (
+        {rankingLoading && (
           <Box
             sx={{
               flex: 1,
@@ -65,7 +69,8 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
             }}>
             <CircularProgress />
           </Box>
-        ) : (
+        )}
+        {!rankingLoading && minPlayers && (
           <Stack
             sx={{
               gap: 1,
