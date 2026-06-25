@@ -1,7 +1,7 @@
 import {
-  Button,
   Chip,
   Collapse,
+  Divider,
   IconButton,
   Paper,
   Skeleton,
@@ -16,7 +16,7 @@ import {useEffect, useState} from "react";
 import {useAddPlayers} from "../functions/ranking/useAddPlayers";
 import {Select} from "../components/Select";
 import {useRanking} from "../functions";
-import {UnfoldLess, UnfoldMore} from "@mui/icons-material";
+import {SportsTennis, UnfoldLess, UnfoldMore} from "@mui/icons-material";
 import {useLocation} from "react-router-dom";
 
 const Row = ({label, value}: {label: string; value: string | number}) => (
@@ -80,7 +80,9 @@ const CurrentSeason = () => {
   }
 
   return (
-    <Paper sx={{...(mobile && {mx: 2})}}>
+    <Paper
+      elevation={mobile && location.pathname !== "/" ? 0 : 1}
+      sx={{...(location.pathname === "/" && {mx: 2, mt: 2})}}>
       <Stack direction={"row"} sx={{p: 2, alignItems: "center"}} spacing={2}>
         {appLoading && (
           <Stack spacing={1}>
@@ -108,7 +110,7 @@ const CurrentSeason = () => {
               <IconButton
                 sx={{ml: "auto"}}
                 onClick={() => setExpanded(!expanded)}>
-                {expanded ? <UnfoldMore /> : <UnfoldLess />}
+                {!expanded ? <UnfoldMore /> : <UnfoldLess />}
               </IconButton>
             </Stack>
             <Collapse in={expanded}>
@@ -133,31 +135,38 @@ const CurrentSeason = () => {
                   value={dayjs(currentSeason.start.toDate()).format("D MMM YY")}
                 />
               </Stack>
-              {!isMember && !expired && user && (
-                <Stack sx={{mt: 1}}>
-                  {invalidPlayerInfo && (
-                    <InfoBox message="Completa il tuo profilo per partecipare al torneo" />
-                  )}
-                  <Button
-                    loading={loading}
-                    disabled={invalidPlayerInfo}
-                    variant="contained"
-                    onClick={() => setOpen(true)}>
-                    Partecipa
-                  </Button>
-                </Stack>
+              {!isMember && !expired && user && invalidPlayerInfo && (
+                <InfoBox
+                  sx={{mt: 1}}
+                  message="Completa il tuo profilo per partecipare al torneo"
+                />
               )}
               <Stack
                 direction={"row"}
                 spacing={1}
                 sx={{mt: 1, justifyContent: "flex-end"}}>
+                {!isMember && !expired && user && (
+                  <Chip
+                    label="Partecipa"
+                    color="primary"
+                    icon={<SportsTennis fontSize="inherit" />}
+                    disabled={loading || invalidPlayerInfo}
+                    onClick={() => setOpen(true)}
+                  />
+                )}
+                {isMember && (
+                  <Chip
+                    variant="outlined"
+                    label="Iscritto"
+                    color="primary"
+                    sx={{ml: 1}}
+                  />
+                )}
                 <Chip
+                  variant="outlined"
                   label={expired ? "Terminata" : "In corso"}
                   color={expired ? "error" : "success"}
                 />
-                {isMember && (
-                  <Chip label="Iscritto" color="primary" sx={{ml: 1}} />
-                )}
               </Stack>
             </Collapse>
           </Stack>
@@ -170,6 +179,7 @@ const CurrentSeason = () => {
           onConfirm={handleConfirmJoin}
         />
       </Stack>
+      {mobile && location.pathname !== "/" && <Divider />}
     </Paper>
   );
 };

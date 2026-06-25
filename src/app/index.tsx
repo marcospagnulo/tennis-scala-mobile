@@ -40,7 +40,7 @@ const App = () => {
               overflow: "auto",
               ...(mobile && {pl: "0 !important", pr: "0 !important"}),
             }}>
-            <Box sx={{mt: 1}}>
+            <Box sx={{...(!mobile && {mt: 1})}}>
               <CurrentSeason />
             </Box>
             <Routes>

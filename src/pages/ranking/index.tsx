@@ -42,18 +42,19 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
   };
 
   return (
-    <Stack sx={{...sx, ...(!mobile && {pb: 2}), pt: 2}}>
-      {!minPlayers && !rankingLoading && (
-        <InfoBox
-          sx={{
-            ...(mobile && {mx: 2}),
-          }}
-          invert
-          message="Non è stato raggiunto il numero minimo di 16 iscritti"
-        />
-      )}
-
-      <Paper sx={{display: "flex", flex: "1 1 0"}} elevation={mobile ? 0 : 1}>
+    <Stack sx={{...sx, ...(!mobile && {py: 2})}}>
+      <Paper
+        sx={{display: "flex", flexDirection: "column", flex: "1 1 0"}}
+        elevation={mobile ? 0 : 1}>
+        {!minPlayers && !rankingLoading && (
+          <InfoBox
+            sx={{
+              ...(mobile && {mx: 2}),
+            }}
+            invert
+            message="Non è stato raggiunto il numero minimo di 16 iscritti"
+          />
+        )}
         {rankingLoading ? (
           <Box
             sx={{
@@ -76,7 +77,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
               sx={{
                 alignItems: "center",
                 gap: 2,
-                ...(mobile && {px: 2}),
+                px: 2,
               }}>
               <Stack direction={"row"} sx={{alignItems: "center"}}>
                 <Typography>Live</Typography>

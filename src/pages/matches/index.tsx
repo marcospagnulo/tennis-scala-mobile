@@ -55,7 +55,15 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
   const matches = Object.values(period?.matches || {});
 
   return (
-    <Paper sx={{...sx, display: "flex", flexDirection: "column", m: 2, gap: 2}}>
+    <Paper
+      elevation={mobile ? 0 : 1}
+      sx={{
+        ...sx,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        my: mobile ? 0 : 2,
+      }}>
       <Tabs
         variant="scrollable"
         value={period?.start.toMillis() ?? periods[0]?.value}
