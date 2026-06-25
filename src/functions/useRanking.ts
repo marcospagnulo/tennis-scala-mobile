@@ -46,7 +46,10 @@ const useRanking = (live?: boolean) => {
 
   useEffect(() => {
     const currentPeriod = currentSeason?.periods?.find(p => !p.end);
-    if (!currentPeriod || !currentSeason) return;
+    if (!currentPeriod || !currentSeason) {
+      setLiveRanking([]);
+      return;
+    }
 
     const newRanking = calculateNewRanking(
       currentPeriod,
