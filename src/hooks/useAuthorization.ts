@@ -8,10 +8,10 @@ const useAuthorization = () => {
     isManager: user?.role === "manager",
     canManageSeason:
       user?.role === "admin" ||
-      (currentSeason?.createdBy &&
-        user &&
-        user.role === "manager" &&
-        currentSeason.createdBy === user.id),
+      (user?.role === "manager" &&
+        currentSeason?.createdBy === user?.id &&
+        currentSeason?.createdBy !== undefined &&
+        user?.id !== undefined),
   };
 };
 

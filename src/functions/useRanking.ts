@@ -124,6 +124,7 @@ const useRanking = (live?: boolean) => {
     rankingPlayer,
     rankingGroups,
     minPlayers,
+    liveRanking,
     loading,
   };
 };
