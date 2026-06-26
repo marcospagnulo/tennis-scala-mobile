@@ -73,7 +73,6 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
         {!rankingLoading && minPlayers && (
           <Stack
             sx={{
-              gap: 1,
               flex: "1 1 0",
               overflow: "hidden",
             }}>
@@ -83,6 +82,7 @@ const RankingPage = ({sx}: {sx?: SxProps<Theme>}) => {
                 alignItems: "center",
                 gap: 2,
                 px: 2,
+                pt: 1,
               }}>
               <Stack direction={"row"} sx={{alignItems: "center"}}>
                 <Typography>Live</Typography>
