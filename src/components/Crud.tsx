@@ -95,9 +95,8 @@ const Crud = <T extends Entity>({
 
   const {items, loading, rowCount, refetch} = useQueryCollection({
     collection,
-    pagination,
     queryText,
-    sort,
+    pagination,
   });
 
   const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -270,8 +269,8 @@ const Crud = <T extends Entity>({
           pagination
           paginationMode="server"
           rowCount={rowCount}
-          pageSizeOptions={pageSizeOptions}
           sortModel={sort}
+          pageSizeOptions={pageSizeOptions}
           onSortModelChange={setSort}
           paginationModel={pagination}
           onPaginationModelChange={setPagination}

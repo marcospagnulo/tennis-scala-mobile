@@ -23,8 +23,8 @@ export type PlayerStatus = "active" | "unactive";
 export interface Player {
   id: string | undefined;
   userId?: string;
-  name?: string;
-  surname?: string;
+  name: string;
+  surname: string;
   avatar?: string;
   gender?: "male" | "female" | "other";
   birthDate?: Timestamp;

@@ -8,11 +8,9 @@ import {columns} from "./columns";
 import {Form} from "./form";
 import {useAppContext} from "../../app/context";
 import {useAuthorization} from "../../hooks/useAuthorization";
+import {useEffect} from "react";
 
-const initialSort: querySort[] = [
-  {field: "surname", sort: "asc"},
-  {field: "name", sort: "asc"},
-];
+const initialSort: querySort[] = [{field: "surname", sort: "asc"}];
 
 export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
   const {user, mobile} = useAppContext();
@@ -28,6 +26,10 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
     avatar: "",
     createdBy: user?.id,
   };
+
+  useEffect(() => {
+    //
+  }, []);
 
   if (!collections) return null;
 

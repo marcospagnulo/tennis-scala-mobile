@@ -11,7 +11,7 @@ import {
   where,
   type WithFieldValue,
 } from "firebase/firestore";
-import type {Player, role, Season, User} from "../domain/types";
+import type {Player, querySort, role, Season, User} from "../domain/types";
 import {
   onAuthStateChanged,
   signOut,
@@ -47,6 +47,8 @@ export const useAppContext = (): AppContextType => {
   return context;
 };
 
+const initSort: readonly querySort[] = [{field: "start", sort: "desc"}];
+
 export const AppProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
@@ -60,7 +62,7 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
 
   const {items: seasons, loading: seasonLoading} = useQueryCollection<Season>({
     collection: collections?.seasons,
-    sort: [{field: "start", direction: "desc"}],
+    sort: initSort,
     skip: user === undefined, // Skip query until auth state is resolved
   });
 
@@ -111,6 +113,8 @@ export const AppProvider: React.FC<{children: React.ReactNode}> = ({
       const newPlayer: WithFieldValue<Partial<Player>> = {
         userId: user.id,
         email: user.email,
+        name: "",
+        surname: "",
         createdAt: serverTimestamp(),
       };
       const newPlayerDoc = await addDoc(collections.players, newPlayer);
