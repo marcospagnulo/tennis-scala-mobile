@@ -10,6 +10,14 @@ const openPeriod = async (season: Season) => {
 
   const currentPeriod = updatedSeason.periods?.find(p => !p.end);
   if (currentPeriod) {
+    // Check if all matches in the current period are completed
+    Object.entries(currentPeriod.matches).forEach(([, match]) => {
+      if (match.status !== "completed") {
+        throw new Error(
+          "Ci sono partite non completate. Assicurati di approvare o rifiutare tutte le partite prima di chiudere il periodo.",
+        );
+      }
+    });
     currentPeriod.end = new Timestamp(Date.now() / 1000, 0);
   }
 
