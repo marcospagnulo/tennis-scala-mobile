@@ -95,9 +95,9 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
             {[
               ...matches
                 .sort((a, b) => a.date.toMillis() - b.date.toMillis())
-                .map((m, index) => (
+                .map(m => (
                   <Stack
-                    key={`match-paper-${index}`}
+                    key={`match-paper-${m.id}`}
                     sx={{display: "flex", overflow: "hidden"}}>
                     <MatchInfo match={m} expired={!!period?.end} />
                   </Stack>
