@@ -27,7 +27,6 @@ import {
   GridActionsCell,
   GridActionsCellItem,
   type GridColDef,
-  type GridPaginationModel,
 } from "@mui/x-data-grid";
 import type {Theme} from "@emotion/react";
 import {AddIcon, EditIcon, DeleteIcon} from "../icons";
@@ -35,6 +34,7 @@ import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../functions/useQueryCollection";
 import {ConfirmDialog} from "./ConfirmDialog";
+import type {queryPage, querySort} from "../domain/types";
 
 export interface Entity {
   id: string | undefined;
@@ -45,12 +45,13 @@ interface CrudProps<T extends Entity> {
   title: string;
   collection: CollectionReference<T, T>;
   columns: GridColDef<T>[];
+  sx?: SxProps<Theme>;
+  sort?: querySort[];
   rules: {
     canAdd: boolean;
     canEdit: (row: T) => boolean;
     canDelete: (row: T) => boolean;
   };
-  sx?: SxProps<Theme>;
   actions?: {
     icon: React.ElementType<SvgIconProps>;
     label: string;
@@ -65,7 +66,7 @@ interface CrudProps<T extends Entity> {
 }
 
 const pageSizeOptions = [25, 50, 100];
-export function Crud<T extends Entity>({
+const Crud = <T extends Entity>({
   sx,
   collection,
   columns: initialColumns,
@@ -74,7 +75,8 @@ export function Crud<T extends Entity>({
   initialFormData,
   actions,
   rules,
-}: CrudProps<T>) {
+  sort: initialSort,
+}: CrudProps<T>) => {
   const {mobile} = useAppContext();
 
   const [selectedItem, setSelectedItem] = useState<T | null>(null);
@@ -83,7 +85,10 @@ export function Crud<T extends Entity>({
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [queryText, setQueryText] = useState<string>("");
-  const [pagination, setPagination] = useState<GridPaginationModel>({
+  const [sort, setSort] = useState<readonly querySort[] | undefined>(
+    initialSort,
+  );
+  const [pagination, setPagination] = useState<queryPage>({
     page: 0,
     pageSize: pageSizeOptions[0],
   });
@@ -92,6 +97,7 @@ export function Crud<T extends Entity>({
     collection,
     pagination,
     queryText,
+    sort,
   });
 
   const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,7 +241,7 @@ export function Crud<T extends Entity>({
           {rules.canAdd && (
             <IconButton
               onClick={handleAddClick}
-              size="medium"
+              size="small"
               sx={{
                 "&, &:hover": {
                   backgroundColor: theme => theme.palette.primary.main,
@@ -265,8 +271,10 @@ export function Crud<T extends Entity>({
           paginationMode="server"
           rowCount={rowCount}
           pageSizeOptions={pageSizeOptions}
+          sortModel={sort}
+          onSortModelChange={setSort}
           paginationModel={pagination}
-          onPaginationModelChange={newModel => setPagination(newModel)}
+          onPaginationModelChange={setPagination}
           localeText={{
             noResultsOverlayLabel: "Nessun risultato",
             noRowsLabel: "Nessun dato",
@@ -298,4 +306,6 @@ export function Crud<T extends Entity>({
       />
     </Stack>
   );
-}
+};
+
+export {Crud};

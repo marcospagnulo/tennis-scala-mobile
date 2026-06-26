@@ -80,10 +80,14 @@ export interface Match {
   status: "pending" | "approved" | "rejected" | "completed";
   date: Timestamp;
 }
+export type queryPage = {
+  page: number;
+  pageSize: number;
+};
 
 export type querySort = {
-  field: string | FieldPath;
-  direction: "asc" | "desc";
+  field: string;
+  sort: "asc" | "desc" | null | undefined;
 };
 
 export type queryFilter = {

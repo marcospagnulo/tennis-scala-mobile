@@ -1,6 +1,6 @@
 import {type SxProps} from "@mui/material";
 import {Timestamp} from "firebase/firestore";
-import type {Player} from "../../domain/types";
+import type {Player, querySort} from "../../domain/types";
 import type {Theme} from "@emotion/react";
 import {collections} from "../../lib/firebase";
 import {Crud} from "../../components/Crud";
@@ -8,6 +8,11 @@ import {columns} from "./columns";
 import {Form} from "./form";
 import {useAppContext} from "../../app/context";
 import {useAuthorization} from "../../hooks/useAuthorization";
+
+const initialSort: querySort[] = [
+  {field: "surname", sort: "asc"},
+  {field: "name", sort: "asc"},
+];
 
 export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
   const {user, mobile} = useAppContext();
@@ -34,6 +39,7 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
       title="Giocatore"
       form={Form}
       initialFormData={initialFormData}
+      sort={initialSort}
       rules={{
         canAdd: isAdmin || isManager,
         canEdit: row =>
