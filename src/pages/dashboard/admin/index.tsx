@@ -59,6 +59,18 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
 
   const currentPeriod = currentSeason?.periods?.find(p => !p.end);
 
+  const disableClosePeriod =
+    periodLoading ||
+    !canManageSeason ||
+    !currentPeriod ||
+    Object.keys(currentPeriod.matches).length === 0;
+
+  const disableNewPeriod =
+    periodLoading ||
+    !canManageSeason ||
+    currentSeasonExpired ||
+    (currentPeriod && Object.keys(currentPeriod.matches).length === 0);
+
   return (
     <DashboardCard
       direction={direction}
@@ -100,7 +112,6 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
                 sx={{fontSize: 40, position: "absolute", bottom: 0, right: 0}}
               />
             </Box>
-
             <Typography sx={{...truncateSx}} variant="body2">
               Stagioni
             </Typography>
@@ -108,7 +119,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={periodLoading || !currentPeriod || !canManageSeason}
+            disabled={disableClosePeriod}
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setClosePeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>
@@ -124,12 +135,7 @@ const AdminCard = ({direction}: {direction?: "row" | "column"}) => {
           <Button
             variant="contained"
             color="secondary"
-            disabled={
-              !currentSeason ||
-              periodLoading ||
-              currentSeasonExpired ||
-              !canManageSeason
-            }
+            disabled={disableNewPeriod}
             sx={{flexDirection: "column", gap: 2, p: 2, flex: 1}}
             onClick={() => setOpenPeriodDialogOpen(true)}>
             <Box sx={{position: "relative", width: 50, height: 50}}>
