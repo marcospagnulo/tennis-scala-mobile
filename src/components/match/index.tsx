@@ -114,7 +114,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
                 gap: 1,
                 flex: 1,
                 ...(!hideResult
-                  ? {maxWidth: downSm ? "50%" : "30%"}
+                  ? {maxWidth: downSm ? "50%" : "40%"}
                   : {alignItems: "center", justifyContent: "center"}),
               }}>
               <Player id={match.pid1} />

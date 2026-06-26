@@ -83,7 +83,10 @@ const CurrentSeason = () => {
     <Paper
       elevation={mobile && location.pathname !== "/" ? 0 : 1}
       sx={{...(location.pathname === "/" && {mx: 2, mt: 2})}}>
-      <Stack direction={"row"} sx={{p: 2, alignItems: "center"}} spacing={2}>
+      <Stack
+        direction={"row"}
+        sx={{p: expanded ? 2 : 1, alignItems: "center"}}
+        spacing={2}>
         {appLoading && (
           <Stack spacing={1}>
             <Skeleton variant="text" width={120} height={40} />
@@ -149,6 +152,7 @@ const CurrentSeason = () => {
                   <Chip
                     label="Partecipa"
                     color="primary"
+                    size="small"
                     icon={<SportsTennis fontSize="inherit" />}
                     disabled={loading || invalidPlayerInfo}
                     onClick={() => setOpen(true)}
@@ -159,6 +163,7 @@ const CurrentSeason = () => {
                     variant="outlined"
                     label="Iscritto"
                     color="primary"
+                    size="small"
                     sx={{ml: 1}}
                   />
                 )}
@@ -166,6 +171,7 @@ const CurrentSeason = () => {
                   variant="outlined"
                   label={expired ? "Terminata" : "In corso"}
                   color={expired ? "error" : "success"}
+                  size="small"
                 />
               </Stack>
             </Collapse>
