@@ -61,7 +61,6 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
         ...sx,
         display: "flex",
         flexDirection: "column",
-        gap: 2,
         my: mobile ? 0 : 2,
       }}>
       {periods.length > 0 && (
@@ -95,9 +94,9 @@ const MatchesPage = ({sx}: {sx?: SxProps<Theme>}) => {
             {[
               ...matches
                 .sort((a, b) => a.date.toMillis() - b.date.toMillis())
-                .map(m => (
+                .map((m, index) => (
                   <Stack
-                    key={`match-paper-${m.id}`}
+                    key={`match-paper-${index}-${m.id}`}
                     sx={{display: "flex", overflow: "hidden"}}>
                     <MatchInfo match={m} expired={!!period?.end} />
                   </Stack>

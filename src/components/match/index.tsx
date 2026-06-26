@@ -62,6 +62,7 @@ const matchStatusColorMap: Record<
 };
 
 const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
+  const downSm = useDownBreakpoint("sm");
   const {player, currentSeason} = useAppContext();
   const {canManageSeason} = useAuthorization();
   const {loading: updateLoading, updateMatchStatus} = useUpdateMatch();
@@ -113,7 +114,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
                 gap: 1,
                 flex: 1,
                 ...(!hideResult
-                  ? {}
+                  ? {maxWidth: downSm ? "50%" : "30%"}
                   : {alignItems: "center", justifyContent: "center"}),
               }}>
               <Player id={match.pid1} />

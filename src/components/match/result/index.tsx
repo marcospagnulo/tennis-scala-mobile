@@ -29,7 +29,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
   const {loading, updateMatchResult, resetMatchApproval} = useUpdateMatch();
 
   const tfSx: SxProps<Theme> = {
-    width: 40,
+    width: 32,
     "& .MuiInputBase-input": {
       textAlign: "center",
       padding: "2px 0",
