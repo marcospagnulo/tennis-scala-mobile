@@ -7,7 +7,7 @@ import {
   Stack,
 } from "@mui/material";
 import {navigationItems} from "./navigation";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAppContext} from "./context";
 import {PlayerDialog} from "../components/player";
@@ -18,16 +18,16 @@ const BottomNavigation = () => {
   const {player} = useAppContext();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const path = navigationItems[value].path;
-    navigate(path);
-  }, [value, navigate]);
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+    navigate(navigationItems[newValue].path);
+  };
 
   return (
     <MuiBottomNavigation
       showLabels
       value={value}
-      onChange={(_e, v) => setValue(v)}
+      onChange={handleChange}
       sx={{
         height: "calc(64px + env(safe-area-inset-bottom))",
         bgcolor: "primary.main",
