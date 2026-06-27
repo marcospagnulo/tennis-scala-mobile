@@ -126,6 +126,9 @@ const useQueryCollection = <T extends DocumentData>({
         const lastDoc =
           documentSnapshots.docs[documentSnapshots.docs.length - 1];
         lastDocsRef.current.set(pagination.page, lastDoc);
+
+        const prev = (await getDoc(doc(collection, lastDoc.id))).data();
+        console.log("set last doc", prev);
       }
 
       setItems(data);

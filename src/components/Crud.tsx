@@ -97,6 +97,7 @@ const Crud = <T extends Entity>({
     collection,
     queryText,
     pagination,
+    sort,
   });
 
   const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
