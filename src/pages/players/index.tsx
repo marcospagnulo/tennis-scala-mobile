@@ -8,14 +8,16 @@ import {getColumns} from "./columns";
 import {Form} from "./form";
 import {useAppContext} from "../../app/context";
 import {useAuthorization} from "../../hooks/useAuthorization";
-import {useEffect} from "react";
+import {useState} from "react";
 import {useDownBreakpoint} from "../../hooks/useDownBreakpoint";
+import {PlayerInfo} from "./PlayerInfo";
 
 const initialSort: querySort[] = [{field: "surname", sort: "asc"}];
 
 export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
   const {user, mobile} = useAppContext();
   const {isAdmin, isManager} = useAuthorization();
+  const [player, setPlayer] = useState<Player>();
 
   const initialFormData: Partial<Player> = {
     name: "",
@@ -28,31 +30,34 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
     createdBy: user?.id,
   };
 
-  useEffect(() => {
-    //
-  }, []);
-
-  const downSm = useDownBreakpoint("sm");
+  const downSm = useDownBreakpoint("md");
 
   if (!collections) return null;
 
   return (
-    <Crud<Player>
-      sx={{...sx, ...(!mobile && {py: 2})}}
-      collection={collections.players}
-      columns={getColumns(downSm)}
-      title="Giocatore"
-      form={Form}
-      initialFormData={initialFormData}
-      sort={initialSort}
-      searchField="surname"
-      rules={{
-        canAdd: isAdmin || isManager,
-        canEdit: row =>
-          isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
-        canDelete: row =>
-          isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
-      }}
-    />
+    <>
+      <Crud<Player>
+        sx={{...sx, ...(!mobile && {py: 2})}}
+        collection={collections.players}
+        columns={getColumns(downSm)}
+        title="Giocatore"
+        form={Form}
+        initialFormData={initialFormData}
+        sort={initialSort}
+        searchField="surname"
+        onRowClick={setPlayer}
+        rules={{
+          canAdd: isAdmin || isManager,
+          canEdit: row =>
+            isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
+          canDelete: row =>
+            isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
+        }}
+      />
+      <PlayerInfo
+        player={player || undefined}
+        onClose={() => setPlayer(undefined)}
+      />
+    </>
   );
 }

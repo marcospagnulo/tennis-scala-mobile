@@ -1,5 +1,5 @@
 import {Female, Male} from "@mui/icons-material";
-import {Avatar, Box, Stack} from "@mui/material";
+import {Stack} from "@mui/material";
 import type {
   GridColDef,
   GridRenderCellParams,
@@ -9,22 +9,6 @@ import dayjs from "dayjs";
 import type {Timestamp} from "firebase/firestore";
 
 const getColumns = (downSm: boolean): GridColDef[] => [
-  {
-    field: "avatar",
-    headerName: "",
-    width: 80,
-    renderCell: params => {
-      return (
-        <Box sx={{mt: 0.5}}>
-          <Avatar
-            src={params.row.avatar}
-            alt="Avatar"
-            sx={{width: 40, height: 40}}
-          />
-        </Box>
-      );
-    },
-  },
   {field: "surname", headerName: "Cognome", flex: 1, minWidth: 150},
   {field: "name", headerName: "Nome", flex: 1, minWidth: 150},
 

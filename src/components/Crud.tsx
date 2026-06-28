@@ -48,6 +48,7 @@ interface CrudProps<T extends Entity> {
   sx?: SxProps<Theme>;
   sort?: querySort[];
   searchField?: string;
+  onRowClick?: (item: T) => void;
   rules: {
     canAdd: boolean;
     canEdit: (row: T) => boolean;
@@ -78,6 +79,7 @@ const Crud = <T extends Entity>({
   rules,
   sort: initialSort,
   searchField,
+  onRowClick,
 }: CrudProps<T>) => {
   const {mobile} = useAppContext();
 
@@ -272,7 +274,7 @@ const Crud = <T extends Entity>({
             </IconButton>
           )}
         </Stack>
-        <DataGrid
+        <DataGrid<T>
           sx={{
             border: "none",
             height: "100%",
@@ -285,6 +287,7 @@ const Crud = <T extends Entity>({
             }),
           }}
           loading={loading}
+          onRowClick={e => onRowClick?.(e.row)}
           disableColumnMenu={true}
           rows={items}
           columns={columns}
