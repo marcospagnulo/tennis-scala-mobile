@@ -34,7 +34,7 @@ import {useAppContext} from "../app/context";
 import {Search} from "@mui/icons-material";
 import {useQueryCollection} from "../functions/useQueryCollection";
 import {ConfirmDialog} from "./ConfirmDialog";
-import type {queryPage, querySort} from "../domain/types";
+import type {queryFilter, queryPage, querySort} from "../domain/types";
 
 export interface Entity {
   id: string | undefined;
@@ -47,6 +47,7 @@ interface CrudProps<T extends Entity> {
   columns: GridColDef<T>[];
   sx?: SxProps<Theme>;
   sort?: querySort[];
+  searchField?: string;
   rules: {
     canAdd: boolean;
     canEdit: (row: T) => boolean;
@@ -76,6 +77,7 @@ const Crud = <T extends Entity>({
   actions,
   rules,
   sort: initialSort,
+  searchField,
 }: CrudProps<T>) => {
   const {mobile} = useAppContext();
 
@@ -84,7 +86,7 @@ const Crud = <T extends Entity>({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
   const [openFormDialog, setOpenFormDialog] = useState(false);
-  const [queryText, setQueryText] = useState<string>("");
+  const [filters, setFilters] = useState<queryFilter[] | undefined>(undefined);
   const [sort, setSort] = useState<readonly querySort[] | undefined>(
     initialSort,
   );
@@ -95,14 +97,31 @@ const Crud = <T extends Entity>({
 
   const {items, loading, rowCount, refetch} = useQueryCollection({
     collection,
-    queryText,
     pagination,
     sort,
+    filters,
   });
 
   const handleSearch = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const text = evt.target.value;
-    setQueryText(text);
+    if (text.trim().length > 2) {
+      const filters: queryFilter[] = [];
+      if (searchField) {
+        filters.push({
+          fieldPath: searchField,
+          opStr: ">=",
+          value: text,
+        });
+        filters.push({
+          fieldPath: searchField,
+          opStr: "<",
+          value: text + "~",
+        });
+      }
+      setFilters(filters);
+    } else {
+      setFilters(undefined);
+    }
   };
 
   const handleEditItem = (item: T) => {
@@ -233,11 +252,13 @@ const Crud = <T extends Entity>({
             mx: 2,
             mt: 2,
           }}>
-          <TextField
-            sx={{"& input": {p: 1}}}
-            onChange={handleSearch}
-            slotProps={{input: {startAdornment: <Search />}}}
-          />
+          {searchField && (
+            <TextField
+              sx={{"& input": {p: 1}}}
+              onChange={handleSearch}
+              slotProps={{input: {startAdornment: <Search />}}}
+            />
+          )}
           {rules.canAdd && (
             <IconButton
               onClick={handleAddClick}
