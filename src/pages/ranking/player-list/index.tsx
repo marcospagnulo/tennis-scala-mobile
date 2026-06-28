@@ -2,7 +2,7 @@ import {Button, Stack, TextField, type SxProps} from "@mui/material";
 import type {Player, queryFilter, querySort} from "../../../domain/types";
 import {useQueryCollection} from "../../../functions/useQueryCollection";
 import {collections} from "../../../lib/firebase";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {
   GridPaginationModel,
   GridRowSelectionModel,
@@ -15,11 +15,9 @@ import {Search} from "@mui/icons-material";
 const pageSizeOptions = [25, 50, 100];
 const PlayerList = ({
   sx,
-  filters,
   onSelect,
 }: {
   sx?: SxProps<Theme>;
-  filters?: queryFilter[];
   onSelect: (players: Player[]) => void;
 }) => {
   const [selection, setSelection] = useState<GridRowSelectionModel>({
@@ -31,14 +29,33 @@ const PlayerList = ({
     page: 0,
     pageSize: pageSizeOptions[0],
   });
-  const [sort] = useState<querySort[]>([{field: "surname", direction: "asc"}]);
+  const [sort] = useState<querySort[]>([{field: "surname", sort: "asc"}]);
+  const [filters, setFilters] = useState<queryFilter[]>([]);
+
+  useEffect(() => {
+    if (queryText.trim().length > 2) {
+      setFilters([
+        {
+          fieldPath: "surname",
+          opStr: ">=",
+          value: queryText,
+        },
+        {
+          fieldPath: "surname",
+          opStr: "<",
+          value: queryText + "~",
+        },
+      ]);
+    } else {
+      setFilters([]);
+    }
+  }, [queryText]);
 
   const {items, loading, rowCount} = useQueryCollection({
     collection: collections?.players,
     pagination,
     filters,
     sort,
-    queryText,
   });
 
   const handleConfirm = () => {
