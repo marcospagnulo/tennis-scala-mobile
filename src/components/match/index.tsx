@@ -114,7 +114,7 @@ const MatchInfo = ({match, expired}: {match: Match; expired?: boolean}) => {
                 flex: 1,
                 ...(!hideResult
                   ? {
-                      maxWidth: {xs: "40%", sm: "35%", md: "25%", lg: "20%"},
+                      maxWidth: {xs: 150, sm: 220, md: 220, lg: 220},
                     }
                   : {alignItems: "center", justifyContent: "center"}),
               }}>
