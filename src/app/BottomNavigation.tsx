@@ -7,8 +7,8 @@ import {
   Stack,
 } from "@mui/material";
 import {navigationItems} from "./navigation";
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useAppContext} from "./context";
 import {PlayerDialog} from "../components/player";
 
@@ -17,6 +17,18 @@ const BottomNavigation = () => {
   const [value, setValue] = useState<number>(0);
   const {player} = useAppContext();
   const [open, setOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const currentIndex = navigationItems.findIndex(
+      item => item.path === currentPath,
+    );
+    if (currentIndex !== -1) {
+      setValue(currentIndex);
+    }
+  }, [location.pathname]);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
