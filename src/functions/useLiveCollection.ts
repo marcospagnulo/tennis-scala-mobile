@@ -2,6 +2,10 @@ import {
   onSnapshot,
   orderBy,
   query,
+  QueryFieldFilterConstraint,
+  QueryLimitConstraint,
+  QueryOrderByConstraint,
+  QueryStartAtConstraint,
   where,
   type CollectionReference,
   type DocumentData,
@@ -25,13 +29,24 @@ const useLiveCollection = <T extends DocumentData>({
 
   useEffect(() => {
     if (!collection || skip) return;
-    const q = query(
-      collection,
-      ...(filters?.map(filter =>
-        where(filter.fieldPath, filter.opStr, filter.value),
-      ) || []),
-      ...(sort?.map(s => orderBy(s.field, s.direction)) || []),
-    );
+
+    const constraints: (
+      | QueryLimitConstraint
+      | QueryFieldFilterConstraint
+      | QueryOrderByConstraint
+      | QueryStartAtConstraint
+    )[] = [];
+
+    filters?.forEach(filter => {
+      constraints.push(where(filter.fieldPath, filter.opStr, filter.value));
+    });
+    sort?.forEach(s => {
+      if (s.sort) {
+        constraints.push(orderBy(s.field, s.sort));
+      }
+    });
+
+    const q = query(collection, ...constraints);
     const unsubscribe = onSnapshot(q, snapshot => {
       const items = snapshot.docs.map(
         doc => ({...doc.data(), id: doc.id}) as T,
