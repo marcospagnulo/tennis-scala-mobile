@@ -11,8 +11,11 @@ service cloud.firestore {
       allow update: if request.auth != null && 
                        (
                         request.auth.token.role == "admin" || 
-                        request.auth.uid == resource.data.createdBy
-                        );  // Admin o creatore
+                        request.auth.uid == resource.data.createdBy ||
+                        // I giocatori lanciano sfide e approvano risultati:
+                        // possono modificare solo i periodi (partite)
+                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["periods"])
+                        );  // Admin, creatore o modifica delle sole partite
       allow delete: if request.auth != null && 
                        request.auth.token.role == "admin";  // Solo admin eliminano
     }

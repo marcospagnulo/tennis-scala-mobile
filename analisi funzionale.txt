@@ -4,29 +4,55 @@ Applicazione per la gestione della Scala Mobile del Tennis Club Monteroni
 1. OBIETTIVO DELL'APPLICAZIONE
 
 L'applicazione ha lo scopo di digitalizzare la gestione della Scala Mobile descritta nel regolamento del circolo.
-Il sistema deve consentire a un unico amministratore di gestire iscritti, classifica, periodi di gioco, sfide, risultati, punteggi, tabelloni finali ed esclusioni, sostituendo le attivita oggi svolte tramite gruppo WhatsApp e gestione manuale.
+Il sistema deve consentire all'amministratore di gestire iscritti, classifica, periodi di gioco, sfide, risultati, punteggi, tabelloni finali ed esclusioni, e ai giocatori di lanciare sfide e registrare i risultati, sostituendo le attivita oggi svolte tramite gruppo WhatsApp e gestione manuale.
 
 
 2. UTENTI DEL SISTEMA
 
-E previsto un solo tipo di utente:
+L'accesso avviene con autenticazione Firebase (email e password).
+Il ruolo e assegnato come custom claim tramite lo script admin/set-custom-claims.mjs.
+Sono previsti tre ruoli:
 
-- Amministratore
+- Amministratore (admin)
+- Gestore di stagione (manager)
+- Giocatore (player, ruolo predefinito)
 
-L'amministratore e l'unico soggetto autorizzato a usare l'applicazione e puo:
+2.1 Amministratore
 
-- inserire, modificare e disattivare i partecipanti
-- definire la classifica iniziale
+L'amministratore ha accesso completo e puo:
+
+- inserire, modificare ed eliminare i partecipanti
+- creare, modificare ed eliminare le stagioni
+- definire la classifica iniziale e modificarne punti, vittorie, pareggi e sconfitte
 - suddividere i giocatori nei gruppi
 - aprire e chiudere i periodi di gioco
-- registrare sfide e risultati
+- registrare sfide e risultati (le sfide inserite dall'admin nascono gia accettate)
 - applicare le regole di validita delle sfide
 - calcolare punti e classifiche
 - gestire nuovi ingressi
 - registrare esclusioni e relative motivazioni
 - creare e gestire il torneo finale a eliminazione diretta
 
-Non sono previsti accessi diretti da parte dei giocatori.
+2.2 Gestore di stagione
+
+Il gestore puo creare stagioni e partecipanti e gestisce, con gli stessi poteri
+dell'amministratore, solo le stagioni che ha creato.
+Non puo eliminare stagioni ne partecipanti.
+
+2.3 Giocatore
+
+Al primo accesso l'utente viene associato al partecipante con la stessa email
+(se creato dall'amministratore) oppure viene creato un nuovo partecipante.
+Il giocatore puo:
+
+- consultare classifica reale e live, partite e partecipanti
+- modificare il proprio profilo
+- lanciare una sfida ai giocatori sfidabili
+- accettare o rifiutare le sfide ricevute
+- cancellare una propria sfida ancora in attesa
+- inserire e approvare il risultato delle proprie partite
+
+Questa possibilita sostituisce la comunicazione di sfide e risultati sul gruppo WhatsApp.
 
 
 3. STRUTTURA DELLA COMPETIZIONE
@@ -217,7 +243,7 @@ Il sistema deve permettere di attribuire a ciascun nuovo giocatore un punteggio 
 Nel regolamento attuale le sfide e i risultati vengono comunicati sul gruppo WhatsApp.
 Nell'applicazione queste operazioni devono essere internalizzate e rese tracciabili.
 
-Il sistema deve consentire all'amministratore di registrare:
+Il sistema deve consentire di registrare:
 
 - chi lancia la sfida
 - chi riceve la sfida
@@ -262,18 +288,104 @@ L'applicazione dovra gestire almeno i seguenti dati:
 - accesso al tabellone finale
 
 
-16. ASPETTI ANCORA DA CHIARIRE
+16. FLUSSO DI SFIDE E RISULTATI
+
+Stati di una partita:
+
+- in attesa (pending): sfida lanciata dal giocatore, da accettare
+- approvata (approved): sfida accettata dallo sfidato o inserita dall'amministratore
+- rifiutata (rejected): sfida rifiutata dallo sfidato
+- completata (completed): risultato approvato da entrambi i giocatori o confermato dall'amministratore
+
+Regole del flusso:
+
+- lo sfidante e sempre il giocatore 1 della partita (riceve il bonus sfidante)
+- solo lo sfidato puo accettare o rifiutare la sfida
+- lo sfidante puo cancellare la sfida finche e in attesa; l'amministratore in ogni momento
+- ciascun giocatore inserisce e approva il risultato; la partita e completata quando
+  entrambi hanno approvato lo stesso risultato
+- se un giocatore approva un risultato diverso da quello approvato dall'avversario,
+  l'approvazione dell'avversario viene annullata e dovra approvare di nuovo
+- un giocatore puo chiedere di modificare un risultato gia approvato: le approvazioni
+  vengono azzerate
+- l'amministratore puo inserire o correggere il risultato, completando la partita
+- un periodo puo essere chiuso solo se tutte le sue partite sono completate o rifiutate
+- l'apertura di un nuovo periodo chiude quello in corso, con il ricalcolo della classifica
+- a parita di punti la classifica ordina per numero di vittorie e poi per minor numero
+  di sconfitte, sia nella classifica reale sia in quella live
+
+
+17. MODELLO DATI
+
+I dati sono salvati su Cloud Firestore in due collezioni:
+
+- players: anagrafica dei partecipanti (nome, cognome, avatar, genere, data di nascita,
+  telefono, email, utente associato)
+- seasons: una stagione per documento, con nome, date, numero massimo di partite per
+  periodo, classifica reale (ranking) e periodi (periods); ogni periodo contiene le
+  proprie partite
+
+Tutte le modifiche a una stagione vengono eseguite in una transazione, sull'ultima
+versione salvata, per evitare che modifiche contemporanee si sovrascrivano.
+I giocatori possono modificare solo i periodi (partite) di una stagione; classifica e
+dati della stagione sono modificabili solo dall'amministratore e dal creatore.
+
+Possibile evoluzione: con l'aumentare delle partite conviene spostare le partite in una
+sotto-collezione, per non avvicinarsi al limite di 1 MB per documento.
+
+
+18. STATO DI IMPLEMENTAZIONE
+
+Implementato:
+
+- autenticazione, ruoli e associazione utente-partecipante
+- gestione di partecipanti e stagioni
+- classifica reale e live, con aggiunta, rimozione, scambio di posizione e
+  modifica manuale dei punteggi
+- stato del giocatore attivo / non disponibile in classifica
+- apertura e chiusura dei periodi con ricalcolo della classifica
+- sfide con flusso di accettazione e doppia approvazione del risultato
+- validazione del formato dei set (6-0..6-4, 7-5, 7-6) e del super tie-break a 10
+- divieto di sfidare piu volte lo stesso avversario nel periodo
+- numero massimo di partite per periodo, configurabile per stagione (predefinito 3)
+- punteggio: 3-0 per la vittoria 2-0, 2-1 per la vittoria 2-1, 1 punto per set vinto
+  in caso di partita pari, 0,5 punti di bonus allo sfidante
+
+Implementato in modo diverso dal regolamento (da adeguare):
+
+- gruppi: la classifica e divisa in 4 gruppi di uguale ampiezza invece che in gruppi
+  variabili di 10 o piu giocatori
+- sfide consentite: si applica ancora la regola "stessa fascia o meta inferiore della
+  fascia superiore" invece della regola dei gruppi adiacenti
+- data della sfida: puo essere scelta solo entro la settimana corrente, mentre il
+  periodo dura circa 3 settimane
+
+Da implementare:
+
+- partite non terminate (vincitore per somma dei game, punteggio 1,5 / 1 / 0,5)
+- prima partita del periodo contro un avversario non incontrato nel periodo precedente
+- eccezione al divieto di ripetere l'avversario quando lo sfidante ha gia
+  affrontato tutto il gruppo
+- sfida irrevocabile e relativi vincoli di calendario
+- stati escluso e giustificato, con motivazione e data
+- obbligo di almeno una partita per periodo
+- torneo finale a eliminazione diretta e requisito dei 12 incontri
+
+
+19. ASPETTI ANCORA DA CHIARIRE
 
 Restano da definire alcuni dettagli applicativi:
 
-- numero massimo di incontri consentiti per periodo, se deve essere configurabile nell'app
 - rappresentazione precisa dei giocatori "a cavallo" tra due gruppi
 - struttura esatta dei tabelloni finali per seconda, terza ed eventuale quarta fascia
 - gestione dei ritiri durante la partita
 - eventuale mantenimento nell'app della funzionalita di congelamento come opzione amministrativa interna, anche se non prevista dal regolamento
+  (oggi lo stato "non disponibile" impedisce di sfidare il giocatore)
+- se il giocatore debba poter lanciare sfide in autonomia o se la sfida debba essere
+  sempre registrata dall'amministratore, come previsto nella prima versione dell'analisi
 
 
-17. SINTESI
+20. SINTESI
 
 L'applicazione dovra aderire al regolamento ufficiale della Scala Mobile del circolo.
 Rispetto alla versione precedente dell'analisi, le principali modifiche riguardano:
@@ -285,3 +397,4 @@ Rispetto alla versione precedente dell'analisi, le principali modifiche riguarda
 - gestione delle partite non terminate tramite somma dei game
 - introduzione delle regole di esclusione
 - fase finale a eliminazione diretta basata sulla classifica dell'ultimo periodo
+- accesso dei giocatori per lanciare sfide e approvare i risultati

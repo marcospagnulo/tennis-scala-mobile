@@ -2,6 +2,7 @@ import {useState} from "react";
 import type {Season} from "../../domain/types";
 import {
   updateMatchResult as coreupdateMatchResult,
+  approveMatchResult as coreApproveMatchResult,
   resetMatchApproval as coreResetMatchApproval,
   updateMatchDate as coreUpdateMatchDate,
   updateMatchStatus as coreUpdateMatchStatus,
@@ -39,6 +40,26 @@ const useUpdateMatch = () => {
         pid2Approved,
         complete,
       );
+      setSuccess(true);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const approveMatchResult = async (
+    season: Season,
+    mId: string,
+    result: string,
+    playerId: string,
+  ) => {
+    setLoading(true);
+    setError(undefined);
+    setSuccess(false);
+
+    try {
+      await coreApproveMatchResult(season, mId, result, playerId);
       setSuccess(true);
     } catch (error) {
       setError((error as Error).message);
@@ -101,6 +122,7 @@ const useUpdateMatch = () => {
     error,
     success,
     updateMatchResult,
+    approveMatchResult,
     resetMatchApproval,
     updateMatchDate,
     updateMatchStatus,

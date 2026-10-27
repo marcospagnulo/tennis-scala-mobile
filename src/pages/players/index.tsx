@@ -50,8 +50,8 @@ export function PlayersPage({sx}: {sx?: SxProps<Theme>}) {
           canAdd: isAdmin || isManager,
           canEdit: row =>
             isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
-          canDelete: row =>
-            isAdmin || (user?.id !== undefined && row.createdBy === user?.id),
+          // Le regole Firestore consentono la cancellazione solo agli admin
+          canDelete: () => isAdmin,
         }}
       />
       <PlayerInfo

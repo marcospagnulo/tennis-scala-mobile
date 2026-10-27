@@ -47,7 +47,8 @@ const SeasonsDialog = ({
         rules={{
           canAdd: isAdmin || isManager,
           canEdit: row => isAdmin || row.createdBy === user?.id,
-          canDelete: row => isAdmin || row.createdBy === user?.id,
+          // Le regole Firestore consentono la cancellazione solo agli admin
+          canDelete: () => isAdmin,
         }}
       />
     </Dialog>
