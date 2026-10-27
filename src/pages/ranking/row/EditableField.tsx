@@ -54,7 +54,14 @@ const EditableField = ({
         variant="body2"
         value={value + ""}
         edit={edit}
-        onConfirm={newValue => handleEdit(parseInt(newValue))}
+        onConfirm={newValue => {
+          const parsed = parseFloat(newValue);
+          if (isNaN(parsed)) {
+            setEdit(false);
+            return;
+          }
+          handleEdit(parsed);
+        }}
         onCancel={() => setEdit(false)}
         type="number"
         textFieldWidth={30}

@@ -26,7 +26,8 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
     [false, false, false],
   ]);
 
-  const {loading, updateMatchResult, resetMatchApproval} = useUpdateMatch();
+  const {loading, updateMatchResult, approveMatchResult, resetMatchApproval} =
+    useUpdateMatch();
 
   const tfSx: SxProps<Theme> = {
     width: 32,
@@ -141,17 +142,7 @@ const Result = ({match, expired}: {match: Match; expired?: boolean}) => {
     if (result[0][2] !== null && result[1][2] !== null) {
       resultString += ` ${result[0][2]}-${result[1][2]}`;
     }
-    const pid1Approved =
-      pid === match.pid1 ? true : match.result?.p1Approved || false;
-    const pid2Approved =
-      pid === match.pid2 ? true : match.result?.p2Approved || false;
-    await updateMatchResult(
-      currentSeason!,
-      match.id,
-      resultString,
-      pid1Approved,
-      pid2Approved,
-    );
+    await approveMatchResult(currentSeason!, match.id, resultString, pid);
   };
 
   const handleAdminApprove = async () => {

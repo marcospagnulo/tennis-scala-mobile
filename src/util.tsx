@@ -1,5 +1,8 @@
 import type {Period, Ranking} from "./domain/types";
 
+// Punti aggiunti allo sfidante (pid1) in ogni caso, come da regolamento (9.4)
+const CHALLENGER_BONUS = 0.5;
+
 /**
  * Ricalcola le posizioni in base ai punti, numero di vittorie e di partite
  *
@@ -7,7 +10,7 @@ import type {Period, Ranking} from "./domain/types";
  * @returns ranking con posizioni ricalcolate
  */
 const recalculatePositions = (ranking: Ranking[]) => {
-  return ranking
+  return [...ranking]
     .sort((a, b) => {
       if (b.points !== a.points) {
         return b.points - a.points; // Ordina per punti
@@ -72,7 +75,7 @@ const calculateNewRanking = (period: Period, ranking: Ranking[]): Ranking[] => {
       }
       const player2 = periodRanking[match.pid2];
 
-      player1.points += 1; // Assegna 1 punto per aver sfidato
+      player1.points += CHALLENGER_BONUS;
       if (sets.p1 > sets.p2) {
         player1.wins += 1;
         player2.losses += 1;
@@ -91,24 +94,21 @@ const calculateNewRanking = (period: Period, ranking: Ranking[]): Ranking[] => {
       }
     });
 
-  ranking = ranking
-    .map(r => {
-      const periodPlayer = periodRanking[r.player.id!];
-      if (periodPlayer) {
-        return {
-          ...r,
-          points: r.points + periodPlayer.points,
-          wins: r.wins + periodPlayer.wins,
-          losses: r.losses + periodPlayer.losses,
-          draws: r.draws + periodPlayer.draws,
-        };
-      }
-      return r;
-    })
-    .sort((a, b) => b.points - a.points)
-    .map((r, index) => ({...r, position: index + 1}));
+  const updatedRanking = ranking.map(r => {
+    const periodPlayer = periodRanking[r.player.id!];
+    if (periodPlayer) {
+      return {
+        ...r,
+        points: r.points + periodPlayer.points,
+        wins: r.wins + periodPlayer.wins,
+        losses: r.losses + periodPlayer.losses,
+        draws: r.draws + periodPlayer.draws,
+      };
+    }
+    return r;
+  });
 
-  return ranking;
+  return recalculatePositions(updatedRanking);
 };
 
 const parseResult = (value: string): number[][] => {
@@ -193,6 +193,7 @@ const getWinnerIndex = (result: (number | null)[][]): number | null => {
 };
 
 export {
+  CHALLENGER_BONUS,
   calculateNewRanking,
   parseResult,
   countSetsWon,
